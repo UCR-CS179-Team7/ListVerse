@@ -1,0 +1,4 @@
+[submodule "dev"]
+	path = dev
+	url = https://github.com/UCR-CS179-Team7/ListVerse-dev-tools.git
+	branch = master
