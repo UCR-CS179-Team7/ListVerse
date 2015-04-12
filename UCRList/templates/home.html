@@ -1,0 +1,7 @@
+{% extends '_layouts/base.html' %}
+
+{% block headline %}<h1>AWESOME!! </h1>{% endblock headline %}
+
+{% block content %}
+<p>It works! Good Job{% if user.is_authenticated %} {{ user.username }}{% endif %}!</p>
+{% endblock %}
