@@ -1,8 +1,9 @@
-from django.views import generic
+from __future__ import absolute_import
 
-from django.contrib.auth.forms import UserCreationForm
+from django.views import generic
 from django.contrib.auth.models import User
 
+from .forms import RegistrationForm
 # NOTE Views go here
 class HomePageView(generic.TemplateView):
     template_name = 'home.html'
@@ -10,6 +11,6 @@ class HomePageView(generic.TemplateView):
 
 # NOTE Forms go here
 class RegisterView(generic.CreateView):
-    form_class = UserCreationForm
+    form_class = RegistrationForm
     model = User
     template_name = 'accounts/signup.html'
