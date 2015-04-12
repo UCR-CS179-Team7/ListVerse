@@ -13,8 +13,6 @@ from .forms import RegistrationForm, LoginForm
 class HomePageView(generic.TemplateView):
     template_name = 'home.html'
 
-
-# NOTE Forms go here
 class RegisterView(generic.CreateView):
     form_class = RegistrationForm
     model = User
