@@ -5,7 +5,10 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.core.urlresolvers import reverse_lazy
 
+
+
 from .forms import RegistrationForm, LoginForm
+
 # NOTE Views go here
 class HomePageView(generic.TemplateView):
     template_name = 'home.html'
@@ -32,3 +35,10 @@ class LoginView(generic.FormView):
             return super(LoginView, self).form_valid(form)
         else:
             return self.form_invalid(form)
+
+class LogOutView(generic.RedirectView):
+    url = reverse_lazy('home')
+
+    def get(self, request, *args, **kwargs):
+        logout(request)
+        return super(LogOutView, self).get(request, *args, **kwargs)
