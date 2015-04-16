@@ -38,6 +38,8 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'crispy_forms',
+    'profiles',
+    'bootstrap_toolkit',
 )
 
 MIDDLEWARE_CLASSES = (
