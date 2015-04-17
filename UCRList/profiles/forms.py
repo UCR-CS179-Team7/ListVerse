@@ -9,11 +9,11 @@ from crispy_forms.bootstrap import AppendedText, PrependedText, FormActions
 
 class EditProfileForm(forms.Form):
     def __init__(self, *args, **kwargs):
-        current_user = kwargs.pop('current_user')
+        current_profile = kwargs.pop('current_profile')
         super(EditProfileForm, self).__init__(*args, **kwargs)
-        self.fields['nickname'].initial = current_user.nickname
-        self.fields['gender'].initial = current_user.gender
-        self.fields['birthday'].initial = current_user.birthday
+        self.fields['nickname'].initial = current_profile.nickname
+        self.fields['gender'].initial = current_profile.gender
+        self.fields['birthday'].initial = current_profile.birthday
 
         self.helper = FormHelper()
         self.helper.form_class = 'blueForms'

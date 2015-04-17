@@ -3,28 +3,39 @@ from django.http import HttpResponse
 from django.views.generic import View
 
 from .models import Profile
+from .models import User
 from .forms import EditProfileForm
 # Create your views here.
 
 class EditProfileView(View):
-    def get(self, request):
-        current_user = request.user.profile
-        form = EditProfileForm(current_user=current_user)
-        return render(request, 'profiles/index.html', {'form' : form, 'current_user' : current_user})
+    def get(self, request, username=''):
+
+        current_profile = request.user.profile
+        if(username == current_profile.user.username):
+            form = EditProfileForm(current_profile=current_profile)
+            return render(request, 'profiles/index.html', {'form' : form, 'current_profile' : current_profile})
+        else:
+            try:
+                userid = User.objects.get(username=username).id
+            except User.DoesNotExist:
+                # TODO
+                return HttpResponse('User Not Found')
+            profile = Profile.objects.get(user_id=userid)
+            return render(request, 'profiles/pubprofile.html', {'profile' : profile})
 
     def post(self, request):
-        current_user = request.user.profile
-        form = EditProfileForm(request.POST, current_user=current_user)
-        # TODO Save new data to db here
+        current_profile = request.user.profile
+        form = EditProfileForm(request.POST, current_profile=current_profile)
+        # Save new data to db
         if form.is_valid():
-            updated_user = Profile.objects.filter(pk=current_user.user.id)
-            updated_user = updated_user[0]
-            updated_user.nickname = form.cleaned_data['nickname']
-            updated_user.gender = form.cleaned_data['gender']
-            updated_user.birthday = form.cleaned_data['birthday']
+            updated_profile = Profile.objects.filter(pk=current_profile.user.id)
+            updated_profile = updated_profile[0]
+            updated_profile.nickname = form.cleaned_data['nickname']
+            updated_profile.gender = form.cleaned_data['gender']
+            updated_profile.birthday = form.cleaned_data['birthday']
 
-            updated_user.save()
-        return render(request, 'profiles/index.html', {'edit' : True, 'form' : form, 'current_user' : current_user})
+            updated_profile.save()
+        return render(request, 'profiles/index.html', {'edit' : True, 'form' : form, 'current_profile' : current_profile})
 
 def index(request):
     current_user = {'current_user' : request.user.profile}

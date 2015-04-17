@@ -11,8 +11,8 @@
 </form>
 
 
-{% if current_user %}
-  <p>Active user since {{current_user.creation_date}}</p>
+{% if current_profile %}
+  <p>Active user since {{current_profile.creation_date}}</p>
 {% else %}
   <p>You must be logged in to view this page.</p>
 {% endif %}
