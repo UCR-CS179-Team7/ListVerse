@@ -7,9 +7,9 @@ class List(models.Model):
 
     # MODEL FIELDS
     owner = models.ForeignKey(User)
-    pub-date =
-    edit-date =
-    content-type =
+    pub-date = 1
+    edit-date = 1
+    content-type = 1
 
 class ListItems(models.Model):
     #MODEL CHOICES
