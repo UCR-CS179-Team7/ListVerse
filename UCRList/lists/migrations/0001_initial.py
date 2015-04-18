@@ -15,17 +15,17 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='List',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, primary_key=True, auto_created=True)),
+                ('id', models.AutoField(serialize=False, auto_created=True, primary_key=True, verbose_name='ID')),
                 ('pub_date', models.DateField(auto_now_add=True)),
                 ('edit_date', models.DateField(auto_now=True)),
-                ('content_type', models.CharField(default='TXT', max_length=3, choices=[('TXT', 'Text'), ('PTO', 'Photo'), ('QOT', 'Quote'), ('LNK', 'Link'), ('VID', 'Video'), ('AUD', 'Audio')])),
+                ('content_type', models.CharField(choices=[('TXT', 'Text'), ('PTO', 'Photo'), ('QOT', 'Quote'), ('LNK', 'Link'), ('VID', 'Video'), ('AUD', 'Audio')], max_length=3, default='TXT')),
                 ('owner', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
             ],
         ),
         migrations.CreateModel(
             name='ListItems',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, primary_key=True, auto_created=True)),
+                ('id', models.AutoField(serialize=False, auto_created=True, primary_key=True, verbose_name='ID')),
                 ('title', models.CharField(max_length=128)),
                 ('body', models.CharField(max_length=1024)),
                 ('contentalt', models.CharField(max_length=1024, blank=True)),
