@@ -20,6 +20,16 @@ class Profile(models.Model):
     creation_date = models.DateField(auto_now_add=True, null=True)
     birthday = models.DateField(blank=True, null=True)
 
+class InterestTopic(models.Model):
+	TOPIC_CHOICES=( (1, 'Music'),
+			(2, 'Movies'),
+			(3, 'TV'),
+			(4, 'Science'),
+			(5, 'Politics')
+			)
+	user = models.ForeignKey(User)
+	topic = models.IntegerField(choices=TOPIC_CHOICES)
+
 
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
