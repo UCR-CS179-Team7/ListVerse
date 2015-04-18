@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from django.template.defaultfilters import slugify
 # Create your models here.
 class List(models.Model):
     # MODEL CHOICES
@@ -17,9 +17,22 @@ class List(models.Model):
 
     # MODEL FIELDS
     owner = models.ForeignKey(User)
+    title = models.CharField(max_length2=128)
+    slug = models.CharField(max_length=128, null=False, unique=True)
     pub_date = models.DateField(auto_now_add=True)
     edit_date = models.DateField(auto_now=True)
     content_type = models.CharField(max_length=3, choices=CONTENT_TYPE_CHOICES, default=TEXT)
+
+    def create_slug(self):
+        d = self.pub_date
+        slugified_title = slugify(self.title)
+        slug_fields = (d.year, d.month, d.day, slugified_title)
+        return '{0}/{1}/{2}/{3}'.format(*slug_fields)
+
+
+    def save(self):
+        super(List, self).save()
+        self.slug = self.create_slug()
 
 class ListItems(models.Model):
     #MODEL CHOICES
