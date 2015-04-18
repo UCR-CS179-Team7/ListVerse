@@ -16,7 +16,7 @@ class List(models.Model):
     ) ## CONTENT_TYPE_CHOICES
 
     # MODEL FIELDS
-    owner = models.ForeignKey(User)
+    owner = models.ForeignKey(Profile)
     pub_date = models.DateField(auto_now_add=True)
     edit_date = models.DateField(auto_now=True)
     content_type = models.CharField(max_length=3, choices=CONTENT_TYPE_CHOICES, default=TEXT)
