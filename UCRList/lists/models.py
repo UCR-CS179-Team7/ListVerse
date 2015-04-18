@@ -17,7 +17,7 @@ class List(models.Model):
 
     # MODEL FIELDS
     owner = models.ForeignKey(User)
-    title = models.CharField(max_length2=128)
+    title = models.CharField(max_length=128)
     slug = models.CharField(max_length=128, null=False, unique=True)
     pub_date = models.DateField(auto_now_add=True)
     edit_date = models.DateField(auto_now=True)
