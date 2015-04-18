@@ -13,5 +13,6 @@ urlpatterns = [
     url(r'^accounts/login/$', LoginView.as_view(), name='login'),
     url(r'^accounts/logout/$', LogOutView.as_view(), name='logout'),
     url(r'^profiles/', include('profiles.urls')),
+    url(r'^lists/', include('lists.urls')),
     url(r'^admin/', include(admin.site.urls)),
 ]
