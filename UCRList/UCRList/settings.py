@@ -41,6 +41,7 @@ INSTALLED_APPS = (
     'bootstrap_toolkit',
     'profiles',
     'lists',
+    'friendship',
 )
 
 MIDDLEWARE_CLASSES = (
