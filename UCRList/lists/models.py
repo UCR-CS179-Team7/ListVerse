@@ -4,12 +4,22 @@ from django.contrib.auth.models import User
 # Create your models here.
 class List(models.Model):
     # MODEL CHOICES
+    TEXT  = 'TXT'
+    PHOTO = 'PTO'
+    QUOTE = 'QOT'
+    LINK  = 'LNK'
+    VIDEO = 'VID'
+    AUDIO = 'AUD'
+    CONTENT_TYPE_CHOICES = (
+        (TEXT, 'Text'), (PHOTO, 'Photo'), (QUOTE, 'Quote'),
+        (LINK, 'Link'), (VIDEO, 'Video'), (AUDIO, 'Audio'),
+    ) ## CONTENT_TYPE_CHOICES
 
     # MODEL FIELDS
     owner = models.ForeignKey(User)
-    pub-date = 1
-    edit-date = 1
-    content-type = 1
+    pub_date = models.DateField(auto_now_add=True)
+    edit_date = models.DateField(auto_now=True)
+    content_type = models.CharField(max_length=3, choices=CONTENT_TYPE_CHOICES, default=TEXT)
 
 class ListItems(models.Model):
     #MODEL CHOICES
@@ -18,8 +28,8 @@ class ListItems(models.Model):
     listid = models.ForeignKey(List)
     title = models.CharField(max_length=128)
     body = models.CharField(max_length=1024)
-    contentalt = models.Charfield(max_length=1024, blank=True)
-    contenturi = modes.CharField(max_length=256, blank=True)
+    contentalt = models.CharField(max_length=1024, blank=True)
+    contenturi = models.CharField(max_length=256, blank=True)
 
 '''
     Notes for List and ListItems models
