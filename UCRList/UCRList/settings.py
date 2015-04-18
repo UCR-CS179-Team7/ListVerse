@@ -40,6 +40,7 @@ INSTALLED_APPS = (
     'crispy_forms',
     'profiles',
     'bootstrap_toolkit',
+    'friendship',
 )
 
 MIDDLEWARE_CLASSES = (

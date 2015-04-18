@@ -18,12 +18,3 @@ class Profile(models.Model):
     gender = models.CharField(max_length=2, choices=GENDERS, null=True)
     creation_date = models.DateField(auto_now_add=True, null=True)
     birthday = models.DateField(blank=True, null=True)
-
-    def get_followers(self):
-        user = self.user
-        return Following.objects.filter(Q(follower=user)|Q(followee=user)).all()
-
-class Following(models.Model):
-    creation_date = models.DateField(auto_now_add=True, editable=False)
-    follower = models.ForeignKey(User, related_name="follower_set")
-    followee = models.ForeignKey(User, related_name="followee_set")
