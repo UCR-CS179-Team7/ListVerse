@@ -10,26 +10,26 @@ from .forms import EditProfileForm
 class EditProfileView(View):
     def get(self, request, username=''):
 
-        current_profile = request.user.profile
-        if(username == current_profile.user.username):
-            form = EditProfileForm(current_profile=current_profile)
-            return render(request, 'profiles/index.html', {'form' : form, 'current_profile' : current_profile})
-        else:
-            try:
-                userid = User.objects.get(username=username).id
-            except User.DoesNotExist:
-                # TODO
-                return HttpResponse('User Not Found')
-            profile = Profile.objects.get(user_id=userid)
-            return render(request, 'profiles/pubprofile.html', {'profile' : profile})
+        if (request.user.is_authenticated()):
+            current_profile = request.user.profile
+            if(username == current_profile.user.username):
+                form = EditProfileForm(current_profile=current_profile)
+                return render(request, 'profiles/index.html', {'form' : form, 'current_profile' : current_profile})
+
+        try:
+            userid = User.objects.get(username=username)
+        except User.DoesNotExist:
+            # TODO
+            return HttpResponse('User Not Found')
+        profile = Profile.objects.get(user_id=userid)
+        return render(request, 'profiles/pubprofile.html', {'profile' : profile})
 
     def post(self, request):
         current_profile = request.user.profile
         form = EditProfileForm(request.POST, current_profile=current_profile)
         # Save new data to db
         if form.is_valid():
-            updated_profile = Profile.objects.filter(pk=current_profile.user.id)
-            updated_profile = updated_profile[0]
+            updated_profile = Profile.objects.get(user_id=current_profile.user_id)
             updated_profile.nickname = form.cleaned_data['nickname']
             updated_profile.gender = form.cleaned_data['gender']
             updated_profile.birthday = form.cleaned_data['birthday']
