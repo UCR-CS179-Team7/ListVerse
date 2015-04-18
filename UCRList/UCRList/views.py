@@ -16,6 +16,7 @@ class HomePageView(generic.TemplateView):
 class RegisterView(generic.CreateView):
     form_class = RegistrationForm
     model = User
+    success_url = '/'
     template_name = 'accounts/signup.html'
 
 class LoginView(generic.FormView):
