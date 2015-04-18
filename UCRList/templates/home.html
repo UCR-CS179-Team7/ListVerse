@@ -1,7 +1,17 @@
 {% extends '_layouts/base.html' %}
+{% load friendshiptags %}
 
 {% block headline %}<h1>AWESOME!!</h1>{% endblock headline %}
 
 {% block content %}
 <p>It works! Good Job{% if user.is_authenticated %} {{ user.username }}{% endif %}!</p>
+{% if user.is_authenticated %} 
+    <p> Friends: {% friends user %} </p>
+    
+    <p> Following: {% following user %} </p>
+
+    <p> Followers: {% friends user %} </p>
+
+    <p> Friend Requests: {% friend_requests user %} </p>
+{% endif %}
 {% endblock %}
