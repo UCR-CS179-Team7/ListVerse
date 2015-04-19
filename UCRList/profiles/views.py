@@ -5,6 +5,8 @@ from django.views.generic import View
 from .models import Profile
 from .models import User
 from .forms import EditProfileForm
+
+from friendship.models import Friend, Follow
 # Create your views here.
 
 class EditProfileView(View):
@@ -12,7 +14,7 @@ class EditProfileView(View):
 
         if (request.user.is_authenticated()):
             current_profile = request.user.profile
-            if(username == current_profile.user.username):
+            if (username == current_profile.user.username):
                 form = EditProfileForm(current_profile=current_profile)
                 return render(request, 'profiles/index.html', {'form' : form, 'current_profile' : current_profile})
         
@@ -21,8 +23,15 @@ class EditProfileView(View):
         except User.DoesNotExist:
             # TODO
             return HttpResponse('User Not Found')
-        profile = Profile.objects.get(user_id=userid)
-        return render(request, 'profiles/pubprofile.html', {'profile' : profile})
+        
+        request_profile = Profile.objects.get(user_id=userid)  
+        current_profile = request.user.profile
+
+        not_friends = not Friend.objects.are_friends(current_profile.user,request_profile.user)
+        doesnt_follow = not Follow.objects.follows(current_profile.user,request_profile.user)
+
+        return render(request, 'profiles/pubprofile.html', {'profile':request_profile,'not_friends':not_friends,'doesnt_follow':doesnt_follow})
+        
 
     def post(self, request):
         current_profile = request.user.profile

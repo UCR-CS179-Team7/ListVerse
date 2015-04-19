@@ -14,5 +14,13 @@
 
 <p> Followers: {% followers profile.user %} </p>
 
+{% if not_friends  %}
+        <input id="submit" type="button" value="Friend Me!" />
+{% endif %}
+
+{% if doesnt_follow  %}
+        <input id="submit" type="button" value="Follow Me!" />
+{% endif %}
+
 {% endblock %}
 

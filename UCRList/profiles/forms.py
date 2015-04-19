@@ -40,3 +40,7 @@ class EditProfileForm(forms.Form):
     nickname = forms.CharField(widget=forms.TextInput(attrs={'style': 'width: 200px;'}), label='Nickname', max_length=100)
     gender = forms.ChoiceField(widget=forms.Select(attrs={'style' : 'width: 150px;'}), label='Gender', choices=GENDERS)
     birthday = forms.DateField(widget=SelectDateWidget(attrs=({'style': 'width: 125px; display: inline-block;'}), years=years), label='Birthday')
+
+
+
+
