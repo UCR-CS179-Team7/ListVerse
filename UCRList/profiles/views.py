@@ -15,7 +15,7 @@ class EditProfileView(View):
             if(username == current_profile.user.username):
                 form = EditProfileForm(current_profile=current_profile)
                 return render(request, 'profiles/index.html', {'form' : form, 'current_profile' : current_profile})
-
+        
         try:
             userid = User.objects.get(username=username)
         except User.DoesNotExist:
