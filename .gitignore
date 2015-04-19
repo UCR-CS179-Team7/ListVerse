@@ -58,3 +58,6 @@ target/
 
 #Virtualenvironment
 venv/
+
+#Django
+migrations/
