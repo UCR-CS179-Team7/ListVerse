@@ -5,24 +5,43 @@ from django.views.generic import View
 from .models import Profile
 from .models import User
 from .forms import EditProfileForm
+
+from friendship.models import Friend, Follow
 # Create your views here.
 
 class EditProfileView(View):
     def get(self, request, username=''):
 
-        if (request.user.is_authenticated()):
-            current_profile = request.user.profile
-            if(username == current_profile.user.username):
-                form = EditProfileForm(current_profile=current_profile)
-                return render(request, 'profiles/index.html', {'form' : form, 'current_profile' : current_profile})
-        
+        # try to get userid, get it's profile if successful
+        # if user is authenticated
+        #   grab the profile
+        #   if the user is viewing his own profile
+        #       return the edit profile form
+        #   if the user is viewing a public profle other than his own
+        #       get his friend and follow relationships to the requested user
+        #       return the public profile with the propper buttons available
+        # last case: an unauthenticated user views a public profile
+
+
         try:
             userid = User.objects.get(username=username)
         except User.DoesNotExist:
             # TODO
             return HttpResponse('User Not Found')
-        profile = Profile.objects.get(user_id=userid)
-        return render(request, 'profiles/pubprofile.html', {'profile' : profile})
+
+        request_profile = Profile.objects.get(user_id=userid)  
+
+        if (request.user.is_authenticated()):
+            current_profile = request.user.profile
+            if (username == current_profile.user.username):
+                form = EditProfileForm(current_profile=current_profile)
+                return render(request, 'profiles/index.html', {'form' : form, 'current_profile' : current_profile})
+            else:
+                not_friends = not Friend.objects.are_friends(current_profile.user,request_profile.user)
+                doesnt_follow = not Follow.objects.follows(current_profile.user,request_profile.user)
+                return render(request, 'profiles/pubprofile.html', {'profile':request_profile,'not_friends':not_friends,'doesnt_follow':doesnt_follow})
+        return  render(request, 'profiles/pubprofile.html', {'profile':request_profile})
+        
 
     def post(self, request):
         current_profile = request.user.profile
