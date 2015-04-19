@@ -5,7 +5,7 @@ from django.views.generic import View, DetailView
 from .models import User, List
 from .forms import AddListForm
 
-class ListDetail(DetailView):
+class ListDetailView(DetailView):
     model = List
     context_object_name = 'l'
     template_name = 'lists/listdetail.html'
