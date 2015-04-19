@@ -33,6 +33,7 @@ class List(models.Model):
     def save(self):
         super(List, self).save()
         self.slug = self.create_slug()
+        super(List, self).save()
 
 class ListItems(models.Model):
     #MODEL CHOICES
