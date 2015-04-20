@@ -9,6 +9,12 @@
 <p>Gender: {{profile.gender}}</p>
 <p>Birthday: {{profile.birthday}}</p>
 <p>Active user since {{profile.creation_date}}</p>
+<p>Topics of Interest</p>
+<ul>
+{% for topic in topicList %}
+        <li> {{topic.get_topic_display}} </li>
+{% endfor %}
+</ul>
 
 <p> Friends: {% friends profile.user %} </p>
 

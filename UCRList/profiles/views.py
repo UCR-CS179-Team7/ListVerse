@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.views.generic import View
 
 from .models import Profile
+from .models import InterestTopic
 from .models import User
 from .forms import EditProfileForm
 
@@ -30,6 +31,7 @@ class EditProfileView(View):
             return HttpResponse('User Not Found')
 
         request_profile = Profile.objects.get(user_id=userid)  
+	topicList = InterestTopic.objects.filter(user_id=userid)[:5]
 
         if (request.user.is_authenticated()):
             current_profile = request.user.profile
@@ -39,7 +41,7 @@ class EditProfileView(View):
             else:
                 not_friends = not Friend.objects.are_friends(current_profile.user,request_profile.user)
                 doesnt_follow = not Follow.objects.follows(current_profile.user,request_profile.user)
-                return render(request, 'profiles/pubprofile.html', {'profile':request_profile,'not_friends':not_friends,'doesnt_follow':doesnt_follow})
+                return render(request, 'profiles/pubprofile.html', {'profile':request_profile, 'topicList' : topicList,'not_friends':not_friends,'doesnt_follow':doesnt_follow})
         return  render(request, 'profiles/pubprofile.html', {'profile':request_profile})
         
 
