@@ -1,7 +1,7 @@
 {% extends '_layouts/base.html' %}
 {% block content %}
 <h2> {{ l.title }} </h2>
-by <a href="/profiles/{{l.owner}}">{{ l.owner }}</a>
+by <a href="{% url 'profiles:view' username=l.owner %}">{{ l.owner }}</a>
 <br>
 {% for item in l.listitems_set.all %}
 {{ forloop.counter}}. {{ item.title }}
