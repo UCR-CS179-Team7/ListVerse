@@ -26,9 +26,11 @@
           <a href="{% url 'signup' %}" class="btn btn-default navbar-btn">Register</a>
           <a href="{% url 'login' %}" class="btn btn-default navbar-btn">Login</a>
           {% else %}
-          <a class="navbar-brand" href="/profiles/{{ user.username }}">Edit Profile</a>
+          <a href="{% url 'lists:new' %}" class="navbar-brand">New List</a>
+          <a class="navbar-brand" href="{% url 'profiles:edit' %}">Edit Profile</a>
+          <a class="navbar-brand" href="{% url 'profiles:view' username=user.username %}">My Profile</a>
           <a href="{% url 'logout' %}" class="btn btn-default navbar-btn">Logout</a>
-          {% endif %}
+        {% endif %}
         </div><!--/.navbar-collapse -->
       </div>
     </div>
