@@ -18,12 +18,13 @@ class ProfileView(View):
             return HttpResponse('User Not Found')
 
         request_profile = Profile.objects.get(user_id=userid)
-        not_friends = doesnt_follow = False
+        not_friends = doesnt_follow = not_self = False
 
         if request.user.is_authenticated():
             not_friends = not Friend.objects.are_friends(request.user, request_profile.user)
             doesnt_follow = not Follow.objects.follows(request.user,request_profile.user)
-        return render(request, 'profiles/pubprofile.html', {'profile':request_profile,'not_friends': not_friends,'doesnt_follow':doesnt_follow})
+            not_self = request.user.username != username
+        return render(request, 'profiles/pubprofile.html', {'profile':request_profile,'not_friends': not_friends,'doesnt_follow':doesnt_follow, 'not_self': not_self})
 
 
 class EditProfileView(View):
