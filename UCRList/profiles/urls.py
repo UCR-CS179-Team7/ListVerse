@@ -2,6 +2,6 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-    url(r'^$', views.EditProfileView.as_view(), name='profiles'),
-    url(r'^(?P<username>\w{0,50})/$', views.EditProfileView.as_view(), name='profiles'),
+    url(r'^edit$', views.EditProfileView.as_view(), name='edit'),
+    url(r'^view/(?P<username>\w{0,50})/$', views.ProfileView.as_view(), name='view'),
 ]
