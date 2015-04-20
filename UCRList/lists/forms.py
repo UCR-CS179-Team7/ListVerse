@@ -6,6 +6,8 @@ from crispy_forms.layout import Submit
 
 from crispy_forms.bootstrap import AppendedText, PrependedText, FormActions
 
+from collections import namedtuple
+
 class AddListForm(forms.Form):
     def __init__(self, *args, **kwargs):
         self.number = n = kwargs.pop('number', 5)
@@ -18,8 +20,8 @@ class AddListForm(forms.Form):
         self.helper.add_input(Submit('submit', 'Submit List'))
 
         for i in range(1, n+1):
-            for (name, field) in self.create_item_form(i):
-                self.fields[name] = field
+            for itemField in self.create_item_form(i):
+                self.fields[itemField.name] = itemField.form
 
     listTitle = forms.CharField(widget=forms.TextInput(attrs={'style': 'width: 200px;'}), label='List Title', max_length=128)
 
@@ -30,7 +32,6 @@ class AddListForm(forms.Form):
 
     @staticmethod
     def create_item_form(i):
-        itemLabel = 'Item {0} title'.format(i)
         itemTitleWidgetKwargs = {
             'attrs': {
                 'style': 'width: 200px;',
@@ -38,7 +39,7 @@ class AddListForm(forms.Form):
         }
 
         itemTitleKwargs = {
-            'label': itemLabel,
+            'label': 'Item {0} title'.format(i),
             'max_length' : 128,
         }
 
@@ -78,19 +79,19 @@ class AddListForm(forms.Form):
             'max_length': 256
         }
 
-        title = forms.CharField(widget=forms.TextInput(**itemTitleWidgetKwargs), **itemTitleKwargs)
+        titleForm = forms.CharField(widget=forms.TextInput(**itemTitleWidgetKwargs), **itemTitleKwargs)
 
-        body = forms.CharField(widget=forms.Textarea(**itemBodyWidgetKwargs), **itemBodyKwargs)
+        bodyForm = forms.CharField(widget=forms.Textarea(**itemBodyWidgetKwargs), **itemBodyKwargs)
 
-        alt = forms.CharField(widget=forms.TextInput(**itemAltWidgetKwargs), **itemAltKwargs)
+        altForm = forms.CharField(widget=forms.TextInput(**itemAltWidgetKwargs), **itemAltKwargs)
 
-        uri = forms.CharField(widget=forms.TextInput(**itemUriWidgetKwargs), **itemUriKwargs)
+        uriForm = forms.CharField(widget=forms.TextInput(**itemUriWidgetKwargs), **itemUriKwargs)
 
-        item = [
-            ('itemTitle_{0}'.format(i), title),
-            ('itemBody_{0}'.format(i), body),
-            ('itemAlt_{0}'.format(i), alt),
-            ('itemUri_{0}'.format(i), uri),
-        ]
+        ItemFieldForm = namedtuple('ItemFieldField', ['name', 'form'])
 
-        return item
+        title = ItemFieldForm('itemTitle_{0}'.format(i), titleForm)
+        body = ItemFieldForm('itemBody_{0}'.format(i), bodyForm)
+        alt = ItemFieldForm('itemAlt_{0}'.format(i), altForm)
+        uri = ItemFieldForm('itemUri_{0}'.format(i), uriForm);
+
+        return [title, body, alt, uri]
