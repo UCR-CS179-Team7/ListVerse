@@ -15,9 +15,9 @@ class EditProfileView(View):
 
         # try to get userid, get it's profile if successful
         # if user is authenticated
-        #   grab the profile
-        #   if the user is viewing his own profile
-        #       return the edit profile form
+        # grab the profile
+        # if the user is viewing his own profile
+        # return the edit profile form
         #   if the user is viewing a public profle other than his own
         #       get his friend and follow relationships to the requested user
         #       return the public profile with the propper buttons available
@@ -30,20 +30,22 @@ class EditProfileView(View):
             # TODO
             return HttpResponse('User Not Found')
 
-        request_profile = Profile.objects.get(user_id=userid)  
-	topicList = InterestTopic.objects.filter(user_id=userid)[:5]
+        request_profile = Profile.objects.get(user_id=userid)
+        topicList = InterestTopic.objects.filter(user=userid)
 
         if (request.user.is_authenticated()):
             current_profile = request.user.profile
             if (username == current_profile.user.username):
-                form = EditProfileForm(current_profile=current_profile)
-                return render(request, 'profiles/index.html', {'form' : form, 'current_profile' : current_profile})
+                form = EditProfileForm(current_profile=current_profile, topics=topicList)
+                return render(request, 'profiles/index.html', {'form': form, 'current_profile': current_profile, 'topics': topicList})
             else:
-                not_friends = not Friend.objects.are_friends(current_profile.user,request_profile.user)
-                doesnt_follow = not Follow.objects.follows(current_profile.user,request_profile.user)
-                return render(request, 'profiles/pubprofile.html', {'profile':request_profile, 'topicList' : topicList,'not_friends':not_friends,'doesnt_follow':doesnt_follow})
-        return  render(request, 'profiles/pubprofile.html', {'profile':request_profile})
-        
+                not_friends = not Friend.objects.are_friends(current_profile.user, request_profile.user)
+                doesnt_follow = not Follow.objects.follows(current_profile.user, request_profile.user)
+                return render(request, 'profiles/pubprofile.html',
+                              {'profile': request_profile, 'topicList': topicList, 'not_friends': not_friends,
+                               'doesnt_follow': doesnt_follow})
+        return render(request, 'profiles/pubprofile.html', {'profile': request_profile})
+
 
     def post(self, request):
         current_profile = request.user.profile
@@ -54,10 +56,19 @@ class EditProfileView(View):
             updated_profile.nickname = form.cleaned_data['nickname']
             updated_profile.gender = form.cleaned_data['gender']
             updated_profile.birthday = form.cleaned_data['birthday']
+            #delete all previous topics of interests by user
+            topics = InterestTopic.objects.filter(user=request.user)
+            topics.delete()
+            #add checked topics
+            updated_topics = form.cleaned_data['topiclist']
+            for t in updated_topics:
+                it = InterestTopic(user=request.user, topic=t)
+                it.save()
 
             updated_profile.save()
-        return render(request, 'profiles/index.html', {'edit' : True, 'form' : form, 'current_profile' : current_profile})
+        return render(request, 'profiles/index.html', {'edit': True, 'form': form, 'current_profile': current_profile})
+
 
 def index(request):
-    current_user = {'current_user' : request.user.profile}
+    current_user = {'current_user': request.user.profile}
     return render(request, 'profiles/index.html', current_user)
