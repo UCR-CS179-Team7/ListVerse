@@ -35,6 +35,9 @@ class List(models.Model):
         self.slug = self.create_slug()
         super(List, self).save()
 
+    def __str__(self):
+        return self.title
+
 class ListItems(models.Model):
     #MODEL CHOICES
 
