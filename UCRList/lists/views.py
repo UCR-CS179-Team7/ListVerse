@@ -19,8 +19,7 @@ class HotListsView(ListView):
 class AddListView(View):
     def get(self, request):
         current_user = request.user
-        form = AddListForm()
-        return render(request, 'lists/addlist.html', {'form' : form})
+        return render(request, 'lists/addlist/index.html')
 
 
     #def post(self, request):
