@@ -58,7 +58,7 @@ gulp.task('clean:temp', function() {
 });
 
 gulp.task('watch:addlist',  function() {
-    gulp.watch(sources.addlist.js, ['make:addlist']);
+    gulp.watch([sources.addlist.js, sources.addlist.templates], ['make:addlist']);
 });
 
 gulp.task('make:addlist', ['clean:addlist:dest', 'build:addlist']);

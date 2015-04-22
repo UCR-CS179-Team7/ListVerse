@@ -61,3 +61,6 @@ venv/
 
 # NPM modules
 node_modules/
+
+# Temp directory
+.tmp/
