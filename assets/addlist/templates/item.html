@@ -1,1 +1,31 @@
-<h1> Top {{vm.top_n}} {{vm.list_title}} </h1> 
+<h1> Top {{vm.top_n}} {{vm.list_title}} </h1>
+<div ng-hide="vm.show_preview()"> 
+    <div id="toolbar" class="toolbar ql-toolbar ql-snow">
+        <span class="ql-format-group">  
+            <span title="Link" class="ql-format-button ql-link"></span>
+            <span class="ql-format-separator"></span>
+            <span title="Image" class="ql-format-button ql-image"></span>
+        </span>
+    </div>
+    <div id="editor" class="editor ql-container ql-snow">
+    </div>
+</div>
+<div ng-show="vm.show_preview()">
+        {{vm.html_preview}}
+</div>
+<div class="btn-group">
+    <label class="btn btn-primary"
+        ng-model="preview_radio"
+        btn-radio="'edit'"
+        uncheckable>
+        edit
+    </label>
+    
+    <label class="btn primary"
+        ng-model="preview_radio"
+        ng-click="vm.generate_preview()"
+        btn-radio="'preview'"
+        uncheckable>
+        preview
+    </label>
+</div>
