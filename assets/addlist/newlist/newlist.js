@@ -9,8 +9,8 @@
 
     function NewList($location, list) {
         var vm = this;
-        vm.top_n = 5;
-        vm.list_title = '';
+        vm.top_n = list.getCapacity();
+        vm.list_title = list.getTitle();
         vm.next = next;
 
         function next() {

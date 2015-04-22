@@ -8,15 +8,18 @@
         var top_n = 10;
         var list_title = '';
         var list_items = [];
+
         var service = {
             setTitle: setTitle,
             getTitle: getTitle,
-            addItem: addItem,
+            getItem: getItem,
+            pushItem: pushItem,
             popItem: popItem,
             setItem: setItem,
             getCapacity: getCapacity,
             setCapacity: setCapacity,
             getSize: getSize,
+            reset: reset,
             parseYouTubeLinks: parseYouTubeLinks,
         };
         
@@ -28,7 +31,17 @@
             return list_title;
         }
 
-        function addItem(item) {
+        function getItem(idx) {
+            if (idx < list_items.length && idx >= 0) {
+                return list_items[idx];
+            }
+            return {
+                title: '',
+                description: '',
+            };
+        }
+
+        function pushItem(item) {
             list_items.push(item);    
         }
 
@@ -37,7 +50,7 @@
         }
 
         function setItem(item, idx) {
-            if (idx < list_items.length()) {
+            if (idx < list_items.length && idx >= 0) {
                 list_items[idx] = item;
             }
         }
@@ -51,7 +64,13 @@
         }
 
         function getSize() {
-            return list_items.length();
+            return list_items.length;
+        }
+
+        function reset() {
+            list_title = '';
+            top_n = 5;
+            list_items = [];
         }
 
         function parseYouTubeLinks() {
