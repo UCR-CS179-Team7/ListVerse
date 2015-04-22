@@ -1,5 +1,6 @@
 <!--TODO-->
 {% extends '_layouts/base.html' %}
+{% load crispy_forms_tags %}
 {% load friendshiptags %}
 
 {% block content %}
@@ -20,16 +21,15 @@
 
 <p> Followers: {% followers profile.user %} </p>
 
+{% if not_self %}
+  {% if not isfriend  %}
+    {% crispy addfriendform %}
+  {% endif %}
 
-{% if not_self and not_friends  %}
-        <input id="submit" type="button" value="Friend Me!" />
-        <!-- Hitting the button needs to refresh the page -->
+  {% if not isfollower  %}
+    {% crispy followuserform %}
+  {% endif %}
 {% endif %}
 
-{% if not_self and doesnt_follow  %}
-        <input id="submit" type="button" value="Follow Me!" />
-        <!-- Hitting the button needs to refresh the page -->
-{% endif %}
 
 {% endblock %}
-

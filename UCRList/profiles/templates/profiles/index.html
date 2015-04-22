@@ -7,9 +7,8 @@
   <p>Changes have been made</p>
 {% endif %}
 
-<form action="/profiles/" method="post">
-  {% crispy form %}
-</form>
+{% crispy form %}
+
 
 
 {% if current_profile %}
