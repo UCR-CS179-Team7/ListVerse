@@ -10,6 +10,7 @@
         var list_items = [];
 
         var service = {
+            getItems: getItems,
             setTitle: setTitle,
             getTitle: getTitle,
             getItem: getItem,
@@ -22,6 +23,10 @@
             reset: reset,
             parseYouTubeLinks: parseYouTubeLinks,
         };
+
+        function getItems() {
+            return list_items;
+        }
         
         function setTitle(title) {
             list_title = title;

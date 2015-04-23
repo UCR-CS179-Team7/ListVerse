@@ -6,6 +6,7 @@
         'ui.bootstrap', 
         'app.newlist',
         'app.newitem',
+        'app.confirm', 
     ]).config(AppRouter);
 
     AppRouter.$inject = ['$routeProvider'];
@@ -18,6 +19,11 @@
         .when('/item/:number', {
             templateUrl: 'templates/item.html',
             controller: 'NewItemController',
+            controllerAs: 'vm',
+        })
+        .when('/confirm', {
+            templateUrl: 'templates/confirm.html', 
+            controller: 'ConfirmController',
             controllerAs: 'vm',
         });
     }
