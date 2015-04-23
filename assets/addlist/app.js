@@ -7,7 +7,8 @@
         'app.newlist',
         'app.newitem',
         'app.confirm', 
-    ]).config(AppRouter);
+    ]).config(AppRouter)
+      .config(SetCSFR);
 
     AppRouter.$inject = ['$routeProvider'];
     function AppRouter($routeProvider) {
@@ -26,5 +27,11 @@
             controller: 'ConfirmController',
             controllerAs: 'vm',
         });
+    }
+
+    SetCSFR.$inject = ['$httpProvider'];
+    function SetCSFR($httpProvider) {
+        $httpProvider.defaults.xsrfCookieName = 'csrftoken';
+        $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
     }
 })();

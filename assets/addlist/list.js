@@ -3,8 +3,8 @@
     angular.module('app.list', [])
            .factory('list', List);
     
-    List.$inject = [];
-    function List() {
+    List.$inject = ['$http'];
+    function List($http) {
         var top_n = 10;
         var list_title = '';
         var list_items = [];
@@ -22,6 +22,7 @@
             getSize: getSize,
             reset: reset,
             parseYouTubeLinks: parseYouTubeLinks,
+            upload: upload,
         };
 
         function getItems() {
@@ -83,6 +84,9 @@
             return [];
         }
 
+        function upload() {
+            return $http.post('/lists/new', {list: list_items});
+        }
         return service;
     }
 })();
