@@ -5,10 +5,24 @@ from django.views.generic import View
 from .models import Profile
 from .models import InterestTopic
 from .models import User
-from .forms import EditProfileForm
+from .forms import EditProfileForm, AddFriendForm, FollowUserForm
 
 from friendship.models import Friend, Follow
 # Create your views here.
+
+class AddFriendView(View):
+    def post(self, request, username=''):
+        # TODO add code here to make the currently logged in user send a friend request to the 'username' user
+        print username
+        httpresponse="adding user " + username
+        return HttpResponse(httpresponse)
+
+class FollowUserView(View):
+    def post(self, request, username=''):
+        # TODO add code here to make the currently logged in user follow the 'username' user
+        httpresponse="following user " + username
+        return HttpResponse(httpresponse)
+
 
 class ProfileView(View):
     def get(self, request, username=''):
@@ -23,10 +37,14 @@ class ProfileView(View):
         topicList = InterestTopic.objects.filter(user=userid)
 
         if request.user.is_authenticated():
-            not_friends = not Friend.objects.are_friends(request.user, request_profile.user)
-            doesnt_follow = not Follow.objects.follows(request.user,request_profile.user)
+            addfriendform = AddFriendForm()
+            followuserform = FollowUserForm()
+            isfriend = Friend.objects.are_friends(request.user, request_profile.user)
+            isfollower = Follow.objects.follows(request.user,request_profile.user)
             not_self = request.user.username != username
         return render(request, 'profiles/pubprofile.html', {'profile':request_profile,
+                                                            'addfriendform':addfriendform,
+                                                            'followuserform':followuserform,
                                                             'not_friends': not_friends,
                                                             'doesnt_follow':doesnt_follow,
                                                             'not_self': not_self,
