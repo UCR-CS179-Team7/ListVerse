@@ -12,14 +12,22 @@ from friendship.models import Friend, Follow
 
 class AddFriendView(View):
     def post(self, request, username=''):
-        # TODO add code here to make the currently logged in user send a friend request to the 'username' user
-        print username
+        
+        new_friend = User.objects.get(username=username)
+        Friend.objects.add_friend(
+            from_user=request.user,
+            to_user = new_friend
+        )
+        
         httpresponse="adding user " + username
         return HttpResponse(httpresponse)
 
 class FollowUserView(View):
     def post(self, request, username=''):
-        # TODO add code here to make the currently logged in user follow the 'username' user
+        
+        followee = User.objects.get(username=username)
+        Follow.objects.add_follower(request.user, followee)
+
         httpresponse="following user " + username
         return HttpResponse(httpresponse)
 
