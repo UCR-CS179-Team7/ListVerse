@@ -1,10 +1,11 @@
 (function() {
     'use strict';
+
     angular.module('app.list', [])
            .factory('list', List);
     
-    List.$inject = ['$http'];
-    function List($http) {
+    List.$inject = ['$http', '$sce'];
+    function List($http, $sce) {
         var top_n = 10;
         var list_title = '';
         var list_items = [];
@@ -21,7 +22,7 @@
             setCapacity: setCapacity,
             getSize: getSize,
             reset: reset,
-            parseYouTubeLinks: parseYouTubeLinks,
+            getPreview: getPreview,
             upload: upload,
         };
 
@@ -79,14 +80,44 @@
             list_items = [];
         }
 
-        function parseYouTubeLinks() {
-            //TODO
-            return [];
+        function getPreview(idx) {
+           var raw_html = getItem(idx).description;
+           var html_with_embeded_yt = replaceYouTubeLinks(raw_html);
+           return $sce.trustAsHtml(html_with_embeded_yt);
         }
-
+    
         function upload() {
+            var size = getSize();
+            var item;
+            var raw_html;
+            
+            for (var i = 0; i < size; i++) {
+                item = getItem(i);
+                raw_html = item.description;
+                item.description = replaceYouTubeLinks(raw_html);
+            }
+
             return $http.post('/lists/new', {list: list_items});
         }
+        
+        // end of public methods 
+        var EMBED_YT_HTML_START = '<iframe width="560" height="315"' + 
+            ' src="https://www.youtube.com/embed/';  
+        
+        var EMBED_YT_HTML_END = '" frameborder="0" allowfullscreen>' +
+            '</iframe>';
+
+
+        function youTubeLinkReplacer(full_match, video_id) {
+            return EMBED_YT_HTML_START + video_id + EMBED_YT_HTML_END;
+        }
+
+        var YT_LINK_RE = /(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})/g;
+        function replaceYouTubeLinks(html) {         
+            var ret = html.replace(YT_LINK_RE, youTubeLinkReplacer);
+            return ret;
+        }
+ 
         return service;
     }
 })();

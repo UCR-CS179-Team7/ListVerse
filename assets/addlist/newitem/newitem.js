@@ -41,7 +41,10 @@
         }
         
         function generate_preview() {
-            vm.html_preview = editor.getHTML();
+            save_item();
+            // hack, but quill has no good support
+            // for custom ebedded stuff
+            vm.html_preview = list.getPreview(vm.number - 1);
         }
 
         function save_item() {

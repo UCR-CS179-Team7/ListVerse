@@ -2,7 +2,7 @@
 
 <div ng-repeat="item in vm.items">
     <h2>{{$index + 1}}. {{item.title}} </h2>
-    <div ng-bind-html="item.description">
+    <div ng-bind-html="vm.preview($index)">
     </div>
 </div>
 

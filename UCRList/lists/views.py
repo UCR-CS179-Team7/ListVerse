@@ -25,6 +25,7 @@ class AddListView(View):
     def post(self, request):
         list = json.loads(request.body)
         #TODO: Add list to database
+        print list
         return HttpResponse(status=201)
 
 #class EditListView(View):

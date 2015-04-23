@@ -21,11 +21,17 @@
             templateUrl: 'templates/item.html',
             controller: 'NewItemController',
             controllerAs: 'vm',
+            resolve: {
+                load: NewListOnRefresh,
+            },
         })
         .when('/confirm', {
             templateUrl: 'templates/confirm.html', 
             controller: 'ConfirmController',
             controllerAs: 'vm',
+            resolve: {
+                load: NewListOnRefresh,
+            },
         });
     }
 
@@ -33,5 +39,16 @@
     function SetCSFR($httpProvider) {
         $httpProvider.defaults.xsrfCookieName = 'csrftoken';
         $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
+    }
+
+    NewListOnRefresh.$inject = ['$q', '$location', 'list'];
+    function NewListOnRefresh($q, $location, list) {
+        var deferred = $q.defer();
+        deferred.resolve();
+        if (list.getTitle() === '') {
+            //logic is if the list has no title, then
+            //the page must have been manually refreshed
+            $location.path('/');
+        }
     }
 })();
