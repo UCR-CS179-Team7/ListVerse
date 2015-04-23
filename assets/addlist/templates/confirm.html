@@ -1,0 +1,19 @@
+<h1>Preview: Your List - Top {{vm.top_n}} {{vm.list_title}}</h1>
+
+<div ng-repeat="item in vm.items">
+    <h2>{{$index + 1}}. {{item.title}} </h2>
+    <div ng-bind-html="vm.preview($index)">
+    </div>
+</div>
+
+<div class="form btn-group">
+<input class="btn"
+                value="Back"
+                type="Submit"
+                ng-click="vm.back()"/>
+
+    <input class="btn btn-success"
+            type="Submit"
+            value="Finish"
+            ng-click="vm.finish()">
+</div>

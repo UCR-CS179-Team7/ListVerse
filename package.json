@@ -1,0 +1,29 @@
+{
+  "name": "ListVerse",
+  "version": "1.0.0",
+  "description": "Development  ----------- In order to bring in submodules such as the development-tools,  use the following command after cloning the repo: ```sh $ git submodule update --init ```",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/UCR-CS179-Team7/ListVerse.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/UCR-CS179-Team7/ListVerse/issues"
+  },
+  "homepage": "https://github.com/UCR-CS179-Team7/ListVerse",
+  "devDependencies": {
+    "del": "^1.1.1",
+    "gulp": "^3.8.11",
+    "gulp-angular-templatecache": "^1.6.0",
+    "gulp-concat": "^2.5.2",
+    "gulp-load-plugins": "^0.10.0",
+    "gulp-minify-html": "^1.0.2",
+    "gulp-uglify": "^1.2.0",
+    "gulp-util": "^3.0.4"
+  }
+}
