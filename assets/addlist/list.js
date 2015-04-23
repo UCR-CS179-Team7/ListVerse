@@ -97,7 +97,10 @@
                 item.description = replaceYouTubeLinks(raw_html);
             }
 
-            return $http.post('/lists/new', {list: list_items});
+            return $http.post('/lists/new', {
+                    list: list_items,
+                    number: top_n,
+                });
         }
         
         // end of public methods 
