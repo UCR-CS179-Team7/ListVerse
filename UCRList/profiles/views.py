@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import View
 
 from .models import Profile
@@ -18,9 +18,8 @@ class AddFriendView(View):
             from_user=request.user,
             to_user = new_friend
         )
-        
-        httpresponse="adding user " + username
-        return HttpResponse(httpresponse)
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
 
 class FollowUserView(View):
     def post(self, request, username=''):
@@ -28,8 +27,7 @@ class FollowUserView(View):
         followee = User.objects.get(username=username)
         Follow.objects.add_follower(request.user, followee)
 
-        httpresponse="following user " + username
-        return HttpResponse(httpresponse)
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 class ProfileView(View):

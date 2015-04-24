@@ -20,9 +20,10 @@
     <h1>{{ profile.user.username }}'s lists</h1>
     {% for list in userLists %}
         <div>
-            <h4>{{ list.title }}</h4
+            <h4><a href="/lists/detail/{{ list.slug }}">{{ list.title }}</a></h4>
             <p><strong>Author</strong>: {{ list.owner }}</p>
             <p><strong>Published</strong>: {{ list.pub_date }}</p>
+            <p><strong>Slug</strong>: {{ list.slug }}</p>
         </div>
     {% endfor %}
 </div>
@@ -32,7 +33,6 @@
     {% friends profile.user %}
 
     <h3> Followers </h3>
-
     <ul>
         {% for f in followers %}
             <li>{{ f.username }}</li>
