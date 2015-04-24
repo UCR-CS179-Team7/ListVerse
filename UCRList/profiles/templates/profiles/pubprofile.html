@@ -16,7 +16,15 @@
         <li> {{topic.get_topic_display}} </li>
 {% endfor %}
 </ul>
-
+<div>
+{% for list in userLists %}
+    <div>
+        <h1>{{ list.title }}</h1>
+        <h2>Author: {{ list.owner }}</h2>
+        <h2>Published: {{ list.pub_date }}</h2>
+    </div>
+{% endfor %}
+</div>
 <p> Friends: {% friends profile.user %} </p>
 
 <p> Followers: {% followers profile.user %} </p>
