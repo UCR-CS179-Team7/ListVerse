@@ -5,7 +5,7 @@
 {% for l in ls %}
 {{ forloop.counter}}. <a href="{% url 'lists:detail' slug=l.slug %}">{{ l.title }}</a>
 <br>
-{% endfor %} 
+{% endfor %}
 
 {% endblock %}
 

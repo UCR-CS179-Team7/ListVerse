@@ -20,10 +20,10 @@
     <h1>{{ profile.user.username }}'s lists</h1>
     {% for list in userLists %}
         <div>
-            <h4><a href="/lists/detail/{{ list.slug }}">{{ list.title }}</a></h4>
+            <h4><a href="{% url 'lists:edit' slug=list.slug %}">{{ list.title }}</a></h4>
             <p><strong>Author</strong>: {{ list.owner }}</p>
             <p><strong>Published</strong>: {{ list.pub_date }}</p>
-            <p><strong>Slug</strong>: {{ list.slug }}</p>
+            <!-- <p><strong>Slug</strong>: {{ list.slug }}</p> --> <!-- debug -->
         </div>
     {% endfor %}
 </div>
