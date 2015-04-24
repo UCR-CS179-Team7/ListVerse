@@ -35,14 +35,11 @@ class AddListView(View):
 
         return HttpResponse(status=201)
 
-class EditListview(View):
-    def get(self, request):
+class EditListView(View):
+    def get(self, request, slug=''):
 
-        return render(request, 'lists/addlist/index.html')
+        return render(request, 'lists/editlist/index.html', {'listSlug': slug})
 
-    def post(self, request):
-
-        return render(request, 'lists/addlist/index.html')
 #class EditListView(View):
 #    def get(self, request):
 #
