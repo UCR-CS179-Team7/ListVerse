@@ -3,25 +3,13 @@ from django.contrib.auth.models import User
 from django.template.defaultfilters import slugify
 # Create your models here.
 class List(models.Model):
-    # MODEL CHOICES
-    TEXT  = 'TXT'
-    PHOTO = 'PTO'
-    QUOTE = 'QOT'
-    LINK  = 'LNK'
-    VIDEO = 'VID'
-    AUDIO = 'AUD'
-    CONTENT_TYPE_CHOICES = (
-        (TEXT, 'Text'), (PHOTO, 'Photo'), (QUOTE, 'Quote'),
-        (LINK, 'Link'), (VIDEO, 'Video'), (AUDIO, 'Audio'),
-    ) ## CONTENT_TYPE_CHOICES
-
     # MODEL FIELDS
     owner = models.ForeignKey(User)
     title = models.CharField(max_length=128)
     slug = models.CharField(max_length=128, null=False, unique=True)
     pub_date = models.DateField(auto_now_add=True)
     edit_date = models.DateField(auto_now=True)
-    content_type = models.CharField(max_length=3, choices=CONTENT_TYPE_CHOICES, default=TEXT)
+    num_items = models.PositiveSmallIntegerField()
 
     def create_slug(self):
         d = self.pub_date
@@ -38,15 +26,17 @@ class List(models.Model):
     def __str__(self):
         return self.title
 
-class ListItems(models.Model):
+class ListItem(models.Model):
     #MODEL CHOICES
 
     #MODEL FIELDS
     listid = models.ForeignKey(List)
     title = models.CharField(max_length=128)
-    body = models.CharField(max_length=1024)
-    contentalt = models.CharField(max_length=1024, blank=True)
-    contenturi = models.CharField(max_length=256, blank=True)
+    descriptionhtml = models.CharField(max_length=8192)
+    descriptionmeta = models.CharField(max_length=8192)
+    #body = models.CharField(max_length=1024)
+    #contentalt = models.CharField(max_length=1024, blank=True)
+    #contenturi = models.CharField(max_length=256, blank=True)
 
 '''
     Notes for List and ListItems models

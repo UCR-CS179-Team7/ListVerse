@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.views.generic import View, DetailView, ListView
 import json
 
-from .models import User, List
+from .models import User, List, ListItem
 from .forms import AddListForm
 
 class ListDetailView(DetailView):
@@ -24,9 +24,21 @@ class AddListView(View):
 
     def post(self, request):
         list = json.loads(request.body)
-        #TODO: Add list to database
-        print list
+        # save list json from request into DB
+        #print(list)
+        newList = List(owner=request.user,title=list["title"],num_items=list["number"])
+        newList.save()
+        for listItem in list["list"]:
+            # TODO We must change decriptionmeta assignment when it is iplemented in frontend.
+            newListItem = ListItem(listid=newList, title=listItem["title"], descriptionhtml=listItem["description"], descriptionmeta=listItem["description_meta"])
+            newListItem.save()
+
         return HttpResponse(status=201)
+
+class EditListView(View):
+    def get(self, request, slug=''):
+
+        return render(request, 'lists/editlist/index.html', {'listSlug': slug})
 
 #class EditListView(View):
 #    def get(self, request):

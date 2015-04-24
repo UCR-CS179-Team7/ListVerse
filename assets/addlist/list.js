@@ -94,12 +94,14 @@
             for (var i = 0; i < size; i++) {
                 item = getItem(i);
                 raw_html = item.description;
+                item.description_meta = raw_html;
                 item.description = replaceYouTubeLinks(raw_html);
             }
 
             return $http.post('/lists/new', {
                     list: list_items,
                     number: top_n,
+                    title: list_title, 
                 });
         }
         

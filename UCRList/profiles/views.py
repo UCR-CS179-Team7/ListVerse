@@ -5,6 +5,7 @@ from django.views.generic import View
 from .models import Profile
 from .models import InterestTopic
 from .models import User
+from lists.models import List, ListItem
 from .forms import EditProfileForm, AddFriendForm, FollowUserForm
 
 from friendship.models import Friend, Follow
@@ -18,7 +19,6 @@ class AddFriendView(View):
             from_user=request.user,
             to_user = new_friend
         )
-
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 class FollowUserView(View):
@@ -42,19 +42,23 @@ class ProfileView(View):
         not_friends = doesnt_follow = not_self = False
         topicList = InterestTopic.objects.filter(user=userid)
 
+        userLists = List.objects.filter(owner=userid)
+
         if request.user.is_authenticated():
             addfriendform = AddFriendForm()
             followuserform = FollowUserForm()
             isfriend = Friend.objects.are_friends(request.user, request_profile.user)
             isfollower = Follow.objects.follows(request.user,request_profile.user)
             not_self = request.user.username != username
-        return render(request, 'profiles/pubprofile.html', {'profile':request_profile,
-                                                            'addfriendform':addfriendform,
-                                                            'followuserform':followuserform,
-                                                            'not_friends': not_friends,
-                                                            'doesnt_follow':doesnt_follow,
-                                                            'not_self': not_self,
-                                                            'topicList': topicList})
+        return render(request, 'profiles/pubprofile.html',
+                        {'profile':request_profile,
+                         'addfriendform':addfriendform,
+                         'followuserform':followuserform,
+                         'not_friends': not_friends,
+                         'doesnt_follow':doesnt_follow,
+                         'not_self': not_self,
+                         'topicList': topicList,
+                         'userLists': userLists})
 
 class EditProfileView(View):
     def get(self, request, username=''):
@@ -62,9 +66,10 @@ class EditProfileView(View):
             current_profile = request.user.profile
             topicList = InterestTopic.objects.filter(user=request.user)
             form = EditProfileForm(current_profile=current_profile, topics=topicList)
-            return render(request, 'profiles/index.html', {'form': form,
-                                                           'current_profile': current_profile,
-                                                           'topicList': topicList})
+            return render(request, 'profiles/index.html',
+                            {'form': form,
+                             'current_profile': current_profile,
+                             'topicList': topicList})
         else:
             # TODO: proper 404 page
             return HttpResponse('Not authenicated')
