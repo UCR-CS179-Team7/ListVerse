@@ -42,6 +42,8 @@ class ProfileView(View):
         not_friends = doesnt_follow = not_self = False
         topicList = InterestTopic.objects.filter(user=userid)
 
+        userLists = List.objects.filter(owner=userid)
+
         if request.user.is_authenticated():
             addfriendform = AddFriendForm()
             followuserform = FollowUserForm()
@@ -56,7 +58,8 @@ class ProfileView(View):
                                                             'doesnt_follow':doesnt_follow,
                                                             'not_self': not_self,
                                                             'topicList': topicList,
-                                                            'followers': followers})
+                                                            'followers': followers,
+                                                            'userLists': userLists})
 
 class EditProfileView(View):
     def get(self, request, username=''):
