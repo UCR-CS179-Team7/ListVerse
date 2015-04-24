@@ -12,19 +12,19 @@ from friendship.models import Friend, Follow
 
 class AddFriendView(View):
     def post(self, request, username=''):
-        
+
         new_friend = User.objects.get(username=username)
         Friend.objects.add_friend(
             from_user=request.user,
             to_user = new_friend
         )
-        
+
         httpresponse="adding user " + username
         return HttpResponse(httpresponse)
 
 class FollowUserView(View):
     def post(self, request, username=''):
-        
+
         followee = User.objects.get(username=username)
         Follow.objects.add_follower(request.user, followee)
 
@@ -50,13 +50,14 @@ class ProfileView(View):
             isfriend = Friend.objects.are_friends(request.user, request_profile.user)
             isfollower = Follow.objects.follows(request.user,request_profile.user)
             not_self = request.user.username != username
-        return render(request, 'profiles/pubprofile.html', {'profile':request_profile,
-                                                            'addfriendform':addfriendform,
-                                                            'followuserform':followuserform,
-                                                            'not_friends': not_friends,
-                                                            'doesnt_follow':doesnt_follow,
-                                                            'not_self': not_self,
-                                                            'topicList': topicList})
+        return render(request, 'profiles/pubprofile.html',
+                        {'profile':request_profile,
+                         'addfriendform':addfriendform,
+                         'followuserform':followuserform,
+                         'not_friends': not_friends,
+                         'doesnt_follow':doesnt_follow,
+                         'not_self': not_self,
+                         'topicList': topicList})
 
 class EditProfileView(View):
     def get(self, request, username=''):

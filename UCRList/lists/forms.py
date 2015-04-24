@@ -25,8 +25,6 @@ class AddListForm(forms.Form):
 
     listTitle = forms.CharField(widget=forms.TextInput(attrs={'style': 'width: 200px;'}), label='List Title', max_length=128)
 
-    #content_type = forms.ChoiceField(widget=forms.Select(), label='Content Type', choices=List.CONTENT_TYPE_CHOICES)
-
     helper = FormHelper()
     helper.form_class = 'form-horizontal'
 
