@@ -100,6 +100,7 @@
             return $http.post('/lists/new', {
                     list: list_items,
                     number: top_n,
+                    title: list_title, 
                 });
         }
         
