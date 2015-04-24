@@ -12,7 +12,7 @@ from friendship.models import Friend, Follow
 
 class AddFriendView(View):
     def post(self, request, username=''):
-        
+
         new_friend = User.objects.get(username=username)
         Friend.objects.add_friend(
             from_user=request.user,
@@ -23,7 +23,7 @@ class AddFriendView(View):
 
 class FollowUserView(View):
     def post(self, request, username=''):
-        
+
         followee = User.objects.get(username=username)
         Follow.objects.add_follower(request.user, followee)
 
@@ -55,7 +55,8 @@ class ProfileView(View):
                                                             'not_friends': not_friends,
                                                             'doesnt_follow':doesnt_follow,
                                                             'not_self': not_self,
-                                                            'topicList': topicList})
+                                                            'topicList': topicList,
+                                                            'followers': followers})
 
 class EditProfileView(View):
     def get(self, request, username=''):
