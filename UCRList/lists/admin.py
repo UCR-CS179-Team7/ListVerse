@@ -3,7 +3,7 @@ from .models import List
 from .models import ListItems
 
 class ListAdmin(admin.ModelAdmin):
-    list_display = ('owner', 'title', 'pub_date', 'content_type')
+    list_display = ('owner', 'title', 'pub_date')
 
 class ListItemAdmin(admin.ModelAdmin):
     list_display = ('listid', 'title')
