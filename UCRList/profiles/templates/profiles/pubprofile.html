@@ -27,9 +27,25 @@
         </div>
     {% endfor %}
 </div>
-<p> Friends: {% friends profile.user %} </p>
 
-<p> Followers: {% followers profile.user %} </p>
+<div>
+    <h3> Friends </h3>
+    {% friends profile.user %}
+
+    <h3> Followers </h3>
+    <ul>
+        {% for f in followers %}
+            <li>{{ f.username }}</li>
+        {% endfor %} 
+    </ul> 
+    
+    <h3> Following </h3>
+    {% following profile.user %}
+
+
+</div>
+
+
 
 {% if not_self %}
   {% if not isfriend  %}
