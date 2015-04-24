@@ -48,11 +48,11 @@
 
 
 {% if not_self %}
-  {% if not isfriend  %}
+  {% if not_friends  %}
     {% crispy addfriendform %}
   {% endif %}
 
-  {% if not isfollower  %}
+  {% if doesnt_follow  %}
     {% crispy followuserform %}
   {% endif %}
 {% endif %}

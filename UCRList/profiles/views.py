@@ -45,8 +45,8 @@ class ProfileView(View):
         if request.user.is_authenticated():
             addfriendform = AddFriendForm()
             followuserform = FollowUserForm()
-            isfriend = Friend.objects.are_friends(request.user, request_profile.user)
-            isfollower = Follow.objects.follows(request.user,request_profile.user)
+            not_friends = not Friend.objects.are_friends(request.user, request_profile.user)
+            doesnt_follow = not Follow.objects.follows(request.user,request_profile.user)
             not_self = request.user.username != username
             followers = Follow.objects.followers(request_profile.user)
         return render(request, 'profiles/pubprofile.html', {'profile':request_profile,
