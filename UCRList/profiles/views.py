@@ -48,7 +48,7 @@ class ProfileView(View):
         followuserform = FollowUserForm()
         followers = Follow.objects.followers(request_profile.user)
         
-        if request.user.is_authenticated(): # need a case for anon
+        if request.user.is_authenticated(): 
             not_friends = not Friend.objects.are_friends(request.user, request_profile.user)
             doesnt_follow = not Follow.objects.follows(request.user,request_profile.user)
             not_self = request.user.username != username
