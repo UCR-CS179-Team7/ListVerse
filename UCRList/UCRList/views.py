@@ -7,6 +7,8 @@ from django.core.urlresolvers import reverse_lazy
 
 from .forms import RegistrationForm, LoginForm
 
+from friendship.models import Friend, Follow
+
 # NOTE Views go here
 class HomePageView(generic.TemplateView):
     def get(self, request):
@@ -15,6 +17,9 @@ class HomePageView(generic.TemplateView):
 
         else:
             return LoginView.as_view()(self.request)
+
+    def post(self, request):
+        return LoginView.as_view()(self.request)
 
 
 class RegisterView(generic.CreateView):
