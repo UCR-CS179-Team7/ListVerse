@@ -44,14 +44,15 @@ class ProfileView(View):
         topicList = InterestTopic.objects.filter(user=userid)
 
         userLists = List.objects.filter(owner=userid)
-
-        if request.user.is_authenticated():
-            addfriendform = AddFriendForm()
-            followuserform = FollowUserForm()
+        addfriendform = AddFriendForm()
+        followuserform = FollowUserForm()
+        followers = Follow.objects.followers(request_profile.user)
+        
+        if request.user.is_authenticated(): # need a case for anon
             not_friends = not Friend.objects.are_friends(request.user, request_profile.user)
             doesnt_follow = not Follow.objects.follows(request.user,request_profile.user)
             not_self = request.user.username != username
-            followers = Follow.objects.followers(request_profile.user)
+            
         return render(request, 'profiles/pubprofile.html', {'profile':request_profile,
                                                             'addfriendform':addfriendform,
                                                             'followuserform':followuserform,
@@ -61,6 +62,7 @@ class ProfileView(View):
                                                             'topicList': topicList,
                                                             'followers': followers,
                                                             'userLists': userLists})
+
 
 class EditProfileView(View):
     def get(self, request, username=''):
