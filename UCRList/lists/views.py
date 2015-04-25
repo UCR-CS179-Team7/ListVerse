@@ -33,14 +33,27 @@ class AddListView(View):
             newListItem = ListItem(listid=newList, title=listItem["title"], descriptionhtml=listItem["description"], descriptionmeta=listItem["description_meta"])
             newListItem.save()
 
-        return HttpResponse(status=201)
+        slug_dict = {
+            'slug': newList.slug
+        }
+
+        return HttpResponse(json.dumps(slug_dict), status=201, \
+                content_type='application/json')
 
 class EditListView(View):
     def get(self, request, slug=''):
-
         return render(request, 'lists/editlist/index.html', {'listSlug': slug})
 
-#class EditListView(View):
-#    def get(self, request):
-#
-#    def post(self, request):
+
+class GetListData(View):
+    def get(self, request, slug=''):
+        ls = List.objects.get(slug=slug)
+        items = ListItem.objects.filter(listid=ls)
+        list_data = {
+            'title': ls.title,
+            'number': ls.number,
+            'list': items
+        }
+        return HttpResponse(json.dumps(list_data), status=200, \
+                content_type='application/json')
+
