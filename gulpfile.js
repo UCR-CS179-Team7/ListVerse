@@ -43,7 +43,10 @@ gulp.task('build:addlist:js', function() {
 
     return gulp.src(addlist_sources)
         //.pipe($.uglify())
+        .pipe($.sourcemaps.init())
         .pipe($.concat('all.js'))
+        .pipe($.babel())
+        .pipe($.sourcemaps.write('.'))
         .pipe(gulp.dest(destinations.addlist.js));
 });
 
