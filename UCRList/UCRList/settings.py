@@ -81,8 +81,17 @@ WSGI_APPLICATION = 'UCRList.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
-import dj_database_url
-DATABASES = {'default': dj_database_url.config(default='postgres://uoxbjebvptnrea:zSEim9cEcxOhjtdOf_yvtPTjJ0@ec2-23-23-199-181.compute-1.amazonaws.com:5432/dc3bpkqahqq9uc')}
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'dc3bpkqahqq9uc',
+        'USER': 'uoxbjebvptnrea',
+        'PASSWORD': 'zSEim9cEcxOhjtdOf_yvtPTjJ0',
+        'HOST': 'ec2-23-23-199-181.compute-1.amazonaws.com',
+        'PORT': '5432',
+    }
+}
 
 
 # Internationalization

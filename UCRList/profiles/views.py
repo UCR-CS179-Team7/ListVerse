@@ -6,6 +6,7 @@ from django.template.context import RequestContext
 from .models import Profile
 from .models import InterestTopic
 from .models import User
+from lists.models import List
 from .forms import EditProfileForm, AddFriendForm, FollowUserForm
 
 from lists.models import List, ListItem

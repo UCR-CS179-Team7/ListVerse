@@ -1,17 +1,26 @@
 from __future__ import absolute_import
-
+from django.shortcuts import render
 from django.views import generic
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.core.urlresolvers import reverse_lazy
 
-
-
 from .forms import RegistrationForm, LoginForm
+
+from friendship.models import Friend, Follow
 
 # NOTE Views go here
 class HomePageView(generic.TemplateView):
-    template_name = 'home.html'
+    def get(self, request):
+        if request.user.is_authenticated():
+            return render(request, 'home.html')
+
+        else:
+            return LoginView.as_view()(self.request)
+
+    def post(self, request):
+        return LoginView.as_view()(self.request)
+
 
 class RegisterView(generic.CreateView):
     form_class = RegistrationForm
