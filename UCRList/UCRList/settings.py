@@ -85,10 +85,10 @@ WSGI_APPLICATION = 'UCRList.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'listverse',
-        'USER': 'listverse',
-        'PASSWORD': 'listverse',
-        'HOST': 'zacharysells.noip.me',
+        'NAME': 'dc3bpkqahqq9uc',
+        'USER': 'uoxbjebvptnrea',
+        'PASSWORD': 'zSEim9cEcxOhjtdOf_yvtPTjJ0',
+        'HOST': 'ec2-23-23-199-181.compute-1.amazonaws.com',
         'PORT': '5432',
     }
 }
