@@ -1,12 +1,14 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import View
+from django.template.context import RequestContext
 
 from .models import Profile
 from .models import InterestTopic
 from .models import User
 from .forms import EditProfileForm, AddFriendForm, FollowUserForm
 
+from lists.models import List, ListItem
 from friendship.models import Friend, Follow
 # Create your views here.
 
@@ -59,7 +61,7 @@ class ProfileView(View):
                                                             'not_self': not_self,
                                                             'topicList': topicList,
                                                             'followers': followers,
-                                                            'userLists': userLists})
+                                                            'userLists': userLists},)
 
 class EditProfileView(View):
     def get(self, request, username=''):

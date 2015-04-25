@@ -8,6 +8,7 @@ from django.db.models.signals import post_save
 class Profile(models.Model):
     user = models.OneToOneField(User)
     nickname = models.CharField(max_length=100, null=True)
+    avatar = models.ImageField(default='no_photo_file.png')
     MALE = 'M'
     FEMALE = 'F'
     NONE = 'NA'
