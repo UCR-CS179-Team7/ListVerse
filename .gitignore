@@ -67,3 +67,6 @@ node_modules/
 
 # generated javascript file
 UCRList/lists/static/lists/addlist/all.js
+
+# IDE specific
+*.idea
