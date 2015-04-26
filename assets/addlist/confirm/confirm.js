@@ -20,10 +20,10 @@
 
        function finish() {
             list.upload()
-                .then(function(data) {
-                    //TODO: Return slug here and redirect
-                    //user to slug
-                    $window.location.href = '/';
+                .then(function(response) {
+                    var slug = response.data.slug;
+                    list.reset();
+                    $window.location.href = '/lists/detail/' + slug;
                 });
        }
     }

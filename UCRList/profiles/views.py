@@ -41,18 +41,23 @@ class ProfileView(View):
             return HttpResponse('User Not Found')
 
         request_profile = Profile.objects.get(user_id=userid)
-        not_friends = doesnt_follow = not_self = False
+        not_friends = doesnt_follow = not_self = active_request = False
         topicList = InterestTopic.objects.filter(user=userid)
 
         userLists = List.objects.filter(owner=userid)
-
-        if request.user.is_authenticated():
-            addfriendform = AddFriendForm()
-            followuserform = FollowUserForm()
+        addfriendform = AddFriendForm()
+        followuserform = FollowUserForm()
+        followers = Follow.objects.followers(request_profile.user)
+        
+        if request.user.is_authenticated(): 
             not_friends = not Friend.objects.are_friends(request.user, request_profile.user)
             doesnt_follow = not Follow.objects.follows(request.user,request_profile.user)
             not_self = request.user.username != username
-            followers = Follow.objects.followers(request_profile.user)
+            
+            # if you've already friended the person who's profile you're viewing, don't show the button
+            frnd_rqsts = Friend.objects.unread_requests(request_profile.user)  
+            active_request = request.user in list(map(lambda req: req.from_user, frnd_rqsts))
+                
         return render(request, 'profiles/pubprofile.html', {'profile':request_profile,
                                                             'addfriendform':addfriendform,
                                                             'followuserform':followuserform,
@@ -61,7 +66,9 @@ class ProfileView(View):
                                                             'not_self': not_self,
                                                             'topicList': topicList,
                                                             'followers': followers,
-                                                            'userLists': userLists})
+                                                            'userLists': userLists,
+                                                            'active_request':active_request})
+
 
 class EditProfileView(View):
     def get(self, request, username=''):
