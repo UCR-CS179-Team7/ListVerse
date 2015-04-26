@@ -7,19 +7,37 @@ from django.core.urlresolvers import reverse_lazy
 
 from .forms import RegistrationForm, LoginForm
 
-from friendship.models import Friend, Follow
+from friendship.models import Friend, Follow, FriendshipRequest
 
 # NOTE Views go here
 class HomePageView(generic.TemplateView):
     def get(self, request):
         if request.user.is_authenticated():
-            return render(request, 'home.html')
+            # Get list of friend requests
+            frequests = Friend.objects.unrejected_requests(user=request.user)
+            return render(request, 'home.html', {'frequests' : frequests})
 
         else:
             return LoginView.as_view()(self.request)
 
     def post(self, request):
-        return LoginView.as_view()(self.request)
+        if request.user.is_authenticated():
+
+            if(request.POST.get('accept')):
+                frequest_id = request.POST.get('accept')
+                frequest = FriendshipRequest.objects.get(id=frequest_id)
+                frequest.accept()
+
+            elif(request.POST.get('reject')):
+                frequest_id = request.POST.get('reject')
+                frequest = FriendshipRequest.objects.get(id=frequest_id)
+                frequest.reject()
+
+            frequests = Friend.objects.unrejected_requests(user=request.user)
+            return render(request, 'home.html', {'frequests' : frequests})
+
+        else:
+            return LoginView.as_view()(self.request)
 
 
 class RegisterView(generic.CreateView):

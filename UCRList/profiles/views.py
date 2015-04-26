@@ -17,7 +17,8 @@ class AddFriendView(View):
         new_friend = User.objects.get(username=username)
         Friend.objects.add_friend(
             from_user=request.user,
-            to_user = new_friend
+            to_user = new_friend,
+            message="Hi, please add me as your friend!",
         )
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
