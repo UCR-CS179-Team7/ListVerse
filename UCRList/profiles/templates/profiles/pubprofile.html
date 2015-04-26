@@ -29,24 +29,24 @@
 </div>
 
 <div>
-    <h3> Friends </h3>
+    <h4> Friends </h4>
     {% friends profile.user %}
 
-    <h3> Followers </h3>
+    <h4> Followers </h4>
     <ul>
         {% for f in followers %}
             <li>{{ f.username }}</li>
         {% endfor %}
     </ul>
 
-    <h3> Following </h3>
+    <h4> Following </h4>
     {% following profile.user %}
 </div>
 
 
 
 {% if not_self %}
-  {% if not_friends  %}
+  {% if not_friends and not active_request %}
     {% crispy addfriendform %}
   {% endif %}
 
