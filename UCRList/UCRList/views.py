@@ -1,17 +1,44 @@
 from __future__ import absolute_import
-
+from django.shortcuts import render
 from django.views import generic
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.core.urlresolvers import reverse_lazy
 
-
-
 from .forms import RegistrationForm, LoginForm
+
+from friendship.models import Friend, Follow, FriendshipRequest
 
 # NOTE Views go here
 class HomePageView(generic.TemplateView):
-    template_name = 'home.html'
+    def get(self, request):
+        if request.user.is_authenticated():
+            # Get list of friend requests
+            frequests = Friend.objects.unrejected_requests(user=request.user)
+            return render(request, 'home.html', {'frequests' : frequests})
+
+        else:
+            return LoginView.as_view()(self.request)
+
+    def post(self, request):
+        if request.user.is_authenticated():
+
+            if(request.POST.get('accept')):
+                frequest_id = request.POST.get('accept')
+                frequest = FriendshipRequest.objects.get(id=frequest_id)
+                frequest.accept()
+
+            elif(request.POST.get('reject')):
+                frequest_id = request.POST.get('reject')
+                frequest = FriendshipRequest.objects.get(id=frequest_id)
+                frequest.reject()
+
+            frequests = Friend.objects.unrejected_requests(user=request.user)
+            return render(request, 'home.html', {'frequests' : frequests})
+
+        else:
+            return LoginView.as_view()(self.request)
+
 
 class RegisterView(generic.CreateView):
     form_class = RegistrationForm
