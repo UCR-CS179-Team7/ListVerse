@@ -6,11 +6,18 @@
 {% block content %}
 <p>It works! Good Job{% if user.is_authenticated %} {{ user.username }}{% endif %}!</p>
 {% if user.is_authenticated %}
-    <p> Friends: {% friends user %} </p>
+    <h4> Friends </h4>
+    {% friends profile.user %}
 
-    <p> Following: {% following user %} </p>
+    <h4> Followers </h4>
+    <ul>
+        {% for f in followers %}
+            <li>{{ f.username }}</li>
+        {% endfor %}
+    </ul>
 
-    <p> Followers: {% friends user %} </p>
+    <h4> Following </h4>
+    {% following profile.user %}
 
     <p> Messages: </p>
     <form method="post" action="">
