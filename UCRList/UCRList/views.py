@@ -15,7 +15,9 @@ class HomePageView(generic.TemplateView):
         if request.user.is_authenticated():
             # Get list of friend requests
             frequests = Friend.objects.unrejected_requests(user=request.user)
-            return render(request, 'home.html', {'frequests' : frequests})
+            followers = Follow.objects.followers(request.user)
+            return render(request, 'home.html', {'frequests' : frequests,
+                                                 'followers': followers})
 
         else:
             return LoginView.as_view()(self.request)

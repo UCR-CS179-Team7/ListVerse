@@ -7,7 +7,7 @@
 <p>It works! Good Job{% if user.is_authenticated %} {{ user.username }}{% endif %}!</p>
 {% if user.is_authenticated %}
     <h4> Friends </h4>
-    {% friends profile.user %}
+    {% friends user %}
 
     <h4> Followers </h4>
     <ul>
@@ -17,7 +17,7 @@
     </ul>
 
     <h4> Following </h4>
-    {% following profile.user %}
+    {% following user %}
 
     <p> Messages: </p>
     <form method="post" action="">
