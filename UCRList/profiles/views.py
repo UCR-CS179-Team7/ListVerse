@@ -97,7 +97,7 @@ class EditProfileView(View):
             updated_profile.nickname = form.cleaned_data['nickname']
             updated_profile.gender = form.cleaned_data['gender']
             updated_profile.birthday = form.cleaned_data['birthday']
-            updated_profile.avatar = form.cleaned_data['hiddenfilename']
+            updated_profile.avatar = form.cleaned_data['currentAvatar']
             # delete all previous topics of interests by user
             topics = InterestTopic.objects.filter(user=request.user)
             topics.delete()
@@ -108,7 +108,7 @@ class EditProfileView(View):
                 it.save()
 
             updated_profile.save()
-        return render(request, 'profiles/index.html', {'edit': True, 'form': form, 'current_profile': updated_profile})
+        return render(request, 'profiles/index.html', {'edit': True, 'form': form, 'current_profile': current_profile})
 
 class SignS3(View):
     def get(self, request):

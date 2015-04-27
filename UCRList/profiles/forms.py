@@ -35,19 +35,19 @@ class EditProfileForm(forms.Form):
         current_profile = kwargs.pop('current_profile')
 
         super(EditProfileForm, self).__init__(*args, **kwargs)
-        self.fields['hiddenfilename'].inital = current_profile.avatar
+        self.fields['currentAvatar'].initial = current_profile.avatar
         self.fields['nickname'].initial = current_profile.nickname
         self.fields['gender'].initial = current_profile.gender
         self.fields['birthday'].initial = current_profile.birthday
         self.fields['topiclist'].initial = [c.topic for c in current_topics]
 
         self.helper = FormHelper()
-        self.helper.form_id = 'edit_profile_form'
+        self.helper.form_id = "edit_profile_form"
         self.helper.form_class = 'blueForms'
-        self.helper.form_method = 'post'
-        self.helper.form_action = ''
+        self.helper.form_method = "post"
+        self.helper.form_action = '/profiles/edit/'
 
-        #self.helper.add_input(Submit('submit', 'Save Changes'))
+        self.helper.add_input(Submit('pstBtn', "Save Changes"))
 
     # Year range for birthday
     years = range(1900, date.today().year)
@@ -63,10 +63,10 @@ class EditProfileForm(forms.Form):
     )
     helper = FormHelper()
     helper.form_class = 'form-horizontal'
-    hiddenfilename = forms.CharField(widget=forms.HiddenInput(attrs={'id': 'hidden_filename'}))
-    photoupload = forms.FileField(widget=forms.FileInput(attrs={'id': 'photo_file'}), label='select file for photo', required=False)
+    currentAvatar = forms.CharField(widget=forms.TextInput(attrs={'id': 'currentAvatar', 'style': 'width: 200px;'}), max_length=200, required=False)
+    upload = forms.FileField(widget=forms.FileInput(attrs={'id': 'upload'}), label='select file for photo', required=False)
     nickname = forms.CharField(widget=forms.TextInput(attrs={'style': 'width: 200px;'}), label='Nickname',
-                               max_length=100)
+                               max_length=100, required=False)
     gender = forms.ChoiceField(widget=forms.Select(attrs={'style': 'width: 150px;'}), label='Gender', choices=GENDERS)
     topiclist = forms.MultipleChoiceField(label='topics of interest',
                                                 widget=forms.CheckboxSelectMultiple,
@@ -75,5 +75,3 @@ class EditProfileForm(forms.Form):
     birthday = forms.DateField(
         widget=SelectDateWidget(attrs=({'style': 'width: 125px; display: inline-block;'}), years=years),
         label='Birthday')
-
-

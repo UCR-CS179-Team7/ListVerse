@@ -1,22 +1,40 @@
 {% extends '_layouts/base.html' %}
 {% block script %}
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
 <script>
-    avatarChanged = false;
-    (function(){
-        document.getElementById('photo_file').onchange = onFileChanged(this);
-    })();
+    var fileSelected = false;
+    var file;
+    var filename;
+
+    // Attach event handlers after window loads
+    $(document).ready( setUpHandlers() );
+
+    function setUpHandlers() {
+        $(document).on('change', '#upload', function () { onFileChanged(); });
+        //$('#upload').change(function() { onFileChanged(); });
+        $(document).on('click', '#submit-id-pstbtn', function() { on_submit(); });
+        //$("#submit-id-pstbtn").onclick = on_submit;
+        filename = $('#currentAvatar').val();
+    }
+
+    // File Placed in select photo field
     function onFileChanged(){
-        avatarChanged = true;
+        fileSelected = true;
+        file = document.getElementById("upload").files[0];
+        filename = file.name;
+        $('#currentAvatar').val(filename);
     }
+
+    // Custom on submit button action. Crispy forms doesn't allow actions besides requests.
     function on_submit(){
-        if( avatarChanged ){
-            files = document.getElementById("photo_file").files;
-            filename = files[0].name;
-            document.getElementById("hidden_filename").setAttribute("value", filename);
-            get_signed_request(files[0]);
+        if( fileSelected ){
+            file = document.getElementById("upload").files[0];
+            get_signed_request(file);
         }
-        (document.getElementById("edit_profile_form")).submit();
+        $("#edit_profile_form").submit();
     }
+
+    // Retrieves the signed-url so uploading goes directly to S3 bypassing our Heroku server
     function get_signed_request(file){
         var xhr = new XMLHttpRequest();
         xhr.open("GET", "sign_s3/?file_name="+file.name+"&file_type="+file.type);
@@ -41,7 +59,6 @@
         xhr.onload = function() {
             if (xhr.status === 200) {
                 document.getElementById("profile_photo").src = url;
-                // document.getElementById("avatar_url").value = url;
             }
         };
         xhr.onerror = function() {
@@ -58,9 +75,9 @@
 {% if edit %}
   <p>Changes have been made</p>
 {% endif %}
-    <image id='profile_photo' src="{{ MEDIA_URL }}{{ current_profile.avatar }}"></image>
+    <image id="profile_photo" height="150" width="150" src="{{ MEDIA_URL }}{{ current_profile.avatar }}"></image>
 {% crispy form %}
-<input type="button" name="submit" value="Save Changes" class="btn btn-primary" id="submit-id-submit" onclick="on_submit()"/>
+
 {% if current_profile %}
   <p>Active user since {{current_profile.creation_date}}</p>
 {% else %}
