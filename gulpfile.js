@@ -4,53 +4,68 @@ var $ = require('gulp-load-plugins')({lazy: true});
 
 var temp_base = '.tmp/';
 
-var addlist_base_src_dir = 'assets/addlist/';
+var angular_base_src_dir = 'assets/lists/';
+var addlist_base_src_dir =  angular_base_src_dir + 'addlist/';
+
 var addlist_base_dest_dir = 'UCRList/lists/static/lists/addlist/';
 
 var sources = {
     addlist: {
-        js: addlist_base_src_dir + '**/*.js',
-        templates: addlist_base_src_dir +  'templates/**/*.html',
-    }
+        entry_point: addlist_base_src_dir + 'app.js',
+        js: angular_base_src_dir, 
+    },
+    templates: angular_base_src_dir + 'templates/**/*.html',
 };
 
 var temp = {
     addlist: temp_base + 'addlist',
+    templates: temp_base + 'templates',
 };
 
 var destinations = {
     addlist: {
         js: addlist_base_dest_dir,
-        templates: addlist_base_dest_dir + 'templates/',
     }
 };
 
-gulp.task('build:addlist:templates', function() {
-    return gulp.src(sources.addlist.templates)
+gulp.task('build:lists:templates', function() {
+    return gulp.src(sources.templates)
             .pipe($.minifyHtml({empty: true}))
             .pipe($.angularTemplatecache('templates.js',{
                 module: 'app',
                 root: 'templates/', 
                 standAlone: false , 
             }))
-            .pipe(gulp.dest(temp.addlist));
+            .pipe($.debug())
+            .pipe(gulp.dest(temp.templates));
 });
 
-gulp.task('build:addlist:js', function() {
-    var addlist_sources =[sources.addlist.js, temp.addlist + '**/*.js'];
+gulp.task('build:addlist:webpack', function() {
+    return gulp.src(sources.addlist.entry_point)
+        .pipe($.webpack({
+            devtool: 'inline-source-map',
+            module: {
+                loaders: [
+                    {test: /\.js$/, loader: 'babel-loader'},
+                ]
+            }
+        }))
+        .pipe($.debug())
+        .pipe(gulp.dest(temp.addlist));
+});
 
-    log('concating ' + addlist_sources);
+gulp.task('build:addlist:concat', ['build:lists:templates', 'build:addlist:webpack'], function() {
+    var addlist_sources = [temp.addlist + '/**/*.js', temp.templates + '/**/*.js'];
+
+    log('concating ' + addlist_sources + ' to ' + destinations.addlist.js);
 
     return gulp.src(addlist_sources)
-        //.pipe($.uglify())
-        .pipe($.sourcemaps.init())
+        .pipe($.debug())
         .pipe($.concat('all.js'))
-        .pipe($.babel())
-        .pipe($.sourcemaps.write('.'))
         .pipe(gulp.dest(destinations.addlist.js));
 });
 
-gulp.task('build:addlist', ['build:addlist:templates', 'build:addlist:js']);
+gulp.task('build:addlist', ['build:addlist:concat']);
 
 gulp.task('clean:addlist:dest', function() {
     return clean(destinations.addlist.js + 'all.js');
@@ -61,10 +76,10 @@ gulp.task('clean:temp', function() {
 });
 
 gulp.task('watch:addlist',  function() {
-    gulp.watch([sources.addlist.js, sources.addlist.templates], ['make:addlist']);
+    gulp.watch([sources.addlist.js, sources.templates], ['make:addlist']);
 });
 
-gulp.task('make:addlist', ['clean:addlist:dest', 'build:addlist']);
+gulp.task('make:addlist', ['clean:addlist:dest', 'build:addlist', 'clean:temp']);
 
 gulp.task('default', ['make:addlist', 'watch:addlist']);
 
