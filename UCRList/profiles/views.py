@@ -108,6 +108,7 @@ class EditProfileView(View):
                 it.save()
 
             updated_profile.save()
+            current_profile = updated_profile
         return render(request, 'profiles/index.html', {'edit': True, 'form': form, 'current_profile': current_profile})
 
 class SignS3(View):

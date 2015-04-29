@@ -3,32 +3,35 @@
 <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
 <script>
     var fileSelected = false;
-    var file;
-    var filename;
-
     // Attach event handlers after window loads
-    $(document).ready( setUpHandlers() );
+    $(document).ready( function() {
+        console.log("document ready function");
+        $("#upload").change( fileInputChanged );
+        $('#submit-id-pstbtn').on('click', on_submit );
+    } );
 
-    function setUpHandlers() {
-        $(document).on('change', '#upload', function () { onFileChanged(); });
-        //$('#upload').change(function() { onFileChanged(); });
-        $(document).on('click', '#submit-id-pstbtn', function() { on_submit(); });
-        //$("#submit-id-pstbtn").onclick = on_submit;
-        filename = $('#currentAvatar').val();
+    function fileInputChanged(){
+        console.log("file input changed");
+        readURL(this);
+        fileSelected = true;
+        var filename = $("#upload")[0].files[0].name;
+        $("#currentAvatar").val(filename);
     }
 
-    // File Placed in select photo field
-    function onFileChanged(){
-        fileSelected = true;
-        file = document.getElementById("upload").files[0];
-        filename = file.name;
-        $('#currentAvatar').val(filename);
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('#profile_photo').attr('src', e.target.result);
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
     }
 
     // Custom on submit button action. Crispy forms doesn't allow actions besides requests.
     function on_submit(){
         if( fileSelected ){
-            file = document.getElementById("upload").files[0];
+            var file = $("#upload").files[0];
             get_signed_request(file);
         }
         $("#edit_profile_form").submit();
