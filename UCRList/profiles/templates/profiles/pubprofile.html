@@ -5,6 +5,7 @@
 
 {% block content %}
 <p>Public profile page</p>
+<img src="{{ MEDIA_URL }}{{ profile.avatar }}" height="100" width="100"/>
 <p>Username: {{profile.user.username}}</p>
 <p>Nickname: {{profile.nickname}}</p>
 <p>Gender: {{profile.gender}}</p>

@@ -1,4 +1,76 @@
 {% extends '_layouts/base.html' %}
+{% block script %}
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+<script>
+    var fileSelected = false;
+    // Attach event handlers after window loads
+    $(document).ready( function() {
+        console.log("document ready function");
+        $("#upload").change( fileInputChanged );
+        $('#submit-id-pstbtn').on('click', on_submit );
+    } );
+
+    function fileInputChanged(){
+        console.log("file input changed");
+        readURL(this);
+        fileSelected = true;
+        var filename = $("#upload")[0].files[0].name;
+        $("#currentAvatar").val(filename);
+    }
+
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('#profile_photo').attr('src', e.target.result);
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    // Custom on submit button action. Crispy forms doesn't allow actions besides requests.
+    function on_submit(){
+        if( fileSelected ){
+            var file = $("#upload").files[0];
+            get_signed_request(file);
+        }
+        $("#edit_profile_form").submit();
+    }
+
+    // Retrieves the signed-url so uploading goes directly to S3 bypassing our Heroku server
+    function get_signed_request(file){
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "sign_s3/?file_name="+file.name+"&file_type="+file.type);
+        xhr.onreadystatechange = function(){
+            if(xhr.readyState === 4){
+                if(xhr.status === 200){
+                    var response = JSON.parse(xhr.responseText);
+                    upload_file(file, response.signed_request, response.url);
+                }
+                else{
+                    alert("Could not get signed URL.");
+                }
+            }
+        };
+        xhr.send();
+    }
+
+    function upload_file(file, signed_request, url){
+        var xhr = new XMLHttpRequest();
+        xhr.open("PUT", signed_request);
+        xhr.setRequestHeader('x-amz-acl', 'public-read');
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                document.getElementById("profile_photo").src = url;
+            }
+        };
+        xhr.onerror = function() {
+            alert("Could not upload file.");
+        };
+        xhr.send(file);
+    }
+</script>
+{% endblock script %}
 {% load crispy_forms_tags %}
 {% load friendshiptags %}
 
@@ -6,9 +78,8 @@
 {% if edit %}
   <p>Changes have been made</p>
 {% endif %}
-
+    <image id="profile_photo" height="150" width="150" src="{{ MEDIA_URL }}{{ current_profile.avatar }}"></image>
 {% crispy form %}
-
 
 {% if current_profile %}
   <p>Active user since {{current_profile.creation_date}}</p>
