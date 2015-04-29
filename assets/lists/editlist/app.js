@@ -55,7 +55,25 @@ function NewListOnRefresh($q, $location, list) {
     }
 }
 
-LoadList.$inject = ['$q', '$http'];
-function LoadList($q, $http) {
+LoadList.$inject = ['$q', '$http', '$location', 'list'];
+function LoadList($q, $http, $location, list) {
+    var deferred = $q.defer();
+   
+    var slug_with_hash = $location.absUrl().split('edit/')[1];
+    var slug = slug_with_hash.substring(0, slug_with_hash.length -2);
+    
+    $http.get('/lists/json/' + slug)
+    .then((response) => {
+       list.reset();
+       var list_data = response.data;
+       list.title(list_data.title);
+       list.capacity(list_data.number);
+       for (let item of list_data.list) {
+            let _item = list.newItem(item.title, item.description_meta);
+            list.push(_item);
+       }
+       deferred.resolve();
+    }, deferred.reject);
 
+    return deferred.promise;
 }

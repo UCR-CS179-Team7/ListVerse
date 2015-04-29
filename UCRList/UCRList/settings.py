@@ -85,10 +85,10 @@ WSGI_APPLICATION = 'UCRList.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'dc3bpkqahqq9uc',
-        'USER': 'uoxbjebvptnrea',
-        'PASSWORD': 'zSEim9cEcxOhjtdOf_yvtPTjJ0',
-        'HOST': 'ec2-23-23-199-181.compute-1.amazonaws.com',
+        'NAME': 'd8sb0l57uf74l1',
+        'USER': 'lybwwlpmazvnnm',
+        'PASSWORD': 'bQhMY1pDfbmVPXjiLbVtJDQbKH',
+        'HOST': 'ec2-107-22-166-233.compute-1.amazonaws.com',
         'PORT': '5432',
     }
 }

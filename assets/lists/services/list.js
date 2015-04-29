@@ -87,7 +87,7 @@ class ListService {
 
     item(idx, item) {
         if (this._inbounds(idx)) {
-            if (typeof item !== undefined) {
+            if (typeof item !== 'undefined') {
                 this.list_items[idx] = item;
             }
             return this.list_items[idx];
