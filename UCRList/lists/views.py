@@ -39,9 +39,9 @@ class AddListView(View):
             'slug': newList.slug
         }
 
-        followers = Follow.objects.followers(request.user)
-        for follower in followers:
-            list_notification = Message(type='LN', to_user=follower, from_user=request.user, content="I've added a new list called " + list["title"] + ". Check it out!")
+        friends = Friends.objects.friends(request.user)
+        for friend in friends:
+            list_notification = Message(type='LN', to_user=friend, from_user=request.user, content="I've added a new list called " + list["title"] + ". Check it out!")
             list_notification.save()
 
         return HttpResponse(json.dumps(slug_dict), status=201, \

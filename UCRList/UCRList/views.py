@@ -21,14 +21,13 @@ class HomePageView(generic.TemplateView):
             frequests = Friend.objects.unrejected_requests(user=request.user)
             followers = Follow.objects.followers(request.user)
             list_notifications = Message.objects.filter(to_user=request.user)
-            print list_notifications
             return render(request, 'home.html', {'frequests' : frequests,
                                                  'followers': followers,
                                                  'list_notifications' : list_notifications})
 
         else:
             return LoginView.as_view()(self.request)
-            
+
     @never_cache
     def post(self, request):
         if request.user.is_authenticated():
@@ -46,7 +45,6 @@ class HomePageView(generic.TemplateView):
             frequests = Friend.objects.unrejected_requests(user=request.user)
             followers = Follow.objects.followers(request.user)
             list_notifications = Message.objects.filter(to_user=request.user)
-            print list_notifications
             return render(request, 'home.html', {'frequests' : frequests,
                                                  'followers': followers,
                                                  'list_notifications' : list_notifications})
