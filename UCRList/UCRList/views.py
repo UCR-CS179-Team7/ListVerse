@@ -10,8 +10,11 @@ from .forms import RegistrationForm, LoginForm
 from friendship.models import Friend, Follow, FriendshipRequest
 from messages.models import Message
 
-# NOTE Views go here
+# Decorators
+from django.views.decorators.cache import never_cache
+
 class HomePageView(generic.TemplateView):
+    @never_cache
     def get(self, request):
         if request.user.is_authenticated():
             # Get list of friend requests
@@ -25,7 +28,8 @@ class HomePageView(generic.TemplateView):
 
         else:
             return LoginView.as_view()(self.request)
-
+            
+    @never_cache
     def post(self, request):
         if request.user.is_authenticated():
 

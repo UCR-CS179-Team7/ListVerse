@@ -5,15 +5,19 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import View
 from django.conf import settings
 
+# Models
 from .models import Profile
 from .models import InterestTopic
 from .models import User
-from lists.models import List
 from .forms import EditProfileForm, AddFriendForm, FollowUserForm
-
 from lists.models import List, ListItem
+
+# Friendship
 from friendship.models import Friend, Follow
-# Create your views here.
+
+# Decorators
+
+from django.views.decorators.cache import never_cache
 
 class AddFriendView(View):
     def post(self, request, username=''):
@@ -37,6 +41,7 @@ class FollowUserView(View):
 
 
 class ProfileView(View):
+    @never_cache
     def get(self, request, username=''):
         try:
             userid = User.objects.get(username=username)
@@ -52,16 +57,16 @@ class ProfileView(View):
         addfriendform = AddFriendForm()
         followuserform = FollowUserForm()
         followers = Follow.objects.followers(request_profile.user)
-        
-        if request.user.is_authenticated(): 
+
+        if request.user.is_authenticated():
             not_friends = not Friend.objects.are_friends(request.user, request_profile.user)
             doesnt_follow = not Follow.objects.follows(request.user,request_profile.user)
             not_self = request.user.username != username
-            
+
             # if you've already friended the person who's profile you're viewing, don't show the button
-            frnd_rqsts = Friend.objects.unread_requests(request_profile.user)  
+            frnd_rqsts = Friend.objects.unread_requests(request_profile.user)
             active_request = request.user in list(map(lambda req: req.from_user, frnd_rqsts))
-                
+
         return render(request, 'profiles/pubprofile.html', {'profile':request_profile,
                                                             'addfriendform':addfriendform,
                                                             'followuserform':followuserform,
@@ -146,12 +151,6 @@ class SignS3(View):
             'url': url,
         })
         return HttpResponse(content, content_type='application/json')
-
-
-def index(request):
-    current_user = {'current_user': request.user.profile}
-    return render(request, 'profiles/index.html', current_user)
-
 
 def handle_uploaded_file(f):
     filename = f.name
