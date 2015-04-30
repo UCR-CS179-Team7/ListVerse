@@ -28,8 +28,8 @@ class AddListView(View):
         #print(list)
         newList = List(owner=request.user,title=list["title"],num_items=list["number"])
         newList.save()
+
         for listItem in list["list"]:
-            # TODO We must change decriptionmeta assignment when it is iplemented in frontend.
             newListItem = ListItem(listid=newList, title=listItem["title"], descriptionhtml=listItem["description"], descriptionmeta=listItem["description_meta"])
             newListItem.save()
 
@@ -56,4 +56,3 @@ class GetListData(View):
         }
         return HttpResponse(json.dumps(list_data), status=200, \
                 content_type='application/json')
-
