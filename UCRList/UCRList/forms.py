@@ -1,5 +1,5 @@
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-
+from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, ButtonHolder, Submit
 
@@ -31,3 +31,7 @@ class LoginForm(AuthenticationForm):
                 Submit('login', 'Login', css_class='btn-primary')
             )
         )
+
+class FeedForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super(FeedForm, self).__init__(*args, **kwargs)

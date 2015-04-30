@@ -4,10 +4,12 @@ from django.views import generic
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.core.urlresolvers import reverse_lazy
+from django.db.models import Q
 
 from .forms import RegistrationForm, LoginForm
 
 from friendship.models import Friend, Follow, FriendshipRequest
+from lists.models import List
 
 # NOTE Views go here
 class HomePageView(generic.TemplateView):
@@ -72,3 +74,14 @@ class LogOutView(generic.RedirectView):
     def get(self, request, *args, **kwargs):
         logout(request)
         return super(LogOutView, self).get(request, *args, **kwargs)
+
+class FeedView(generic.TemplateView):
+    def get(self, request, *args, **kwargs):
+        # args[0] = list item start, args[1] = num of list items
+        user = request.user
+        #startListNum = args[0]
+        #numListItems = args[1]
+        friends = Friend.objects.friends(user)
+        followees = Follow.objects.following(user)
+        lists = List.objects.filter(Q(owner__in=friends) | Q(owner__in=followees))
+        return render(request, 'feed.html', {'friendList': lists})
