@@ -1,0 +1,19 @@
+{% extends '_layouts/base.html' %}
+
+{% block content %}
+    <h1>List Feed</h1>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <td>Title</td><td>Created by</td><td>Description</td>
+            </tr>
+        </thead>
+    {% for l in friendList %}
+        <tr><td> <a href="{% url 'lists:detail' slug=l.slug %}">{{ l.title }}</a></td>
+            <td> <a href="{% url 'profiles:view' username=l.owner %}">{{ l.owner }}</a></td>
+            <td>{{ l.descriptionmeta|slice:'50' }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+
+{% endblock content %}
