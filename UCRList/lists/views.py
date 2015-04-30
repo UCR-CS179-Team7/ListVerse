@@ -2,8 +2,10 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.views.generic import View, DetailView, ListView
 import json
+from friendship.models import Friend, Follow
 
 from .models import User, List, ListItem
+from messages.models import Message
 from .forms import AddListForm
 
 class ListDetailView(DetailView):
@@ -37,6 +39,11 @@ class AddListView(View):
             'slug': newList.slug
         }
 
+        followers = Follow.objects.followers(request.user)
+        for follower in followers:
+            list_notification = Message(type='LN', to_user=follower, from_user=request.user, content="I've added a new list called " + list["title"] + ". Check it out!")
+            list_notification.save()
+
         return HttpResponse(json.dumps(slug_dict), status=201, \
                 content_type='application/json')
 
@@ -56,4 +63,3 @@ class GetListData(View):
         }
         return HttpResponse(json.dumps(list_data), status=200, \
                 content_type='application/json')
-

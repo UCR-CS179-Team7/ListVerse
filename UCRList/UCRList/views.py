@@ -8,6 +8,7 @@ from django.core.urlresolvers import reverse_lazy
 from .forms import RegistrationForm, LoginForm
 
 from friendship.models import Friend, Follow, FriendshipRequest
+from messages.models import Message
 
 # NOTE Views go here
 class HomePageView(generic.TemplateView):
@@ -16,8 +17,11 @@ class HomePageView(generic.TemplateView):
             # Get list of friend requests
             frequests = Friend.objects.unrejected_requests(user=request.user)
             followers = Follow.objects.followers(request.user)
+            list_notifications = Message.objects.filter(to_user=request.user)
+            print list_notifications
             return render(request, 'home.html', {'frequests' : frequests,
-                                                 'followers': followers})
+                                                 'followers': followers,
+                                                 'list_notifications' : list_notifications})
 
         else:
             return LoginView.as_view()(self.request)
@@ -37,8 +41,11 @@ class HomePageView(generic.TemplateView):
 
             frequests = Friend.objects.unrejected_requests(user=request.user)
             followers = Follow.objects.followers(request.user)
+            list_notifications = Message.objects.filter(to_user=request.user)
+            print list_notifications
             return render(request, 'home.html', {'frequests' : frequests,
-                                                 'followers': followers})
+                                                 'followers': followers,
+                                                 'list_notifications' : list_notifications})
 
         else:
             return LoginView.as_view()(self.request)

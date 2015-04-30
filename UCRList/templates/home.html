@@ -29,6 +29,7 @@
             <th>Content</th>
             <th></th>
             <th></th>
+            <th>Date</th>
           </tr>
         </thead>
         {% for frequest in frequests %}
@@ -38,6 +39,16 @@
           <td> <button name="accept" value="{{frequest.id}}" type="submit" class="btn btn-success btn-sm">Accept</button>
                <button name="reject" value="{{frequest.id}}" type="submit" class="btn btn-danger btn-sm">Reject</button>
           </td>
+          <td>{{frequest.created}}</td>
+        </tr>
+        {% endfor %}
+        {% for list_notification in list_notifications %}
+        <tr>
+          <td><a href="/profiles/view/{{list_notification.from_user}}">{{list_notification.from_user}}</a></td>
+          <td> {{list_notification.content}} </td>
+          <td></td>
+          <td></td>
+          <td>{{list_notification.send_date}} </td>
         </tr>
         {% endfor %}
       </table>
