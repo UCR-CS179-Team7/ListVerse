@@ -5,6 +5,17 @@ class ListItem {
         this.edit(raw_html);
     }
 
+    _replaceClypItLinks(html) {
+        let CI_LINK_RE = /(?:https?:\/\/)?(?:www\.)?(?:clyp\.it)\/((\w){8})/g;
+
+        function replace_links(_, sound_id){
+            return `<iframe width="100%" height="160" 
+           src="https://clyp.it/${sound_id}/widget" 
+           frameborder="0"></iframe>`;
+        }
+        return html.replace(CI_LINK_RE, replace_links);
+    }
+
     _replaceYouTubeLinks(html) {         
         let YT_LINK_RE = /(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})/g;
         
@@ -19,7 +30,9 @@ class ListItem {
     }
     
     _process(raw_html) {
-        return this._replaceYouTubeLinks(raw_html);
+        var description = this._replaceYouTubeLinks(raw_html);
+        description = this._replaceClypItLinks(description);
+        return description;
     }
 
     title(title) {
@@ -57,9 +70,10 @@ class ListItem {
 }
 
 class ListService {
-    constructor($http, $sce) {
+    constructor($http, $sce, $location) {
         this.$http = $http;
         this.$sce = $sce;
+        this.$location = $location;
 
         this.top_n = 10;
         this.list_title = '';
@@ -122,13 +136,17 @@ class ListService {
 
     upload() {
         var _payload = {};
+        var operation_with_hash = this.$location.absUrls().split('/lists/')[1];
+        var operation = operation_with_hash.substring(0, operation_with_hash.length -2);
+        var endpoint = '/lists/' + operation;
+        console.log(endpoint);
         _payload.list = this.list_items.map((_item) => _item.repr());
         _payload.number = this.top_n;
         _payload.title = this.list_title;
-        return this.$http.post('/lists/new', _payload);
+        return this.$http.post(endpoint, _payload);
     }
 }
 
-ListService.$inject = ['$http', '$sce'];
+ListService.$inject = ['$http', '$sce', '$location'];
 
 export default ListService;
