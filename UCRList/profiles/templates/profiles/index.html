@@ -31,7 +31,7 @@
     // Custom on submit button action. Crispy forms doesn't allow actions besides requests.
     function on_submit(){
         if( fileSelected ){
-            var file = $("#upload").files[0];
+            var file = $("#upload")[0].files[0];
             get_signed_request(file);
         }
         $("#edit_profile_form").submit();
