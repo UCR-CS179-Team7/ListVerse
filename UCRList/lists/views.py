@@ -25,12 +25,11 @@ class AddListView(View):
         return render(request, 'lists/addlist/index.html')
 
     def post(self, request):
-        list = json.loads(request.body)
+        ls = json.loads(request.body)
         # save list json from request into DB
-        newList = List(owner=request.user,title=list["title"],num_items=list["number"])
+        newList = List(owner=request.user,title=ls["title"],num_items=ls["number"])
         newList.save()
-
-        for listItem in list["list"]:
+        for listItem in ls["list"]:
             newListItem = ListItem(listid=newList, title=listItem["title"], descriptionhtml=listItem["description"], descriptionmeta=listItem["description_meta"])
             newListItem.save()
 
@@ -38,11 +37,10 @@ class AddListView(View):
             'slug': newList.slug
         }
 
-        friends = Friends.objects.friends(request.user)
+        friends = Friend.objects.friends(request.user)
         for friend in friends:
             list_notification = Message(type='LN', to_user=friend, from_user=request.user, content="I've added a new list called " + list["title"] + ". Check it out!")
             list_notification.save()
-
         return HttpResponse(json.dumps(slug_dict), status=201, \
                 content_type='application/json')
 
