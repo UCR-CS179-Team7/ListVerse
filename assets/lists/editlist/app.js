@@ -1,9 +1,11 @@
 'use strict';
-import {default as controllers_module_name} from '../controllers';
+import {default as controllers_module_name} from './controllers';
 
 angular.module('app', [
     'ngRoute', 'ngSanitize', 'ngMessages',
     'ui.bootstrap', 
+
+    'ngTagsInput',
 
     controllers_module_name,
 ])

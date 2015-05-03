@@ -1,5 +1,5 @@
 <form name="newlist" novalidate>
-    <h1> Your List: Top {{vm.top_n}} {{vm.list_title}} </h1>
+    <h1> Your List: {{vm.top_n}} {{vm.list_title}} </h1>
         <div class="row">
             <div class="col-md-6 form-group">
                 <label for="listnumber">
@@ -30,6 +30,17 @@
                     min="1"
                     max="100"/>
             </div>
+        </div>
+        <div class="row">
+                <label for="listtags">
+                    Tags
+                </label>
+                <tags-input
+                    id="listtags"
+                    ng-model="vm.tags">
+                    <autocomplete source="vm.possible_tags($query)"></auto-complete>
+                    </tags-input>
+                </label>
         </div>
         <div class="footer">
             <input class="btn"

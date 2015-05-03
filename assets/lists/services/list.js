@@ -16,6 +16,15 @@ class ListItem {
         return html.replace(CI_LINK_RE, replace_links);
     }
 
+    _replaceQuoteBlocks(html) {
+       let QUOTE_RE = /`(.+)`/g;
+       
+       function replace_quotes(_, match) {
+            return '<blockquote>${match}</blockquote>';
+       }
+       return html.replace(QUOTE_RE, replace_quotes);
+    }
+
     _replaceYouTubeLinks(html) {         
         let YT_LINK_RE = /(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})/g;
         
@@ -30,7 +39,8 @@ class ListItem {
     }
     
     _process(raw_html) {
-        var description = this._replaceYouTubeLinks(raw_html);
+        var description = this._replaceQuoteBlocks(raw_html); 
+        description = this._replaceYouTubeLinks(description);
         description = this._replaceClypItLinks(description);
         return description;
     }
@@ -78,12 +88,50 @@ class ListService {
         this.top_n = 10;
         this.list_title = '';
         this.list_items = [];
+
+        this.possible_tags = [{
+            id: 1,
+            text: 'Music'
+        }, {
+            id: 2,
+            text: 'Movies'
+        }, {
+            id: 3,
+            text: 'TV'
+        }, {
+            id: 4,
+            text: 'Science'
+        }, {
+            id: 5,
+            text: 'Politics'
+        }];
+        
+        this.list_tags = []; 
+    }
+ 
+    possible_tags() {
+        return this.tags_list;
     }
 
     items() {
         return this.list_items;
     }
+
+    tags() {
+        return this.list_tags;
+    }
     
+    add_tag(tag) {
+        if(this.possible_tags().some((_other_tag) => tag === _other_tag)) {
+            this.list_tags.push(tag);
+        }
+    }
+
+    clear_tags(tag) {
+        this.tags = [];
+    }
+
+
     title(title) {
         if(typeof title === 'string') {
             this.list_title = title;
@@ -134,12 +182,8 @@ class ListService {
         this.list_items = [];
     }
 
-    upload() {
+    upload(endpoint) {
         var _payload = {};
-        var operation_with_hash = this.$location.absUrls().split('/lists/')[1];
-        var operation = operation_with_hash.substring(0, operation_with_hash.length -2);
-        var endpoint = '/lists/' + operation;
-        console.log(endpoint);
         _payload.list = this.list_items.map((_item) => _item.repr());
         _payload.number = this.top_n;
         _payload.title = this.list_title;
@@ -149,4 +193,16 @@ class ListService {
 
 ListService.$inject = ['$http', '$sce', '$location'];
 
-export default ListService;
+class AddListService extends ListService {
+    upload() {
+        return super.upload('/lists/new');
+    }
+}
+
+class EditListService extends ListService {
+    upload() {
+        return super.upload('/lists/edit');
+    }
+}
+
+export {AddListService, EditListService}
