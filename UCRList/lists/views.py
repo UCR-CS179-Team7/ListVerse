@@ -4,7 +4,7 @@ from django.views.generic import View, DetailView, ListView
 import json
 from friendship.models import Friend, Follow
 
-from .models import User, List, ListItem
+from .models import User, List, ListItem, TopicTag
 from messages.models import Message
 from .forms import AddListForm
 
@@ -26,6 +26,7 @@ class AddListView(View):
 
     def post(self, request):
         ls = json.loads(request.body)
+        # print ls
         # save list json from request into DB
         newList = List(owner=request.user, title=ls["title"], num_items=ls["number"])
         newList.save()
@@ -36,6 +37,9 @@ class AddListView(View):
         slug_dict = {
             'slug': newList.slug
         }
+        for tagChoiceID in ls["tags"]:
+            newTopicTag = TopicTag(list=newList, topic=tagChoiceID)
+            newTopicTag.save()
 
         friends = Friend.objects.friends(request.user)
         for friend in friends:
