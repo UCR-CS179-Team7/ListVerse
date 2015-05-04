@@ -37,6 +37,7 @@ class AddListView(View):
         slug_dict = {
             'slug': newList.slug
         }
+
         for tagChoiceID in ls["tags"]:
             newTopicTag = TopicTag(list=newList, topic=tagChoiceID)
             newTopicTag.save()
@@ -74,6 +75,18 @@ descriptionhtml=item['description'], descriptionmeta=item['description_meta'])
                 items[idx].title = item['title']
                 items[idx].descriptionhtml = item['description']
                 items[idx].descriptionmeta = item['description_meta']
+
+        ''' TODO Make sure this works '''
+        # TODO TODO TODO TODO TODO TODO #
+        ''' TODO Make sure this works '''
+        
+        for topicTag in TopicTag.objects.filter(listid=ls):
+            print topicTag
+            topicTag.delete()
+
+        for tagChoiceID in item['tags']:
+            newTopicTag = TopicTag(list=newList, topic=tagChoiceID)
+            newTopicTag.save()
 
         slug_dict = {
             'slug': ls.slug
