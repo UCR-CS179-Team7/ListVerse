@@ -20,7 +20,7 @@ class ListItem {
        let QUOTE_RE = /`(.+)`/g;
        
        function replace_quotes(_, match) {
-            return '<blockquote>${match}</blockquote>';
+            return `<blockquote>${match}</blockquote>`;
        }
        return html.replace(QUOTE_RE, replace_quotes);
     }
@@ -80,10 +80,11 @@ class ListItem {
 }
 
 class ListService {
-    constructor($http, $sce, $location) {
+    constructor($http, $sce, $location, $q) {
         this.$http = $http;
         this.$sce = $sce;
         this.$location = $location;
+        this.$q = $q;
 
         this.top_n = 10;
         this.list_title = '';
@@ -109,8 +110,14 @@ class ListService {
         this.list_tags = []; 
     }
  
-    possible_tags() {
-        return this.tags_list;
+    possibleTags() {
+        var deferred = this.$q.defer();
+
+        deferred.resolve({
+            data:this.possible_tags
+        });
+
+        return deferred.promise;
     }
 
     items() {
@@ -118,19 +125,28 @@ class ListService {
     }
 
     tags() {
-        return this.list_tags;
+        return this.list_tags.slice();
     }
     
-    add_tag(tag) {
-        if(this.possible_tags().some((_other_tag) => tag === _other_tag)) {
-            this.list_tags.push(tag);
+    addTag(tag) {
+        for(let _tag of this.list_tags) {
+            if(_tag.text === tag.text) {
+                return;
+            }
+        }
+
+        for(let _possible_tag of this.possible_tags) {
+            if(_possible_tag.text === tag.text) {
+                tag.id = _possible_tag.id;
+                this.list_tags.push(tag);
+                return;
+            }
         }
     }
 
-    clear_tags(tag) {
-        this.tags = [];
+    clearTags(tag) {
+        this.list_tags = [];
     }
-
 
     title(title) {
         if(typeof title === 'string') {
@@ -187,11 +203,13 @@ class ListService {
         _payload.list = this.list_items.map((_item) => _item.repr());
         _payload.number = this.top_n;
         _payload.title = this.list_title;
+        _payload.tags = this.list_tags.map((_item) => _item.id);
+        console.log(_payload);
         return this.$http.post(endpoint, _payload);
     }
 }
 
-ListService.$inject = ['$http', '$sce', '$location'];
+ListService.$inject = ['$http', '$sce', '$location', '$q'];
 
 class AddListService extends ListService {
     upload() {

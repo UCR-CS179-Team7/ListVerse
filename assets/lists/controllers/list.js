@@ -9,13 +9,13 @@
     }
 
     possible_tags(query) {
-        return this.list.possible_tags();
+        return this.list.possibleTags();
     }
 
     next() {
-        this.list.clear_tags();
+        this.list.clearTags();
         for(let tag of this.tags) {
-            this.list.add_tags(tag);
+            this.list.addTag(tag);
         }
         this.list.title(this.list_title);
         this.list.capacity(this.top_n);

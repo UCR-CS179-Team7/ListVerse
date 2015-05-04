@@ -7,6 +7,7 @@
        this.items = this.list.items();
        this.list_title = this.list.title();
        this.top_n = this.list.capacity();
+       this.tags = this.list.tags();
    }
 
    back() {
