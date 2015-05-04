@@ -27,7 +27,7 @@ class AddListView(View):
     def post(self, request):
         ls = json.loads(request.body)
         # save list json from request into DB
-        newList = List(owner=request.user,title=ls["title"],num_items=ls["number"])
+        newList = List(owner=request.user, title=ls["title"], num_items=ls["number"])
         newList.save()
         for listItem in ls["list"]:
             newListItem = ListItem(listid=newList, title=listItem["title"], descriptionhtml=listItem["description"], descriptionmeta=listItem["description_meta"])
@@ -39,7 +39,7 @@ class AddListView(View):
 
         friends = Friend.objects.friends(request.user)
         for friend in friends:
-            list_notification = Message(type='LN', to_user=friend, from_user=request.user, content="I've added a new list called " + list["title"] + ". Check it out!")
+            list_notification = Message(type='LN', to_user=friend, from_user=request.user, content="I've added a new list called " + newList.title + ". Check it out!")
             list_notification.save()
         return HttpResponse(json.dumps(slug_dict), status=201, \
                 content_type='application/json')

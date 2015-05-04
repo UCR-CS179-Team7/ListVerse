@@ -18,7 +18,7 @@ class List(models.Model):
             self.pub_date = datetime.datetime.today()
         self.edit_date = datetime.datetime.today()
 
-    def _handle_dup_slug(original_slug):
+    def _handle_dup_slug(self, original_slug):
         for i in itertools.count(1):
             slug ='{0}/{1}'.format(original_slug, i)
             if not List.objects.filter(slug=slug).exists():
@@ -36,7 +36,7 @@ class List(models.Model):
         slug = '{0}/{1}/{2}/{3}/{4}/{5}'.format(*slug_fields)
 
         if List.objects.filter(slug=slug).exists():
-            slug = _handle_dup_slug(slug)
+            slug = self._handle_dup_slug(slug)
 
         return slug
 
