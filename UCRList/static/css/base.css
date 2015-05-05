@@ -1,0 +1,126 @@
+
+body {
+    padding-bottom: 0;
+    padding-top: 120px;
+    height: 100%;
+}
+
+.messages {
+    list-style: none;
+}
+
+.side-border{
+    width: 91px;
+    height: 1000px;
+    background-repeat: repeat-y;
+}
+
+.navbar{
+     height: 120px;
+}
+
+.navbar-header{
+    padding-top: 10px;
+}
+
+.navbar-collapse{
+    padding-top: 10px;
+}
+
+.nav-tabs{
+    border: solid #ffffff;
+    border-radius: 10px;
+    border-color: blue;
+    vertical-align: middle;
+    height: 50px;
+    width: 120px;
+    padding: 10px;
+    margin-right: 10px;
+    font-size: 18px;
+    float: left;
+    color: #ffffff;
+    text-align: center;
+}
+
+.login-status{
+    display: inline-block;
+    margin-right: 5px;
+    color: #ffffff;
+}
+
+.logout-button{
+    display: inline-block;
+}
+
+#logoimage{
+    width: 150px;
+    height: 50px;
+    display: inline-block;
+    padding-bottom: 5px;
+    float: left;
+    margin-right: 5px;
+}
+
+.side-border-left{
+    float: left;
+}
+
+.side-border-right{
+    float: right;
+}
+
+.content-container{
+    display: inline-block;
+    width: 85%;
+    height: 100%;
+    margin-right: 0px;
+    margin-left: 5px;
+}
+
+.network-section{
+    border: solid #0066cc;
+    border-radius: 15px;
+    padding: 15px;
+    width: 100%;
+    min-height: 200px;
+}
+
+.network-content{
+    margin-left: 20px;
+    width: 100%;
+}
+
+.messages-section{
+    border: solid #0066cc;
+    border-radius: 15px;
+    padding: 15px;
+    width: 100%;
+    min-height: 250px;
+}
+
+.feed-section{
+    border: solid #0066cc;
+    margin-top: 20px;
+    border-radius: 15px;
+    padding: 15px;
+    width: 100%;
+    min-height: 500px;
+}
+
+.trending-section{
+    border: solid #0066cc;
+    margin-top: 20px;
+    border-radius: 15px;
+    padding: 15px;
+    width: 100%;
+    min-height: 500px;
+}
+
+.list-detail-section{
+    border: solid #0066cc;
+    margin-top: 20px;
+    border-radius: 15px;
+    padding: 15px;
+    width: 100%;
+    min-height: 500px;
+}

@@ -1,8 +1,8 @@
 {% extends '_layouts/base.html' %}
 {% block content %}
+<div class="list-detail-section">
     <h2> {{ l.title }} </h2>
-    by <a href="{% url 'profiles:view' username=l.owner sortmethod='default'%}">{{ l.owner }}</a><br/>
-
+    <p style="margin-left: 10px">by <a href="{% url 'profiles:view' username=l.owner sortmethod='default'%}">{{ l.owner }}</a></p><br/>
     {% for item in l.listitem_set.all %}
         <div>
             <h4>{{ forloop.counter}}. {{ item.title }}</h4>
@@ -10,5 +10,5 @@
             {{ item.descriptionmeta |safe}}
         </div>
     {% endfor %}
-
+</div>
 {% endblock %}

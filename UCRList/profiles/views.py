@@ -29,6 +29,11 @@ class AddFriendView(View):
         )
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
+class DeleteFriendView(View):
+    def post(self, request, username='', sortmethod=''):
+        old_friend = User.objects.get(username=username)
+        Friend.objects.remove_friend(old_friend, request.user)
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 class FollowUserView(View):
     def post(self, request, username='', sortmethod=''):
@@ -38,6 +43,11 @@ class FollowUserView(View):
 
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
+class UnfollowUserView(View):
+    def post(self, request, username='', sortmethod=''):
+        followee = User.objects.get(username=username)
+        Follow.objects.remove_follower(request.user, followee)
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 class ProfileView(View):
     @never_cache
