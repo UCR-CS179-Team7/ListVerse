@@ -17,10 +17,12 @@ class ListItem {
     }
 
     _replaceQuoteBlocks(html) {
-       let QUOTE_RE = /`(.+)`/g;
+       let QUOTE_RE = /`([\s\S]+)`/g;
        
        function replace_quotes(_, match) {
-            return `<blockquote>${match}</blockquote>`;
+            let match_nl = match.replace(/<\/div\s*><div\s*>/gi, '<br>');
+            console.log(match_nl);
+            return `<div><blockquote>${match_nl}</blockquote></div>`;
        }
        return html.replace(QUOTE_RE, replace_quotes);
     }
