@@ -38,7 +38,7 @@
     {% for list in userLists %}
         <div>
             <h4><a href="{% url 'lists:detail' slug=list.slug %}">{{ list.title }}</a>  {% if not not_self %}<a href="{% url 'lists:edit' slug=list.slug %}"><small>(Edit)</small></a>{% endif %}</h4>
-            <p><strong>Author</strong>: {{ list.owner }}</p>
+            <p><strong>Author</strong>: <a href="{% url 'profiles:view' username=list.owner sortmethod='default'%}">{{ list.owner }}</a></p>
             <p><strong>Published</strong>: {{ list.pub_date }}</p>
             <!-- <p><strong>Slug</strong>: {{ list.slug }}</p> --> <!-- debug -->
         </div>

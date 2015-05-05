@@ -1,7 +1,7 @@
 {% extends '_layouts/base.html' %}
 {% block content %}
     <h2> {{ l.title }} </h2>
-    by <a href="{% url 'profiles:view' username=l.owner %}">{{ l.owner }}</a><br/>
+    by <a href="{% url 'profiles:view' username=l.owner sortmethod='default'%}">{{ l.owner }}</a><br/>
 
     {% for item in l.listitem_set.all %}
         <div>
@@ -12,4 +12,3 @@
     {% endfor %}
 
 {% endblock %}
-

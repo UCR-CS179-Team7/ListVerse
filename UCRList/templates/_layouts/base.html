@@ -31,10 +31,10 @@
           {% else %}
           <a href="{% url 'lists:new' %}" class="navbar-brand">New List</a>
           <a class="navbar-brand" href="{% url 'profiles:edit' %}">Edit Profile</a>
-          <a class="navbar-brand" href="{% url 'profiles:view' username=user.username %}">My Profile</a>
+          <a class="navbar-brand" href="{% url 'profiles:view' username=user.username sortmethod='default'%}">My Profile</a>
           <a href="{% url 'logout' %}" class="btn btn-default navbar-btn">Logout</a>
         {% endif %}
-    
+
         </div><!--/.navbar-collapse -->
       </div>
     </div>

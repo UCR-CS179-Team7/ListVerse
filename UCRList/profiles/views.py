@@ -42,7 +42,7 @@ class FollowUserView(View):
 
 class ProfileView(View):
     @never_cache
-    def get(self, request, username=''):
+    def get(self, request, username='', sortmethod=''):
         try:
             userid = User.objects.get(username=username)
         except User.DoesNotExist:
@@ -51,9 +51,22 @@ class ProfileView(View):
 
         request_profile = Profile.objects.get(user_id=userid)
         not_friends = doesnt_follow = not_self = active_request = False
-        topicList = InterestTopic.objects.filter(user=userid)
 
         userLists = List.objects.filter(owner=userid)
+        if sortmethod=='ascending':
+            global topicList
+            userLists = List.objects.filter(owner=userid).order_by('pub_date')
+
+        elif sortmethod=='descending':
+            global topicList
+            userLists = List.objects.filter(owner=userid).order_by('-pub_date')
+
+        elif sortmethod=='category':
+            global topicList
+            userLists = List.objects.filter(owner=userid).order_by('title')
+
+
+        topicList = InterestTopic.objects.filter(user=userid)
         addfriendform = AddFriendForm()
         followuserform = FollowUserForm()
         followers = Follow.objects.followers(request_profile.user)
