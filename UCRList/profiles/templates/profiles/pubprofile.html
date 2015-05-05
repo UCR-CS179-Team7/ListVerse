@@ -34,15 +34,21 @@
   </div>
 {% endif %}
 <div>
-    <h1>{{ profile.user.username }}'s lists</h1>
-    {% for list in userLists %}
-        <div>
-            <h4><a href="{% url 'lists:detail' slug=list.slug %}">{{ list.title }}</a>  {% if not not_self %}<a href="{% url 'lists:edit' slug=list.slug %}"><small>(Edit)</small></a>{% endif %}</h4>
-            <p><strong>Author</strong>: <a href="{% url 'profiles:view' username=list.owner sortmethod='default'%}">{{ list.owner }}</a></p>
-            <p><strong>Published</strong>: {{ list.pub_date }}</p>
-            <!-- <p><strong>Slug</strong>: {{ list.slug }}</p> --> <!-- debug -->
-        </div>
-    {% endfor %}
+    <h1><strong>{{ profile.user.username }}'s lists</strong></h1>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <td>Title</td><td>Created by</td><td>Publish date</td>
+            </tr>
+        </thead>
+        {% for list in userLists %}
+          <tr>
+            <td><a href="{% url 'lists:detail' slug=list.slug %}">{{ list.title }}</a>  {% if not not_self %}<a href="{% url 'lists:edit' slug=list.slug %}"><small>(Edit)</small></a>{% endif %}</td>
+            <td> <a href="{% url 'profiles:view' username=list.owner sortmethod='default'%}">{{ list.owner }}</a></td>
+            <td>{{ list.pub_date }}</p></td>
+          </tr>
+        {% endfor %}
+    </table>
 </div>
 
 
