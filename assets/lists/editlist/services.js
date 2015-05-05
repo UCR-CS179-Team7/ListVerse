@@ -1,6 +1,6 @@
 'use strict';
 
-import {default as ListService} from '../services/list';    
+import {EditListService as ListService} from '../services/list';    
 
 var services_module_name = 'app.services';
 

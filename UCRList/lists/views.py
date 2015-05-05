@@ -66,32 +66,19 @@ class EditListView(View):
         ls.num_items = list['number']
         ls.save()
 
-        items = ListItem.objects.filter(listid=ls)
+        for item in ListItem.objects.filter(listid=ls):
+            item.delete()
 
-        if len(items) < len(list['list']):
-            for item in items[len(items):]:
-                item.delete()
-
-        for idx, item in enumerate(list['list']):
-            if idx >= len(items):
-                newItem = ListItem(listid=ls, title=item['title'],\
+        for item in list['list']:
+            newItem = ListItem(listid=ls, title=item['title'],\
 descriptionhtml=item['description'], descriptionmeta=item['description_meta'])
-                newItem.save()
-            else:
-                items[idx].title = item['title']
-                items[idx].descriptionhtml = item['description']
-                items[idx].descriptionmeta = item['description_meta']
+            newItem.save()
 
-        ''' TODO Make sure this works '''
-        # TODO TODO TODO TODO TODO TODO #
-        ''' TODO Make sure this works '''
-
-        for topicTag in TopicTag.objects.filter(listid=ls):
-            print topicTag
+        for topicTag in TopicTag.objects.filter(list=ls):
             topicTag.delete()
 
-        for tagChoiceID in item['tags']:
-            newTopicTag = TopicTag(list=newList, topic=tagChoiceID)
+        for tagChoiceID in list['tags']:
+            newTopicTag = TopicTag(list=ls, topic=tagChoiceID)
             newTopicTag.save()
 
         slug_dict = {
@@ -111,10 +98,13 @@ class GetListData(View):
                 'description_meta': item.descriptionmeta,
             }
 
+        tags = TopicTag.objects.filter(list=ls)
+
         list_data = {
             'title': ls.title,
             'number': ls.num_items,
             'list': map(get_item_info, items),
+            'tags': map(lambda tag: tag.topic, tags),
         }
 
         return HttpResponse(json.dumps(list_data), status=200, \

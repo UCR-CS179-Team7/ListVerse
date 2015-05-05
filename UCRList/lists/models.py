@@ -65,7 +65,7 @@ class ListItem(models.Model):
     #body = models.CharField(max_length=1024)
     #contentalt = models.CharField(max_length=1024, blank=True)
     #contenturi = models.CharField(max_length=256, blank=True)
-    
+
 class TopicTag(models.Model):
     # topic is tied to the choices as InterestTopic
 	list = models.ForeignKey(List)
