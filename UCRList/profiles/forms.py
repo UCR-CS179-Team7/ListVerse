@@ -15,18 +15,12 @@ class AddFriendForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(AddFriendForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.form_class = 'blueForms'
-        self.helper.form_method = 'post'
-        self.helper.form_action = 'add/'
         self.helper.add_input(Submit('submit', 'Add as Friend'))
 
 class FollowUserForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(FollowUserForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.form_class = 'blueForms'
-        self.helper.form_method = 'post'
-        self.helper.form_action = 'follow/'
         self.helper.add_input(Submit('submit', 'Follow'))
 
 class EditProfileForm(forms.Form):

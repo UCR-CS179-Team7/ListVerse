@@ -7,7 +7,7 @@
         <div>
             <h4>{{ forloop.counter}}. {{ item.title }}</h4>
              <!-- safe filter allows for html to be rendered -->
-            {{ item.descriptionhtml |safe}}
+            {{ item.descriptionmeta |safe}}
         </div>
     {% endfor %}
 

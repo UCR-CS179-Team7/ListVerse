@@ -20,8 +20,7 @@ from friendship.models import Friend, Follow
 from django.views.decorators.cache import never_cache
 
 class AddFriendView(View):
-    def post(self, request, username=''):
-
+    def post(self, request, username='', sortmethod=''):
         new_friend = User.objects.get(username=username)
         Friend.objects.add_friend(
             from_user=request.user,
@@ -32,7 +31,7 @@ class AddFriendView(View):
 
 
 class FollowUserView(View):
-    def post(self, request, username=''):
+    def post(self, request, username='', sortmethod=''):
 
         followee = User.objects.get(username=username)
         Follow.objects.add_follower(request.user, followee)
