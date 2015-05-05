@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import View, DetailView, ListView
 import json
 from friendship.models import Friend, Follow
@@ -49,6 +49,12 @@ class AddListView(View):
         return HttpResponse(json.dumps(slug_dict), status=201, \
                 content_type='application/json')
 
+class DeleteView(View):
+    def post(self, request, slug=''):
+        for list in List.objects.filter(slug=slug):
+            list.delete()
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
 class EditListView(View):
     def get(self, request, slug=''):
         return render(request, 'lists/editlist/index.html', {'listSlug': slug})
@@ -79,7 +85,7 @@ descriptionhtml=item['description'], descriptionmeta=item['description_meta'])
         ''' TODO Make sure this works '''
         # TODO TODO TODO TODO TODO TODO #
         ''' TODO Make sure this works '''
-        
+
         for topicTag in TopicTag.objects.filter(listid=ls):
             print topicTag
             topicTag.delete()
