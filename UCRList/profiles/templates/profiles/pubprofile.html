@@ -20,7 +20,6 @@
   <div class="col-md-6">
     <h3>{{profile.user.username}}'s Friends </h3>
     {% friends profile.user %}
-
     <h3>{{profile.user.username}}'s Followers </h3>
     <ul>
       {% for f in followers %}
@@ -40,7 +39,7 @@
 
 
 {% endif %}
-<div class="col-md-11">
+<div class="col-md-12">
   <div>
       <h1>{{ profile.user.username }}'s lists</h1>
       <div class="btn-group" role="group" aria-label="...">
@@ -52,22 +51,28 @@
       <table class="table table-hover">
           <thead>
               <tr>
-                  <td>Title</td><td>Created by</td><td>Publish date</td>
+                  <td>Title</td>
+                  <td>Created by</td>
+                  <td>Publish date</td>
+                  {% if not not_self %}<td><center>Options</center></td>{% endif %}
               </tr>
           </thead>
           {% for list in userLists %}
             <tr>
               <td>
                 <a href="{% url 'lists:detail' slug=list.slug %}">{{ list.title }}</a>
-                {% if not not_self %}
-                  <a href="{% url 'lists:edit' slug=list.slug %}"><small>(Edit)</small></a>
-                  <form method="post" action="{% url 'lists:delete' slug=list.slug %}">
-                    {% csrf_token %}
-                    <button class="btn btn-link" type="submit"><small class="text-danger">(Delete)</small></button>
-                  </form>
-                {% endif %}</td>
+              </td>
               <td> <a href="{% url 'profiles:view' username=list.owner sortmethod='default'%}">{{ list.owner }}</a></td>
               <td>{{ list.pub_date }}</p></td>
+              <td>  {% if not not_self %}
+                  <center>
+                    <a href="{% url 'lists:edit' slug=list.slug %}"><small class="text-info">(Edit)</small></a><br />
+                    <form method="post" action="{% url 'lists:delete' slug=list.slug %}">{% csrf_token %}
+                      <button class="btn btn-link" type="submit"><div class="text-danger">(Delete)</div></button>
+                    </form>
+                  </center>
+                {% endif %}
+              </td
             </tr>
           {% endfor %}
       </table>
