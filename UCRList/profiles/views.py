@@ -9,7 +9,7 @@ from django.conf import settings
 from .models import Profile
 from .models import InterestTopic
 from .models import User
-from .forms import EditProfileForm, AddFriendForm, FollowUserForm
+from .forms import EditProfileForm
 from lists.models import List, ListItem
 
 # Friendship
@@ -66,8 +66,6 @@ class ProfileView(View):
             userLists = List.objects.filter(owner=userid).order_by('-title')
 
         topicList = InterestTopic.objects.filter(user=userid)
-        addfriendform = AddFriendForm()
-        followuserform = FollowUserForm()
         followers = Follow.objects.followers(request_profile.user)
 
         if request.user.is_authenticated():
@@ -80,8 +78,6 @@ class ProfileView(View):
             active_request = request.user in list(map(lambda req: req.from_user, frnd_rqsts))
 
         return render(request, 'profiles/pubprofile.html', {'profile':request_profile,
-                                                            'addfriendform':addfriendform,
-                                                            'followuserform':followuserform,
                                                             'not_friends': not_friends,
                                                             'doesnt_follow':doesnt_follow,
                                                             'not_self': not_self,
