@@ -3,7 +3,7 @@
 <div class="trending-section">
     <h2 style="text-align: center">Lists Trending Right Now!</h2>
     <table style="">
-        {% for l in ls %}
+        {% for l in ls|dictsortreversed:"pub_date" %}
             <tr style="height: 30px;">
                 <td><div style="width: 30px;display: inline-block; vertical-align: bottom">{{ forloop.counter}}.</div></td>
                 <td><div style="width: 300px;display: inline-block"><a href="{% url 'lists:detail' slug=l.slug %}">{{ l.title|truncatechars:50 }}</a></div></td>
