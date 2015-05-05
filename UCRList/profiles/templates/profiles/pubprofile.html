@@ -50,14 +50,15 @@
         {% for list in userLists %}
           <tr>
             <td>
-              <span>
-                <form method="post" action="{% url 'lists:delete' slug=list.slug %}">
-                  {% csrf_token %}
-                  <a href="{% url 'lists:detail' slug=list.slug %}">{{ list.title }}</a>  {% if not not_self %}<a href="{% url 'lists:edit' slug=list.slug %}"><small>(Edit)</small></a>
-                  <button class="btn btn-link" type="submit"><small class="text-danger">(Delete)</small></button>
-                </form>
-              </span>
-              {% endif %}</td>
+                <a href="{% url 'lists:detail' slug=list.slug %}">{{ list.title }}</a>
+                {% if not not_self %}
+                  <form method="post" action="{% url 'lists:delete' slug=list.slug %}">
+                    {% csrf_token %}
+                    <a href="{% url 'lists:edit' slug=list.slug %}"><small>(Edit)</small></a>
+                    <button class="btn btn-link" type="submit"><small class="text-danger">(Delete)</small></button>
+                  </form>
+                {% endif %}
+            </td>
             <td> <a href="{% url 'profiles:view' username=list.owner sortmethod='default'%}">{{ list.owner }}</a></td>
             <td>{{ list.pub_date }}</p></td>
           </tr>
@@ -72,14 +73,14 @@
       {% if not_friends and not active_request %}
       <form method="post" action="{% url 'profiles:addfriend' username=profile.user.username sortmethod='default' %}">
         {% csrf_token %}
-        <button type="submit">Add Friend</button>
+        <button class="btn btn-default" type="submit">Add Friend</button>
       </form>
       {% endif %}
 
       {% if doesnt_follow  %}
       <form method="post" action="{% url 'profiles:followuser' username=profile.user.username sortmethod='default' %}">
         {% csrf_token %}
-        <button type="submit">Follow User</button>
+        <button class="btn btn-default" type="submit">Follow User</button>
       </form>
       {% endif %}
     {% endif %}
