@@ -89,7 +89,7 @@
         {% csrf_token %}
         <button class="btn btn-default" type="submit">Add Friend</button>
       </form>
-      {% else %}
+      {% elif not active_request %}
           <form method="post" action="{% url 'profiles:deletefriend' username=profile.user.username sortmethod='default' %}">
               {% csrf_token %}
               <button class="btn btn-default" type="submit">Un-friend</button>
