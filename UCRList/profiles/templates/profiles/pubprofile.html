@@ -58,10 +58,11 @@
           {% for list in userLists %}
             <tr>
               <td>
-                  <a href="{% url 'lists:detail' slug=list.slug %}">{{ list.title }}</a>
-                  {% if not not_self %}
-                    <form method="post" action="{% url 'lists:delete' slug=list.slug %}">
-                    <a href="{% url 'lists:edit' slug=list.slug %}"><small>(Edit)</small></a>
+                <a href="{% url 'lists:detail' slug=list.slug %}">{{ list.title }}</a>
+                {% if not not_self %}
+                  <a href="{% url 'lists:edit' slug=list.slug %}"><small>(Edit)</small></a>
+                  <form method="post" action="{% url 'lists:delete' slug=list.slug %}">
+                    {% csrf_token $}
                     <button class="btn btn-link" type="submit"><small class="text-danger">(Delete)</small></button>
                   </form>
                 {% endif %}</td>
@@ -75,7 +76,6 @@
 <div class="col-md-4">
 
 </div>
-
 <div class="row">
   <div class="span4 offset2">
     {% if not_self %}
