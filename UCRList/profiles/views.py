@@ -79,6 +79,8 @@ class ProfileView(View):
         followers = Follow.objects.followers(request_profile.user)
 
         if request.user.is_authenticated():
+            myfriends = Friend.objects.friends(request.user)
+            following = Follow.objects.following(request.user)
             not_friends = not Friend.objects.are_friends(request.user, request_profile.user)
             doesnt_follow = not Follow.objects.follows(request.user,request_profile.user)
             not_self = request.user.username != username
@@ -92,7 +94,9 @@ class ProfileView(View):
                                                             'doesnt_follow':doesnt_follow,
                                                             'not_self': not_self,
                                                             'topicList': topicList,
+                                                            'myfriends': myfriends,
                                                             'followers': followers,
+                                                            'following': following,
                                                             'userLists': userLists,
                                                             'active_request':active_request})
 
