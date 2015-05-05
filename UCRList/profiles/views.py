@@ -56,15 +56,15 @@ class ProfileView(View):
         if sortmethod=='ascending':
             global topicList
             userLists = List.objects.filter(owner=userid).order_by('pub_date')
-
         elif sortmethod=='descending':
             global topicList
             userLists = List.objects.filter(owner=userid).order_by('-pub_date')
-
-        elif sortmethod=='category':
+        elif sortmethod=='alphabetical':
             global topicList
             userLists = List.objects.filter(owner=userid).order_by('title')
-
+        elif sortmethod=='ralphabetical':
+            global topicList
+            userLists = List.objects.filter(owner=userid).order_by('-title')
 
         topicList = InterestTopic.objects.filter(user=userid)
         addfriendform = AddFriendForm()
