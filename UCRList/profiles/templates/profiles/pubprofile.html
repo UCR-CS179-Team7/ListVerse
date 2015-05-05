@@ -16,12 +16,6 @@
       <p><strong>Birthday</strong>: {{profile.birthday}}</p>
       <p><strong>Active user since</strong>: {{profile.creation_date}}</p>
     </center>
-    <p>Topics of Interest</p>
-    <ul>
-      {% for topic in topicList %}
-      <li> {{topic.get_topic_display}} </li>
-      {% endfor %}
-    </ul>
   </div>
   <div class="col-md-6">
     <h3>{{profile.user.username}}'s Friends </h3>
@@ -33,46 +27,55 @@
       <li>{{ f.username }}</li>
       {% endfor %}
     </ul>
-
     <h4> Following </h4>
     {% following profile.user %}
+    <pFavorite Topics</p>
+    <ul>
+      {% for topic in topicList %}
+      <li> {{topic.get_topic_display}} </li>
+      {% endfor %}
+    </ul>
   </div>
 </div>
 
 
 {% endif %}
-<div>
-    <h1>{{ profile.user.username }}'s lists</h1>
-    <div class="btn-group" role="group" aria-label="...">
-      <a class="btn btn-info" href="/profiles/view/{{profile.user.username}}/ascending">Time Ascending</a>
-      <a class="btn btn-info"href="/profiles/view/{{profile.user.username}}/descending">Time Descending</a>
-      <a class="btn btn-info"href="/profiles/view/{{profile.user.username}}/alphabetical">A-Z</a>
-      <a class="btn btn-info"href="/profiles/view/{{profile.user.username}}/ralphabetical">Z-A</a>
-    </div>
-    <table class="table table-hover">
-        <thead>
+<div class="col-md-8">
+  <div>
+      <h1>{{ profile.user.username }}'s lists</h1>
+      <div class="btn-group" role="group" aria-label="...">
+        <a class="btn btn-info" href="/profiles/view/{{profile.user.username}}/ascending">Time Ascending</a>
+        <a class="btn btn-info"href="/profiles/view/{{profile.user.username}}/descending">Time Descending</a>
+        <a class="btn btn-info"href="/profiles/view/{{profile.user.username}}/alphabetical">A-Z</a>
+        <a class="btn btn-info"href="/profiles/view/{{profile.user.username}}/ralphabetical">Z-A</a>
+      </div>
+      <table class="table table-hover">
+          <thead>
+              <tr>
+                  <td>Title</td><td>Created by</td><td>Publish date</td>
+              </tr>
+          </thead>
+          {% for list in userLists %}
             <tr>
-                <td>Title</td><td>Created by</td><td>Publish date</td>
+              <td>
+                <span>
+                  <form method="post" action="{% url 'lists:delete' slug=list.slug %}">
+                    {% csrf_token %}
+                    <a href="{% url 'lists:detail' slug=list.slug %}">{{ list.title }}</a>  {% if not not_self %}<a href="{% url 'lists:edit' slug=list.slug %}"><small>(Edit)</small></a>
+                    <button class="btn btn-link" type="submit"><small class="text-danger">(Delete)</small></button>
+                  </form>
+                </span>
+                {% endif %}</td>
+              <td> <a href="{% url 'profiles:view' username=list.owner sortmethod='default'%}">{{ list.owner }}</a></td>
+              <td>{{ list.pub_date }}</p></td>
             </tr>
-        </thead>
-        {% for list in userLists %}
-          <tr>
-            <td>
-              <span>
-                <form method="post" action="{% url 'lists:delete' slug=list.slug %}">
-                  {% csrf_token %}
-                  <a href="{% url 'lists:detail' slug=list.slug %}">{{ list.title }}</a>  {% if not not_self %}<a href="{% url 'lists:edit' slug=list.slug %}"><small>(Edit)</small></a>
-                  <button class="btn btn-link" type="submit"><small class="text-danger">(Delete)</small></button>
-                </form>
-              </span>
-              {% endif %}</td>
-            <td> <a href="{% url 'profiles:view' username=list.owner sortmethod='default'%}">{{ list.owner }}</a></td>
-            <td>{{ list.pub_date }}</p></td>
-          </tr>
-        {% endfor %}
-    </table>
+          {% endfor %}
+      </table>
+  </div>
 </div>
+<div class="col-md-4">
 
+</div>
 
 <div class="row">
   <div class="span4 offset2">
@@ -80,14 +83,14 @@
       {% if not_friends and not active_request %}
       <form method="post" action="{% url 'profiles:addfriend' username=profile.user.username sortmethod='default' %}">
         {% csrf_token %}
-        <button type="submit">Add Friend</button>
+        <button class="btn btn-primary" type="submit">Add Friend</button>
       </form>
       {% endif %}
 
       {% if doesnt_follow  %}
       <form method="post" action="{% url 'profiles:followuser' username=profile.user.username sortmethod='default' %}">
         {% csrf_token %}
-        <button type="submit">Follow User</button>
+        <button class="btn btn-primary" type="submit">Follow User</button>
       </form>
       {% endif %}
     {% endif %}
