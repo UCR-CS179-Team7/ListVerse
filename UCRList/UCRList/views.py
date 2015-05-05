@@ -21,10 +21,14 @@ class HomePageView(generic.TemplateView):
         if request.user.is_authenticated():
             # Get list of friend requests
             frequests = Friend.objects.unrejected_requests(user=request.user)
+            myfriends = Friend.objects.friends(request.user)
             followers = Follow.objects.followers(request.user)
+            following = Follow.objects.following(request.user)
             list_notifications = Message.objects.filter(to_user=request.user)
             return render(request, 'home.html', {'frequests' : frequests,
                                                  'followers': followers,
+                                                 'myfriends': myfriends,
+                                                 'following': following,
                                                  'list_notifications' : list_notifications})
 
         else:

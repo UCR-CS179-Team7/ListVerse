@@ -1,55 +1,78 @@
 {% extends '_layouts/base.html' %}
 {% load friendshiptags %}
-
-{% block headline %}<h1>AWESOME!!</h1>{% endblock headline %}
-
 {% block content %}
-<p>It works! Good Job{% if user.is_authenticated %} {{ user.username }}{% endif %}!</p>
-{% if user.is_authenticated %}
-    <h4> Friends </h4>
-    {% friends user %}
+    {% block headline %}<h1 style="text-align: center;">Welcome to UCRList</h1>{% endblock headline %}
+    {% if user.is_authenticated %}
+    <div style="width: 20px; float: left"></div>
+    <div class="network-section" style="float: left;">
+        <h3>Your Network</h3>
+        <div class="network-content">
+            <table style="width: 100%">
+                <tr style="width: 100%">
+                    <td style="width: 33%">
+                        <h4> Friends </h4>
+                        <ul>
+                            {% for f in myfriends %}
+                                <li><a href="/profiles/view/{{ f.username }}/">{{ f.username }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    <td style="width: 33%">
+                        <h4> Followers </h4>
+                        <ul>
+                            {% for f in followers %}
+                                <li><a href="/profiles/view/{{ f.username }}/">{{ f.username }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    <td style="width: 33%">
+                        <h4> Following </h4>
+                        <ul>
+                            {% for f in following %}
+                                <li><a href="/profiles/view/{{ f.username }}/">{{ f.username }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
 
-    <h4> Followers </h4>
-    <ul>
-        {% for f in followers %}
-            <li>{{ f.username }}</li>
-        {% endfor %}
-    </ul>
+     <div class="small-separator" style="height: 30px; width: 100%; display: inline-block;"> &nbsp; </div>
 
-    <h4> Following </h4>
-    {% following user %}
-
-    <p> Messages: </p>
-    <form method="post" action="">
-      {% csrf_token %}
-      <table class="table table-hover">
-        <thead>
-          <tr>
-            <th>From</th>
-            <th>Content</th>
-            <th></th>
-            <th>Date</th>
-          </tr>
-        </thead>
-        {% for frequest in frequests %}
-        <tr>
-          <td><a href="/profiles/view/{{frequest.from_user}}">{{frequest.from_user}}</a></td>
-          <td> {{frequest.message}} </td>
-          <td> <button name="accept" value="{{frequest.id}}" type="submit" class="btn btn-success btn-sm">Accept</button>
-               <button name="reject" value="{{frequest.id}}" type="submit" class="btn btn-danger btn-sm">Reject</button>
-          </td>
-          <td>{{frequest.created}}</td>
-        </tr>
-        {% endfor %}
-        {% for list_notification in list_notifications %}
-        <tr>
-          <td><a href="/profiles/view/{{list_notification.from_user}}">{{list_notification.from_user}}</a></td>
-          <td> {{list_notification.content}} </td>
-          <td></td>
-          <td>{{list_notification.send_date}} </td>
-        </tr>
-        {% endfor %}
-      </table>
-    </form>
+    <div class="messages-section" style="float: left;">
+        <h3> Messages: </h3>
+        <form method="post" action="">
+          {% csrf_token %}
+          <table class="table table-hover" style="width: 100%;">
+            <thead>
+              <tr>
+                <th>From</th>
+                <th>Content</th>
+                <th></th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            {% for frequest in frequests %}
+            <tr>
+              <td><a href="/profiles/view/{{frequest.from_user}}">{{frequest.from_user}}</a></td>
+              <td> {{frequest.message}} </td>
+              <td> <button name="accept" value="{{frequest.id}}" type="submit" class="btn btn-success btn-sm">Accept</button>
+                   <button name="reject" value="{{frequest.id}}" type="submit" class="btn btn-danger btn-sm">Reject</button>
+              </td>
+              <td>{{frequest.created}}</td>
+            </tr>
+            {% endfor %}
+            {% for list_notification in list_notifications %}
+            <tr>
+              <td><a href="/profiles/view/{{list_notification.from_user}}">{{list_notification.from_user}}</a></td>
+              <td> {{list_notification.content}} </td>
+              <td></td>
+              <td>{{list_notification.send_date}} </td>
+            </tr>
+            {% endfor %}
+          </table>
+        </form>
+    </div>
 {% endif %}
-{% endblock %}
+{% endblock content %}
