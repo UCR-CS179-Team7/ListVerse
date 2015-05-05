@@ -1,5 +1,5 @@
 from django.conf.urls import include, url
-from .views import AddListView, ListDetailView, HotListsView, EditListView, GetListData
+from .views import AddListView, ListDetailView, HotListsView, EditListView, GetListData, DeleteView
 
 urlpatterns = [
     url(r'^new$', AddListView.as_view(), name='new'),
