@@ -62,7 +62,7 @@
                 {% if not not_self %}
                   <a href="{% url 'lists:edit' slug=list.slug %}"><small>(Edit)</small></a>
                   <form method="post" action="{% url 'lists:delete' slug=list.slug %}">
-                    {% csrf_token $}
+                    {% csrf_token %}
                     <button class="btn btn-link" type="submit"><small class="text-danger">(Delete)</small></button>
                   </form>
                 {% endif %}</td>
@@ -80,7 +80,8 @@
   <div class="span4 offset2">
     {% if not_self %}
       {% if not_friends and not active_request %}
-      <form method="post" action="{% url 'profiles:addfriend' username=profile.user.username sortmethod='default' %}">{% csrf_token %}
+      <form method="post" action="{% url 'profiles:addfriend' username=profile.user.username sortmethod='default' %}">
+        {% csrf_token %}
         <button class="btn btn-default" type="submit">Add Friend</button>
       </form>
       {% endif %}
