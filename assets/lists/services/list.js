@@ -128,6 +128,18 @@ class ListService {
         return this.list_tags.slice();
     }
     
+    addTagById(id) {
+        for(let _possible_tag of this.possible_tags) {
+            if(_possible_tag.id === id) {
+                this.list_tags.push({
+                    text: _possible_tag.text,
+                    id: _possible_tag.id,
+                });
+                return;
+            }
+        }
+    }
+
     addTag(tag) {
         for(let _tag of this.list_tags) {
             if(_tag.text === tag.text) {
@@ -218,9 +230,16 @@ class AddListService extends ListService {
 }
 
 class EditListService extends ListService {
+    slug(s) {
+        if(typeof s === 'string'){
+            this.list_slug = s;
+        }
+        return this.list_slug;
+    }
+    
     upload() {
-        return super.upload('/lists/edit');
+        return super.upload('/lists/edit/' + this.slug());
     }
 }
 
-export {AddListService, EditListService}
+export {AddListService, EditListService};

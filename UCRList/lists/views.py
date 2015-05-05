@@ -1,10 +1,10 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import View, DetailView, ListView
 import json
 from friendship.models import Friend, Follow
 
-from .models import User, List, ListItem
+from .models import User, List, ListItem, TopicTag
 from messages.models import Message
 from .forms import AddListForm
 
@@ -26,6 +26,7 @@ class AddListView(View):
 
     def post(self, request):
         ls = json.loads(request.body)
+        # print ls
         # save list json from request into DB
         newList = List(owner=request.user, title=ls["title"], num_items=ls["number"])
         newList.save()
@@ -37,12 +38,22 @@ class AddListView(View):
             'slug': newList.slug
         }
 
+        for tagChoiceID in ls["tags"]:
+            newTopicTag = TopicTag(list=newList, topic=tagChoiceID)
+            newTopicTag.save()
+
         friends = Friend.objects.friends(request.user)
         for friend in friends:
             list_notification = Message(type='LN', to_user=friend, from_user=request.user, content="I've added a new list called " + newList.title + ". Check it out!")
             list_notification.save()
         return HttpResponse(json.dumps(slug_dict), status=201, \
                 content_type='application/json')
+
+class DeleteView(View):
+    def post(self, request, slug=''):
+        for list in List.objects.filter(slug=slug):
+            list.delete()
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 class EditListView(View):
     def get(self, request, slug=''):
@@ -55,21 +66,20 @@ class EditListView(View):
         ls.num_items = list['number']
         ls.save()
 
-        items = ListItem.objects.filter(listid=ls)
+        for item in ListItem.objects.filter(listid=ls):
+            item.delete()
 
-        if len(items) < len(list['list']):
-            for item in items[len(items):]:
-                item.delete()
-
-        for idx, item in enumerate(list['list']):
-            if idx >= len(items):
-                newItem = ListItem(listid=ls, title=item['title'],\
+        for item in list['list']:
+            newItem = ListItem(listid=ls, title=item['title'],\
 descriptionhtml=item['description'], descriptionmeta=item['description_meta'])
-                newItem.save()
-            else:
-                items[idx].title = item['title']
-                items[idx].descriptionhtml = item['description']
-                items[idx].descriptionmeta = item['description_meta']
+            newItem.save()
+
+        for topicTag in TopicTag.objects.filter(list=ls):
+            topicTag.delete()
+
+        for tagChoiceID in list['tags']:
+            newTopicTag = TopicTag(list=ls, topic=tagChoiceID)
+            newTopicTag.save()
 
         slug_dict = {
             'slug': ls.slug
@@ -88,10 +98,13 @@ class GetListData(View):
                 'description_meta': item.descriptionmeta,
             }
 
+        tags = TopicTag.objects.filter(list=ls)
+
         list_data = {
             'title': ls.title,
             'number': ls.num_items,
             'list': map(get_item_info, items),
+            'tags': map(lambda tag: tag.topic, tags),
         }
 
         return HttpResponse(json.dumps(list_data), status=200, \

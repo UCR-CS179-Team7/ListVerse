@@ -9,7 +9,7 @@ from django.conf import settings
 from .models import Profile
 from .models import InterestTopic
 from .models import User
-from .forms import EditProfileForm, AddFriendForm, FollowUserForm
+from .forms import EditProfileForm
 from lists.models import List, ListItem
 
 # Friendship
@@ -20,8 +20,7 @@ from friendship.models import Friend, Follow
 from django.views.decorators.cache import never_cache
 
 class AddFriendView(View):
-    def post(self, request, username=''):
-
+    def post(self, request, username='', sortmethod=''):
         new_friend = User.objects.get(username=username)
         Friend.objects.add_friend(
             from_user=request.user,
@@ -32,7 +31,7 @@ class AddFriendView(View):
 
 
 class FollowUserView(View):
-    def post(self, request, username=''):
+    def post(self, request, username='', sortmethod=''):
 
         followee = User.objects.get(username=username)
         Follow.objects.add_follower(request.user, followee)
@@ -42,7 +41,7 @@ class FollowUserView(View):
 
 class ProfileView(View):
     @never_cache
-    def get(self, request, username=''):
+    def get(self, request, username='', sortmethod=''):
         try:
             userid = User.objects.get(username=username)
         except User.DoesNotExist:
@@ -51,11 +50,22 @@ class ProfileView(View):
 
         request_profile = Profile.objects.get(user_id=userid)
         not_friends = doesnt_follow = not_self = active_request = False
-        topicList = InterestTopic.objects.filter(user=userid)
 
         userLists = List.objects.filter(owner=userid)
-        addfriendform = AddFriendForm()
-        followuserform = FollowUserForm()
+        if sortmethod=='ascending':
+            global topicList
+            userLists = List.objects.filter(owner=userid).order_by('pub_date')
+        elif sortmethod=='descending':
+            global topicList
+            userLists = List.objects.filter(owner=userid).order_by('-pub_date')
+        elif sortmethod=='alphabetical':
+            global topicList
+            userLists = List.objects.filter(owner=userid).order_by('title')
+        elif sortmethod=='ralphabetical':
+            global topicList
+            userLists = List.objects.filter(owner=userid).order_by('-title')
+
+        topicList = InterestTopic.objects.filter(user=userid)
         followers = Follow.objects.followers(request_profile.user)
 
         if request.user.is_authenticated():
@@ -68,8 +78,6 @@ class ProfileView(View):
             active_request = request.user in list(map(lambda req: req.from_user, frnd_rqsts))
 
         return render(request, 'profiles/pubprofile.html', {'profile':request_profile,
-                                                            'addfriendform':addfriendform,
-                                                            'followuserform':followuserform,
                                                             'not_friends': not_friends,
                                                             'doesnt_follow':doesnt_follow,
                                                             'not_self': not_self,

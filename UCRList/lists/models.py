@@ -1,8 +1,12 @@
+# Models
 from django.db import models
 from django.contrib.auth.models import User
 from django.template.defaultfilters import slugify
+from profiles.models import InterestTopic
+
 import datetime
 import itertools
+
 
 class List(models.Model):
     # MODEL FIELDS
@@ -53,8 +57,6 @@ class List(models.Model):
         return self.title
 
 class ListItem(models.Model):
-    #MODEL CHOICES
-
     #MODEL FIELDS
     listid = models.ForeignKey(List)
     title = models.CharField(max_length=128)
@@ -63,6 +65,11 @@ class ListItem(models.Model):
     #body = models.CharField(max_length=1024)
     #contentalt = models.CharField(max_length=1024, blank=True)
     #contenturi = models.CharField(max_length=256, blank=True)
+
+class TopicTag(models.Model):
+    # topic is tied to the choices as InterestTopic
+	list = models.ForeignKey(List)
+	topic = models.IntegerField(choices=InterestTopic.TOPIC_CHOICES)
 
 '''
     Notes for List and ListItems models
