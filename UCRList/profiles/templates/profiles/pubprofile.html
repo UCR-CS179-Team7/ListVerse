@@ -35,6 +35,11 @@
 {% endif %}
 <div>
     <h1>{{ profile.user.username }}'s lists</h1>
+    <div class="btn-group" role="group" aria-label="...">
+      <a class="btn btn-info" href="/profiles/view/{{profile.user.username}}/ascending">Ascending</a>
+      <a class="btn btn-info"href="/profiles/view/{{profile.user.username}}/descending">Descending</a>
+      <a class="btn btn-info"href="/profiles/view/{{profile.user.username}}/category">Category</a>
+    </div>
     {% for list in userLists %}
         <div>
             <h4><a href="{% url 'lists:detail' slug=list.slug %}">{{ list.title }}</a>  {% if not not_self %}<a href="{% url 'lists:edit' slug=list.slug %}"><small>(Edit)</small></a>{% endif %}</h4>
