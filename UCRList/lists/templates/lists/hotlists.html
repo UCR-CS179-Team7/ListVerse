@@ -7,7 +7,7 @@
             <tr style="height: 30px;">
                 <td><div style="width: 30px;display: inline-block; vertical-align: bottom">{{ forloop.counter}}.</div></td>
                 <td><div style="width: 300px;display: inline-block"><a href="{% url 'lists:detail' slug=l.slug %}">{{ l.title|truncatechars:50 }}</a></div></td>
-                <td><div style="width: 300px;display: inline-block"><a href="/profiles/view/{{ l.owner }}/"> by {{ l.owner }}</a> </div></td>
+                <td><div style="width: 300px;display: inline-block"><a href="{% url 'profiles:view' username=l.owner sortmethod='default' %}"> by {{ l.owner }}</a> </div></td>
                 <td><div style="width: 300px;display: inline-block"> {{ l.pub_date }}</div></td>
             </tr>
         {% endfor %}

@@ -13,7 +13,7 @@
                         <h4> Friends </h4>
                         <ul>
                             {% for f in myfriends %}
-                                <li><a href="/profiles/view/{{ f.username }}/">{{ f.username }}</a></li>
+                                <li><a href="{% url 'profiles:view' username=f.username sortmethod='default'%}">{{ f.username }}</a></li>
                             {% endfor %}
                         </ul>
                     </td>
@@ -21,7 +21,7 @@
                         <h4> Followers </h4>
                         <ul>
                             {% for f in followers %}
-                                <li><a href="/profiles/view/{{ f.username }}/">{{ f.username }}</a></li>
+                                <li><a href="{% url 'profiles:view' username=f.username sortmethod='default'%}">{{ f.username }}</a></li>
                             {% endfor %}
                         </ul>
                     </td>
@@ -29,7 +29,7 @@
                         <h4> Following </h4>
                         <ul>
                             {% for f in following %}
-                                <li><a href="/profiles/view/{{ f.username }}/">{{ f.username }}</a></li>
+                                <li><a href="{% url 'profiles:view' username=f.username sortmethod='default'%}">{{ f.username }}</a></li>
                             {% endfor %}
                         </ul>
                     </td>

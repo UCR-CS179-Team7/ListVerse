@@ -10,6 +10,8 @@ from .forms import RegistrationForm, LoginForm
 
 from friendship.models import Friend, Follow, FriendshipRequest
 from messages.models import Message
+from profiles.models import InterestTopic
+from lists.models import TopicTag
 
 # Decorators
 from django.views.decorators.cache import never_cache
@@ -95,6 +97,9 @@ class FeedView(generic.TemplateView):
         #startListNum = args[0]
         #numListItems = args[1]
         friends = Friend.objects.friends(user)
+        mytopics = InterestTopic.objects.filter(user=request.user).values('topic')
+        similarListTags = TopicTag.objects.filter(topic__in=mytopics)
+        listsWithMyTopics = TopicTag.objects.filter(topic__in=mytopics).values('list')
         followees = Follow.objects.following(user)
-        lists = List.objects.filter(Q(owner__in=friends) | Q(owner__in=followees))
+        lists = List.objects.filter(Q(owner__in=friends) | Q(owner__in=followees) | Q(id__in=listsWithMyTopics)).order_by('-pub_date')
         return render(request, 'feed.html', {'friendList': lists})

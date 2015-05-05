@@ -30,7 +30,7 @@
           {% else %}
           <a href="{% url 'lists:new' %}" class="nav-tabs">New List</a>
           <a class="nav-tabs" href="{% url 'profiles:edit' %}">Edit Profile</a>
-          <a class="nav-tabs" href="{% url 'profiles:view' username=user.username %}">My Profile</a>
+          <a class="nav-tabs" href="{% url 'profiles:view' username=user.username sortmethod='default'%}">My Profile</a>
               <div style="float: right; display: inline-block">
           <p class="login-status">logged in as {{  user.username }}</p>
           <a href="{% url 'logout' %}" class="logout-button btn btn-default navbar-btn">Logout</a>
