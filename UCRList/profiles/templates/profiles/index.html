@@ -75,16 +75,18 @@
 {% load friendshiptags %}
 
 {% block content %}
-{% if edit %}
-  <p>Changes have been made</p>
-{% endif %}
-    <image id="profile_photo" height="150" width="150" src="{{ MEDIA_URL }}{{ current_profile.avatar }}"></image>
-{% crispy form %}
+<div class="profile-section">
+    <h2 style="text-align: center">Make Changes to Your Profile</h2>
+    {% if edit %}
+      <p>Changes have been made</p>
+    {% endif %}
+        <image id="profile_photo" height="150" width="150" src="{{ MEDIA_URL }}{{ current_profile.avatar }}"></image>
+    {% crispy form %}
 
-{% if current_profile %}
-  <p>Active user since {{current_profile.creation_date}}</p>
-{% else %}
-  <p>You must be logged in to view this page.</p>
-{% endif %}
-
-{% endblock %}
+    {% if current_profile %}
+      <p>Active user since {{current_profile.creation_date}}</p>
+    {% else %}
+      <p>You must be logged in to view this page.</p>
+    {% endif %}
+</div>
+{% endblock content %}
