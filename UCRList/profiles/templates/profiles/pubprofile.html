@@ -31,7 +31,7 @@
     {% following profile.user %}
     <pFavorite Topics</p>
     <ul>
-      {% for topic in topicList %}
+       {% for topic in topicList %}
       <li> {{topic.get_topic_display}} </li>
       {% endfor %}
     </ul>
@@ -80,8 +80,7 @@
   <div class="span4 offset2">
     {% if not_self %}
       {% if not_friends and not active_request %}
-      <form method="post" action="{% url 'profiles:addfriend' username=profile.user.username sortmethod='default' %}">
-        {% csrf_token %}
+      <form method="post" action="{% url 'profiles:addfriend' username=profile.user.username sortmethod='default' %}">{% csrf_token %}
         <button class="btn btn-default" type="submit">Add Friend</button>
       </form>
       {% endif %}
