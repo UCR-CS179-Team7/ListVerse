@@ -55,7 +55,7 @@
             </thead>
             {% for frequest in frequests %}
             <tr>
-              <td><a href="/profiles/view/{{frequest.from_user}}">{{frequest.from_user}}</a></td>
+              <td><a href="{% url 'profiles:view' username=frequest.from_user sortmethod='default'%}">{{frequest.from_user}}</a></td>
               <td> {{frequest.message}} </td>
               <td> <button name="accept" value="{{frequest.id}}" type="submit" class="btn btn-success btn-sm">Accept</button>
                    <button name="reject" value="{{frequest.id}}" type="submit" class="btn btn-danger btn-sm">Reject</button>
@@ -65,7 +65,7 @@
             {% endfor %}
             {% for list_notification in list_notifications %}
             <tr>
-              <td><a href="/profiles/view/{{list_notification.from_user}}">{{list_notification.from_user}}</a></td>
+              <td><a href="{% url 'profiles:view' username=list_notification.from_user sortmethod='default' %}">{{list_notification.from_user}}</a></td>
               <td> {{list_notification.content}} </td>
               <td></td>
               <td>{{list_notification.send_date}} </td>
