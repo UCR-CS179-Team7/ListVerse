@@ -9,3 +9,4 @@ urlpatterns = [
     url(r'^edit/(?P<slug>[^\.]+)$', EditListView.as_view(), name='edit'),
     url(r'^json/(?P<slug>[^\.]+)$', GetListData.as_view(), name='json'),
 ]
+

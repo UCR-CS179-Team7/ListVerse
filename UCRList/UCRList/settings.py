@@ -83,8 +83,7 @@ WSGI_APPLICATION = 'UCRList.wsgi.application'
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
 import dj_database_url
-DATABASES = {}
-DATABASES['default'] = dj_database_url.config()
+DATABASES = {'default': dj_database_url.config()}
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
@@ -105,14 +104,18 @@ USE_TZ = True
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
 )
-STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+
+
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+STATIC_URL = os.environ.get("STATIC_URL", "")
+STATIC_ROOT = '/static/'
+
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 
 AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID", "")
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY", "")
 AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME", "")
 
-STATIC_URL = 'http://' + 'ucrlist-static' + '.s3.amazonaws.com/'
-MEDIA_URL = STATIC_URL + 'media/'
+MEDIA_URL = 'http://ucrlist-static.s3.amazonaws.com/media/'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
