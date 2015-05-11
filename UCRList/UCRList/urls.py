@@ -13,6 +13,7 @@ urlpatterns = [
     url(r'^accounts/login/$', LoginView.as_view(), name='login'),
     url(r'^accounts/logout/$', LogOutView.as_view(), name='logout'),
     url(r'^profiles/', include('profiles.urls', namespace='profiles')),
+    url(r'^search/', include('searching.urls', namespace='searching')),
     url(r'^lists/', include('lists.urls', namespace='lists')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'feed/$', FeedView.as_view(), name='feed')
