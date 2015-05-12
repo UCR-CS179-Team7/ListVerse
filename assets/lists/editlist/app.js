@@ -76,7 +76,7 @@ function LoadList($q, $http, $location, list) {
        }
 
        for (let item of list_data.list) {
-            let _item = list.newItem(item.title, item.description_meta);
+            let _item = list.newItem(item.title, item.description);
             list.push(_item);
        }
        deferred.resolve();

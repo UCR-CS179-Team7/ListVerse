@@ -95,7 +95,7 @@ class GetListData(View):
         def get_item_info(item):
             return {
                 'title': item.title,
-                'description_meta': item.descriptionmeta,
+                'description': item.descriptionhtml,
             }
 
         tags = TopicTag.objects.filter(list=ls)
