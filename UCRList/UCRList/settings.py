@@ -65,7 +65,7 @@ ROOT_URLCONF = 'UCRList.urls'
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenicationBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
 )
 
 TEMPLATE_BACKEND = 'django.template.backends.django.DjangoTemplates'
