@@ -37,12 +37,17 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     'crispy_forms',
     'bootstrap_toolkit',
     'profiles',
     'lists',
     'friendship',
     'messages',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.facebook',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -58,23 +63,38 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'UCRList.urls'
 
-TEMPLATES = [
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.template.context_processors.media',
-                'django.template.context_processors.static',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-            ],
-        },
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenicationBackend',
+)
+
+TEMPLATE_BACKEND = 'django.template.backends.django.DjangoTemplates'
+TEMPLATE_DIRS = (
+        os.path.join(BASE_DIR, 'templates'),
+)
+
+TEMPLATE_APP_DIRS = True
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.template.context_processors.debug',
+    'django.template.context_processors.request',
+    'django.template.context_processors.media',
+    'django.template.context_processors.static',
+    'django.contrib.auth.context_processors.auth',
+    'django.contrib.messages.context_processors.messages',
+    'django.core.context_processors.request',
+    'allauth.account.context_processors.account',
+    'allauth.socialaccount.context_processors.socialaccount',
+)
+
+SITE_ID = 1
+LOGIN_REDIRECT_URL = '/'
+SOCIALACCOUTN_QUERY_EMAIL = True
+SOCIALACCOUNT_PROVIDERS = {
+    'facebook': {
+        'SCOPE': ['email'],
+        'METHOD': 'js_sdk',
     },
-]
+}
 
 WSGI_APPLICATION = 'UCRList.wsgi.application'
 
