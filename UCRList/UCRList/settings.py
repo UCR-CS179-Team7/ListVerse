@@ -43,7 +43,7 @@ INSTALLED_APPS = (
     'lists',
     'friendship',
     'messages',
-    'searching',
+    'stats',
 )
 
 MIDDLEWARE_CLASSES = (
