@@ -9,4 +9,5 @@ urlpatterns = [
     url(r'^view/(?P<username>\w{0,50})/(?P<sortmethod>\w{0,50})/delete$', views.DeleteFriendView.as_view(), name='deletefriend'),
     url(r'^view/(?P<username>\w{0,50})/(?P<sortmethod>\w{0,50})/follow$', views.FollowUserView.as_view(), name='followuser'),
     url(r'^view/(?P<username>\w{0,50})/(?P<sortmethod>\w{0,50})/unfollow$', views.UnfollowUserView.as_view(), name='unfollowuser'),
+    url(r'^view/(?P<username>\w{0,50})/(?P<sortmethod>\w{0,50})/sendmessage$', views.SendMessage.as_view(), name='sendmessage'),
 ]

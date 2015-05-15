@@ -40,15 +40,19 @@ class HomePageView(generic.TemplateView):
     def post(self, request):
         if request.user.is_authenticated():
 
-            if(request.POST.get('accept')):
-                frequest_id = request.POST.get('accept')
+            if(request.POST.get('accept_fr')):
+                frequest_id = request.POST.get('accept_fr')
                 frequest = FriendshipRequest.objects.get(id=frequest_id)
                 frequest.accept()
 
-            elif(request.POST.get('reject')):
-                frequest_id = request.POST.get('reject')
+            elif(request.POST.get('reject_fr')):
+                frequest_id = request.POST.get('reject_fr')
                 frequest = FriendshipRequest.objects.get(id=frequest_id)
                 frequest.reject()
+
+            elif(request.POST.get('delete_ln')):
+                ln_id = request.POST.get('delete_ln')
+                ln = Message.objects.filter(id=ln_id).delete()
 
             frequests = Friend.objects.unrejected_requests(user=request.user)
             myfriends = Friend.objects.friends(request.user)

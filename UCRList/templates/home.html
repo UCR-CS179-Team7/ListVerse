@@ -57,8 +57,8 @@
             <tr>
               <td><a href="{% url 'profiles:view' username=frequest.from_user sortmethod='default'%}">{{frequest.from_user}}</a></td>
               <td> {{frequest.message}} </td>
-              <td> <button name="accept" value="{{frequest.id}}" type="submit" class="btn btn-success btn-sm">Accept</button>
-                   <button name="reject" value="{{frequest.id}}" type="submit" class="btn btn-danger btn-sm">Reject</button>
+              <td> <button name="accept_fr" value="{{frequest.id}}" type="submit" class="btn btn-success btn-sm">Accept</button>
+                   <button name="reject_fr" value="{{frequest.id}}" type="submit" class="btn btn-danger btn-sm">Reject</button>
               </td>
               <td>{{frequest.created}}</td>
             </tr>
@@ -67,7 +67,7 @@
             <tr>
               <td><a href="{% url 'profiles:view' username=list_notification.from_user sortmethod='default' %}">{{list_notification.from_user}}</a></td>
               <td> {{list_notification.content}} </td>
-              <td></td>
+              <td> <button name="delete_ln" value="{{list_notification.id}}" type="submit" class="btn btn-danger btn-sm">Delete</button></td>
               <td>{{list_notification.send_date}} </td>
             </tr>
             {% endfor %}

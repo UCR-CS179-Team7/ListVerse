@@ -6,9 +6,8 @@ from django.views.generic import View
 from django.conf import settings
 
 # Models
-from .models import Profile
-from .models import InterestTopic
-from .models import User
+from .models import Profile, InterestTopic, User
+from messages.models import Message
 from .forms import EditProfileForm
 from lists.models import List, ListItem
 
@@ -18,6 +17,19 @@ from friendship.models import Friend, Follow
 # Decorators
 
 from django.views.decorators.cache import never_cache
+
+class SendMessage(View):
+    def post(self, request, username='', sortmethod=''):
+        message_content = request.POST.get('message_content')
+        to_user = User.objects.get(username=username)
+        message = Message(
+                    type='GN',
+                    to_user=to_user,
+                    from_user=request.user,
+                    content=message_content
+        )
+        message.save()
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 class AddFriendView(View):
     def post(self, request, username='', sortmethod=''):
