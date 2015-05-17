@@ -10,7 +10,9 @@ from .models import Profile
 from .models import InterestTopic
 from .models import User
 from .forms import EditProfileForm
+from .models import FriendCircle, FriendCircleRelation
 from lists.models import List, ListItem
+from django.db.models import Q
 
 # Friendship
 from friendship.models import Friend, Follow
@@ -89,6 +91,12 @@ class ProfileView(View):
             frnd_rqsts = Friend.objects.unread_requests(request_profile.user)
             active_request = request.user in list(map(lambda req: req.from_user, frnd_rqsts))
 
+            circleList = []
+            circles = FriendCircle.objects.filter(user=request.user)
+            for c in circles:
+                friendsInCircle = [Friend.objects.filter(Q(pk__in=FriendCircleRelation.objects.filter(pk__in=c)))]
+                circleList.append(friendsInCircle)
+
         return render(request, 'profiles/pubprofile.html', {'profile':request_profile,
                                                             'not_friends': not_friends,
                                                             'doesnt_follow':doesnt_follow,
@@ -98,7 +106,8 @@ class ProfileView(View):
                                                             'followers': followers,
                                                             'following': following,
                                                             'userLists': userLists,
-                                                            'active_request':active_request})
+                                                            'active_request': active_request,
+                                                            'circle_list': circleList})
 
 class EditProfileView(View):
     def get(self, request, username=''):

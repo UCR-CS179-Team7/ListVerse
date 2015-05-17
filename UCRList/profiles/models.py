@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 
+from friendship.models import Friend
+
 # Create your models here.
 
 
@@ -40,8 +42,8 @@ class FriendCircle(models.Model):
 
 class FriendCircleRelation(models.Model):
     circle = models.ForeignKey(FriendCircle)
-    friend = models.ForeignKey(User)
-    
+    friend = models.ForeignKey(Friend)
+
 
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
