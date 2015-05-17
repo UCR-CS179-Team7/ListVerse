@@ -51,6 +51,8 @@ INSTALLED_APPS = (
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.facebook',
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.twitter',
 )
 
 SITE_ID = 3
@@ -59,12 +61,19 @@ LOGIN_REDIRECT_URL = '/'
 
 SOCIALACCOUNT_PROVIDERS = \
     {'facebook':
-       {'SCOPE': ['email', 'public_profile', 'user_friends'],
-        'AUTH_PARAMS': {'auth_type': 'reauthenticate'},
-        'METHOD': 'oauth2',
-        'LOCALE_FUNC': lambda request: 'en-US',
-        'VERIFIED_EMAIL': False,
-        'VERSION': 'v2.3'}}
+     {'SCOPE': ['email', 'public_profile', 'user_friends'],
+      'AUTH_PARAMS': {'auth_type': 'reauthenticate'},
+      'METHOD': 'oauth2',
+      'LOCALE_FUNC': lambda request: 'en-US',
+      'VERIFIED_EMAIL': False,
+      'VERSION': 'v2.3'
+      },
+     'google':
+     {'SCOPE': ['profile', 'email'],
+      'AUTH_PARAMS': {'access_type': 'online'},
+      'LOCALE_FUNC': lambda request: 'en-US',
+      }
+     }
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',

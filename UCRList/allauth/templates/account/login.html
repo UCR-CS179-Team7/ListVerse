@@ -1,8 +1,8 @@
-{% extends  %}
+{% extends "base.html" %}
 
 {% load i18n %}
-{% load account %}
-
+{% load socialaccount %}
+{% providers_media_js %}
 {% block head_title %}{% trans "Sign In" %}{% endblock %}
 
 {% block content %}
