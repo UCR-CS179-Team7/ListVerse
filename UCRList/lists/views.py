@@ -4,7 +4,7 @@ from django.views.generic import View, DetailView, ListView
 import json
 from friendship.models import Friend, Follow
 
-from .models import User, List, ListItem, TopicTag
+from .models import User, List, ListItem, TopicTag, BrowseHistory
 from messages.models import Message
 from .forms import AddListForm
 
@@ -12,6 +12,16 @@ class ListDetailView(DetailView):
     model = List
     context_object_name = 'l'
     template_name = 'lists/listdetail.html'
+
+    def get(self, request, slug=''):
+        user = request.user
+        # might find a better way
+        lst = List.objects.get(slug=slug) 
+        
+        bh = BrowseHistory(user=user, list=lst)
+        bh.save()
+        
+        return super(ListDetailView,self).get(self)
 
 class HotListsView(ListView):
     model = List
