@@ -1,4 +1,6 @@
 {% extends '_layouts/base.html' %}
+{% load crispy_forms_tags %}
+
 {% block content %}
 <div class="list-detail-section">
     <h2> {{ l.title }} </h2>
@@ -10,5 +12,28 @@
             {{ item.descriptionmeta |safe}}
         </div>
     {% endfor %}
+
+    {% for comment in l.comments.all %}
+        <div class="row">
+          <div class="col-md-6">
+                
+              <img style="display:block; margin: 0 auto;" class="img-circle" src="{{ MEDIA_URL }}{{ comment.owner.profile.avatar }}" height="75" width="75"/>
+              <strong><a href="{% url 'profiles:view' username=comment.owner.username sortmethod='default' %}"> {{comment.owner.username}}</a></strong>
+                <strong>Posted on </strong>: {{ comment.pub_date }}
+                {{ comment.content }}
+            </div>
+        </div>
+    {% endfor %}
+        <form method="post" action="{% url 'lists:comment' slug=l.slug %}">
+            {% csrf_token %}
+            <textarea name="comment_content" rows="4"
+                cols="40" class="comment" 
+                placeholder="What did you think about this list?">
+            </textarea>
+            <button type="submit" class="btn btn-primary">
+                Post Comment
+            </button>
+        </form>
+
 </div>
 {% endblock %}

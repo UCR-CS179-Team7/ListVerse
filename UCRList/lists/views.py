@@ -4,7 +4,7 @@ from django.views.generic import View, DetailView, ListView
 import json
 from friendship.models import Friend, Follow
 
-from .models import User, List, ListItem, TopicTag
+from .models import User, List, ListItem, TopicTag, Comment
 from messages.models import Message
 from .forms import AddListForm
 
@@ -109,3 +109,15 @@ class GetListData(View):
 
         return HttpResponse(json.dumps(list_data), status=200, \
                 content_type='application/json')
+
+class PostComment(View):
+    def post(self, request, slug=''):
+        ls = List.objects.get(slug=slug)
+        comment_content = request.POST.get('comment_content')
+        comment = Comment(
+                    list=ls,
+                    owner=request.user,
+                    content=comment_content
+        )
+        comment.save()
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))

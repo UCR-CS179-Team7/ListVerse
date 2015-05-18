@@ -91,3 +91,20 @@ class TopicTag(models.Model):
         contentalt is required
 
 '''
+
+class Comment(models.Model):
+    list = models.ForeignKey(List, related_name='comments')
+    owner = models.ForeignKey(User, related_name='comment_history')
+    content = models.CharField(max_length=8192)
+    pub_date = models.DateField(editable=False)
+    edit_date = models.DateField()
+
+    def update_timestamps(self):
+        if not self.id:
+            self.pub_date = datetime.datetime.today()
+        self.edit_date = datetime.datetime.today()
+
+    def save(self, *args, **kwargs):
+        self.update_timestamps()
+        super(Comment, self).save(args, kwargs)
+
