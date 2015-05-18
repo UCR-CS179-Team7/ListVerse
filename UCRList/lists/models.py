@@ -71,6 +71,12 @@ class TopicTag(models.Model):
 	list = models.ForeignKey(List)
 	topic = models.IntegerField(choices=InterestTopic.TOPIC_CHOICES)
 
+class BrowseHistory(models.Model):
+    user = models.ForeignKey(User)
+    list = models.ForeignKey(List)
+    creation_date = models.DateField(auto_now_add=True, null=True)
+
+
 '''
     Notes for List and ListItems models
     ----------------------------------------
