@@ -42,7 +42,7 @@ class FriendCircle(models.Model):
 
 class FriendCircleRelation(models.Model):
     circle = models.ForeignKey(FriendCircle)
-    friend = models.ForeignKey(Friend)
+    friend = models.ForeignKey(User)
 
 
 def create_user_profile(sender, instance, created, **kwargs):

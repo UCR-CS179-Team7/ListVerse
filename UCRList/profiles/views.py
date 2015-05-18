@@ -1,9 +1,10 @@
 import base64, hmac, json, os, time, urllib
 from hashlib import sha1
-from django.shortcuts import render
+from django.shortcuts import render, redirect, render_to_response
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import View
 from django.conf import settings
+from django.core.urlresolvers import reverse, reverse_lazy
 
 # Models
 from .models import Profile
@@ -20,6 +21,7 @@ from friendship.models import Friend, Follow
 # Decorators
 
 from django.views.decorators.cache import never_cache
+from django.template.defaultfilters import register
 
 class AddFriendView(View):
     def post(self, request, username='', sortmethod=''):
@@ -91,11 +93,7 @@ class ProfileView(View):
             frnd_rqsts = Friend.objects.unread_requests(request_profile.user)
             active_request = request.user in list(map(lambda req: req.from_user, frnd_rqsts))
 
-            circleList = []
-            circles = FriendCircle.objects.filter(user=request.user)
-            for c in circles:
-                friendsInCircle = [Friend.objects.filter(Q(pk__in=FriendCircleRelation.objects.filter(pk__in=c)))]
-                circleList.append(friendsInCircle)
+            circles = FriendCircle.objects.filter(user=request.user).values('circleName')
 
         return render(request, 'profiles/pubprofile.html', {'profile':request_profile,
                                                             'not_friends': not_friends,
@@ -107,7 +105,7 @@ class ProfileView(View):
                                                             'following': following,
                                                             'userLists': userLists,
                                                             'active_request': active_request,
-                                                            'circle_list': circleList})
+                                                            'circles': circles})
 
 class EditProfileView(View):
     def get(self, request, username=''):
@@ -182,6 +180,48 @@ class SignS3(View):
             'url': url,
         })
         return HttpResponse(content, content_type='application/json')
+
+
+class CirclesView(View):
+    def get(self, request):
+        if request.user.is_authenticated():
+            current_profile = request.user.profile
+            myfriends = Friend.objects.friends(request.user)
+            circles = FriendCircle.objects.filter(user=request.user).values()
+            friendsInCircles = {}
+            friendsNotInCircles = {}
+            for c in circles:
+                circleMappings = FriendCircleRelation.objects.filter(circle=c['id'])
+                friendsInCircles[c['circleName']] = \
+                    [f for f in myfriends if circleMappings.filter(friend=f).exists()]
+                friendsNotInCircles[c['circleName']] = \
+                    [f for f in myfriends if not circleMappings.filter(friend=f).exists()]
+
+        return render(request, 'profiles/circles.html', {'profile': current_profile,
+                                                         'friends': myfriends,
+                                                         'circles': circles,
+                                                         'friends_in_circles': friendsInCircles,
+                                                         'not_in_circles': friendsNotInCircles})
+
+    @register.filter(name='getItem')
+    def getItem(dictionary, key):
+        return dictionary.get(key)
+
+    def post(self, request):
+        if request.user.is_authenticated():
+            if request.POST['circle_action'] == 'add_circle':
+                if not FriendCircle.objects.filter(circleName=request.POST['newcircle']).exists():
+                    circle = FriendCircle(user=request.user, circleName=request.POST['newcircle'])
+                    circle.save()
+            if request.POST['circle_action'] == 'add_friend_to_circle':
+                friend = Friend.objects.get(to_user=request.user,
+                                            from_user=User.objects.get(username=request.POST['friend']))
+                circle = FriendCircle.objects.get(user=request.user, circleName=request.POST['circle'])
+                if not FriendCircleRelation.objects.filter(circle=circle, friend=friend.from_user).exists():
+                    friendCircleMapping = FriendCircleRelation(circle=circle, friend=friend.from_user)
+                    friendCircleMapping.save()
+            return HttpResponseRedirect('/profiles/circles')
+
 
 def handle_uploaded_file(f):
     filename = f.name
