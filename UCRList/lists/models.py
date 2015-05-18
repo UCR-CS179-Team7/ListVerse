@@ -74,7 +74,7 @@ class TopicTag(models.Model):
 class BrowseHistory(models.Model):
     user = models.ForeignKey(User)
     list = models.ForeignKey(List)
-    browse_date = models.DateField(auto_now_add=True, null=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
 
 
 '''
