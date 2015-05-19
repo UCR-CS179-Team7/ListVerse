@@ -111,15 +111,16 @@ class FeedView(generic.TemplateView):
         listsWithMyTopics = TopicTag.objects.filter(topic__in=mytopics).values('list')
         followees = Follow.objects.following(user)
         lists = List.objects.filter(Q(owner__in=friends) | Q(owner__in=followees) | Q(id__in=listsWithMyTopics)).order_by('-pub_date')
-        return render(request, 'feed.html', {'friendList': lists})
+        recommendations = recommended_lists(user)
+        return render(request, 'feed.html', {'friendList': lists,
+                                             'recommendations':recommendations})
 
 def recommended_lists(user):
     
     mytopics = InterestTopic.objects.filter(user=user).values('topic')    
-    today = datetime.date.today()
+    today = datetime.datetime.today()
     margin = datetime.timedelta(days=7)
-    history = BrowseHistory.objects.filter(user=user, 
-                                    Q(today - margin <= timestamp <= today + margin)).values('list')
+    history = BrowseHistory.objects.filter(Q(timestamp__gte=today-margin), user=user).values('list')
     histTopics = TopicTag.objects.filter(Q(list__in=history)).values('topic')    
     relevantlists = TopicTag.objects.filter(Q(topic__in=mytopics) | Q(topic__in=histTopics)).values('list')
 
