@@ -11,11 +11,12 @@ from .forms import RegistrationForm, LoginForm
 from friendship.models import Friend, Follow, FriendshipRequest
 from messages.models import Message
 from profiles.models import InterestTopic
-from lists.models import TopicTag
+from lists.models import List, TopicTag, BrowseHistory
+import datetime
 
 # Decorators
 from django.views.decorators.cache import never_cache
-from lists.models import List
+
 
 class HomePageView(generic.TemplateView):
     @never_cache
@@ -111,3 +112,19 @@ class FeedView(generic.TemplateView):
         followees = Follow.objects.following(user)
         lists = List.objects.filter(Q(owner__in=friends) | Q(owner__in=followees) | Q(id__in=listsWithMyTopics)).order_by('-pub_date')
         return render(request, 'feed.html', {'friendList': lists})
+
+def recommended_lists(user):
+    
+    mytopics = InterestTopic.objects.filter(user=user).values('topic')    
+    today = datetime.date.today()
+    margin = datetime.timedelta(days=7)
+    history = BrowseHistory.objects.filter(user=user, 
+                                    Q(today - margin <= timestamp <= today + margin)).values('list')
+    histTopics = TopicTag.objects.filter(Q(list__in=history)).values('topic')    
+    relevantlists = TopicTag.objects.filter(Q(topic__in=mytopics) | Q(topic__in=histTopics)).values('list')
+
+    top = List.objects.filter(Q(id__in=relevantlists)).order_by('-pub_date')[:5]
+    return top
+
+
+
