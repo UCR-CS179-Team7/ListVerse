@@ -2,8 +2,17 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
+
 <div class="list-detail-section">
     <h2> {{ l.title }} </h2>
+    <a href="{%url 'lists:like' slug=l.slug %}">
+    {% if user_likes %}
+    Unlike
+    {% else %}
+    Like
+    {% endif %}
+    </a>
+    <p>{{ num_likes }} users like this post</p>
     <p style="margin-left: 10px">by <a href="{% url 'profiles:view' username=l.owner sortmethod='default'%}">{{ l.owner }}</a></p><br/>
     {% for item in l.listitem_set.all %}
         <div>

@@ -16,7 +16,6 @@ class List(models.Model):
     pub_date = models.DateField(editable=False)
     edit_date = models.DateField()
     num_items = models.PositiveSmallIntegerField()
-    likes =
 
     def update_timestamps(self):
         if not self.id:
@@ -118,4 +117,14 @@ class Reblog(models.Model):
         if not self.id:
             self.reblog_date = datetime.datetime.today()
         super(Reblog, self).save(*args, **kwargs)
+
+class Like(models.Model):
+    list = models.ForeignKey(List, related_name='likes')
+    owner = models.ForeignKey(User, related_name='likes')
+    like_date = models.DateField(editable=False)
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.like_date = datetime.datetime.today()
+        super(Like, self).save(*args, **kwargs)
 
