@@ -25,23 +25,38 @@
                 </button>
 
                 <style>
-                textarea.message
-                {
-                  resize:none;
-                }
-
+                  textarea.message
+                  {
+                    resize:none;
+                  }
+                  p.from {
+                    text-align: left;
+                  }
+                  p.to {
+                    text-align: right;
+                  }
                 </style>
+
                 <!-- Modal -->
                 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                   <div class="modal-dialog">
                     <div class="modal-content">
                       <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="myModalLabel">Your Message to {{profile.user.username}}</h4>
+                        <h4 class="modal-title" id="myModalLabel">Conversation with {{profile.user.username}}</h4>
                       </div>
-                      <div class="modal-body">
-                        <textarea name="message_content" rows="7" cols="65" class="message" placeholder="Your message content here"></textarea>
+                      <div class="modal-body" id="conversation" style="height:200px; overflow:scroll;">
+                        {% for message in conversation %}
+                          {% if message.from_user = profile.user %}
+                            <p class="from">{{profile.user.username}}: {{message.content}}</p>
+                          {% endif %}
+
+                          {% if message.to_user = profile.user %}
+                            <p class="to">You: {{message.content}}</p>
+                          {% endif %}
+                        {% endfor %}
                       </div>
+                      <textarea name="message_content" rows="4" cols="65" class="message" placeholder="Your message content here"></textarea>
                       <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-primary">Send</button>
@@ -49,6 +64,7 @@
                     </div>
                   </div>
                 </div>
+
             </strong></p>
           </form>
           {% endif %}
