@@ -213,6 +213,10 @@ class CirclesView(View):
                 if not FriendCircle.objects.filter(circleName=request.POST['newcircle']).exists():
                     circle = FriendCircle(user=request.user, circleName=request.POST['newcircle'])
                     circle.save()
+            if request.POST['circle_action'] == 'delete_circle':
+                if FriendCircle.objects.filter(circleName=request.POST['circle']).exists():
+                    circle = FriendCircle.objects.get(user=request.user, circleName=request.POST['circle'])
+                    circle.delete()
             if request.POST['circle_action'] == 'add_friend_to_circle':
                 friend = Friend.objects.get(to_user=request.user,
                                             from_user=User.objects.get(username=request.POST['friend']))
@@ -220,6 +224,13 @@ class CirclesView(View):
                 if not FriendCircleRelation.objects.filter(circle=circle, friend=friend.from_user).exists():
                     friendCircleMapping = FriendCircleRelation(circle=circle, friend=friend.from_user)
                     friendCircleMapping.save()
+            if request.POST['circle_action'] == 'remove_friend_from_circle':
+                friend = Friend.objects.get(to_user=request.user,
+                                            from_user=User.objects.get(username=request.POST['friend']))
+                circle = FriendCircle.objects.get(user=request.user, circleName=request.POST['circle'])
+                if FriendCircleRelation.objects.filter(circle=circle, friend=friend.from_user).exists():
+                    friendCircleMapping = FriendCircleRelation.objects.get(circle=circle, friend=friend.from_user)
+                    friendCircleMapping.delete()
             return HttpResponseRedirect('/profiles/circles')
 
 

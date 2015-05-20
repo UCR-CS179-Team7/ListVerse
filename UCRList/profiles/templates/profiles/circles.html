@@ -5,26 +5,46 @@
         <h3>Your Circles</h3>
         <ul>
             {% for c in circles %}
-                <li>{{ c.circleName }}</li>
+                <li>
+                    <div style="display: inline-block">
+                        {{ c.circleName }}
+                    </div>
+                    <div style="display: inline-block">
+                        <form action="{% url 'profiles:circles' %}" method="POST">{% csrf_token %}
+                            <input type="hidden" name="circle_action" value="add_friend_to_circle"/>
+                            <input type="hidden" name="circle" value="{{ c.circleName }}"/>
+                            <select name="friend">
+                                <option value="" disabled selected>Add Friend</option>
+                                {% for f in not_in_circles|getItem:c.circleName %}
+                                    <option value="{{ f }}">{{ f }}</option>
+                                {% endfor %}
+                            </select>
+                            <input type="submit" value="add to circle"/>
+                        </form>
+                    </div>
+                    <div style="display: inline-block">
+                        <form action="{% url 'profiles:circles' %}" method="POST">{% csrf_token %}
+                            <input type="hidden" name="circle_action" value="delete_circle"/>
+                            <input type="hidden" name="circle" value="{{ c.circleName }}"/>
+                            <input type="submit" value="delete circle"/>
+                        </form>
+                    </div>
+                </li>
                 <ul>
                     {% for f in friends_in_circles|getItem:c.circleName %}
-                        <li>{{ f }}</li>
-                    {% endfor %}
-                </ul>
-                <form action="{% url 'profiles:circles' %}" method="POST">{% csrf_token %}
-                    <input type="hidden" name="circle_action" value="add_friend_to_circle"/>
-                    <input type="hidden" name="circle" value="{{ c.circleName }}"/>
-                    <select name="friend">
-                        <option value="" disabled selected>Add Friend</option>
-                        {% for f in not_in_circles|getItem:c.circleName %}
-                            <option value="{{ f }}">{{ f }}</option>
-                        {% endfor %}
-                    </select>
-                    <input type="submit" value="add to circle"/>
-                </form>
-                <ul>
-                    {% for f in friends_in_circles.c.circleName %}
-                        <li>{{ f.username }}</li>
+                        <li>
+                            <div style="display: inline-block">
+                                {{ f }}
+                            </div>
+                            <div style="display: inline-block">
+                                <form action="{% url 'profiles:circles' %}" method="POST">{% csrf_token %}
+                                    <input type="hidden" name="circle_action" value="remove_friend_from_circle"/>
+                                    <input type="hidden" name="circle" value="{{ c.circleName }}"/>
+                                    <input type="hidden" name="friend" value="{{ f }}"/>
+                                    <input type="submit" value="remove from circle"/>
+                                </form>
+                            </div>
+                        </li>
                     {% endfor %}
                 </ul>
             {% endfor %}
