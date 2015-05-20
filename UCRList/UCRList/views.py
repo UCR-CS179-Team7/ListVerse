@@ -11,11 +11,12 @@ from .forms import RegistrationForm, LoginForm
 from friendship.models import Friend, Follow, FriendshipRequest
 from messages.models import Message
 from profiles.models import InterestTopic
-from lists.models import TopicTag
+from lists.models import List, TopicTag, BrowseHistory, Like
+import datetime
 
 # Decorators
 from django.views.decorators.cache import never_cache
-from lists.models import List
+
 
 class HomePageView(generic.TemplateView):
     @never_cache
@@ -107,7 +108,6 @@ class LoginView(generic.FormView):
 
 class LogOutView(generic.RedirectView):
     url = reverse_lazy('home')
-
     def get(self, request, *args, **kwargs):
         logout(request)
         return super(LogOutView, self).get(request, *args, **kwargs)
@@ -124,4 +124,31 @@ class FeedView(generic.TemplateView):
         listsWithMyTopics = TopicTag.objects.filter(topic__in=mytopics).values('list')
         followees = Follow.objects.following(user)
         lists = List.objects.filter(Q(owner__in=friends) | Q(owner__in=followees) | Q(id__in=listsWithMyTopics)).order_by('-pub_date')
-        return render(request, 'feed.html', {'friendList': lists})
+        recommendations = recommended_lists(user)
+        return render(request, 'feed.html', {'friendList': lists,
+                                             'recommendations':recommendations})
+
+def recommended_lists(user):
+    today = datetime.datetime.today()
+    margin = datetime.timedelta(days=7)
+    history = BrowseHistory.objects.filter(Q(timestamp__gte=today-margin), user=user).values('list')
+    histTopics = TopicTag.objects.filter(Q(list__in=history)).values('topic')
+    mytopics = InterestTopic.objects.filter(user=user).values('topic')
+    relevantlists = TopicTag.objects.filter(Q(topic__in=mytopics) | Q(topic__in=histTopics)).values('list')
+    
+    # first getting the 5 most recent lists in the categories, then sort by likes
+    # sorting all potential lists by count is possible, but could be really slow
+
+    top = List.objects.filter(Q(id__in=relevantlists)).order_by('-pub_date')[:5]
+    pairs = [] 
+    for lst in top:
+        count = Like.objects.filter(list=lst).count()
+        pairs.append((lst,count)) 
+    pairs = sorted(pairs,key=lambda x: x[1])
+    pairs.reverse() 
+
+    mostLiked = [pair[0] for pair in pairs] # remove the counts
+    return mostLiked
+
+
+
