@@ -11,7 +11,7 @@ from .forms import RegistrationForm, LoginForm
 from friendship.models import Friend, Follow, FriendshipRequest
 from messages.models import Message
 from profiles.models import InterestTopic
-from lists.models import List, TopicTag, BrowseHistory
+from lists.models import List, TopicTag, BrowseHistory, Like
 import datetime
 
 # Decorators
@@ -94,7 +94,6 @@ class LoginView(generic.FormView):
 
 class LogOutView(generic.RedirectView):
     url = reverse_lazy('home')
-
     def get(self, request, *args, **kwargs):
         logout(request)
         return super(LogOutView, self).get(request, *args, **kwargs)
@@ -116,16 +115,23 @@ class FeedView(generic.TemplateView):
                                              'recommendations':recommendations})
 
 def recommended_lists(user):
-    
-    mytopics = InterestTopic.objects.filter(user=user).values('topic')    
     today = datetime.datetime.today()
     margin = datetime.timedelta(days=7)
     history = BrowseHistory.objects.filter(Q(timestamp__gte=today-margin), user=user).values('list')
-    histTopics = TopicTag.objects.filter(Q(list__in=history)).values('topic')    
+    histTopics = TopicTag.objects.filter(Q(list__in=history)).values('topic')
+    mytopics = InterestTopic.objects.filter(user=user).values('topic')
     relevantlists = TopicTag.objects.filter(Q(topic__in=mytopics) | Q(topic__in=histTopics)).values('list')
-
     top = List.objects.filter(Q(id__in=relevantlists)).order_by('-pub_date')[:5]
-    return top
+    
+    pairs = []
+    for lst in top:
+        count = Like.objects.filter(list=lst).count()
+        pairs.append((lst,count)) 
+    pairs = sorted(pairs,key=lambda x: x[1]) 
+    pairs.reverse() 
+
+    mostLiked = [pair[0] for pair in pairs] # remove the counts
+    return mostLiked
 
 
 

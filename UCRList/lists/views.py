@@ -4,23 +4,37 @@ from django.views.generic import View, DetailView, ListView
 import json
 from friendship.models import Friend, Follow
 
-from .models import User, List, ListItem, TopicTag, BrowseHistory
+from .models import User, List, ListItem, TopicTag, Comment, \
+        Reblog, Like, BrowseHistory
+
 from messages.models import Message
 from .forms import AddListForm
+from django.views.decorators.cache import never_cache
 
 class ListDetailView(DetailView):
     model = List
     context_object_name = 'l'
     template_name = 'lists/listdetail.html'
 
+    def get_context_data(self, **kwargs):
+        context = super(ListDetailView, self).get_context_data(**kwargs)
+        user = self.request.user
+        ls = context['l']
+        num_likes = len(Like.objects.filter(list=ls))
+        context['num_likes'] = num_likes
+        try:
+            like = Like.objects.get(owner=user, list=ls)
+            context['user_likes'] = True
+        except Like.DoesNotExist:
+            context['user_likes'] = False
+
+        return context
+
     def get(self, request, slug=''):
         user = request.user
-        # might find a better way
-        lst = List.objects.get(slug=slug) 
-        
+        lst = List.objects.get(slug=slug) # might find a better way
         bh = BrowseHistory(user=user, list=lst)
         bh.save()
-        
         return super(ListDetailView,self).get(self)
 
 class HotListsView(ListView):
@@ -119,3 +133,53 @@ class GetListData(View):
 
         return HttpResponse(json.dumps(list_data), status=200, \
                 content_type='application/json')
+
+class DeleteComment(View):
+    def get(self, request, comment_id):
+        try:
+            comment = Comment(id=comment_id)
+            comment.delete()
+        except Comment.DoesNotExist:
+             return HttpResponseRedirect(request.META.get('HTTP_REFERER'), status=404)
+        return HttpResponse(request.META.get('HTTP_REFERER'))
+
+class PostComment(View):
+    def post(self, request, slug=''):
+        ls = List.objects.get(slug=slug)
+        comment_content = request.POST.get('comment_content')
+        comment = Comment(
+                    list=ls,
+                    owner=request.user,
+                    content=comment_content
+        )
+        comment.save()
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+class LikeList(View):
+    @never_cache
+    def get(self, request, slug=''):
+        ls = List.objects.get(slug=slug)
+        user = request.user
+        try:
+            like = Like.objects.get(list=ls, owner=user)
+            like.delete()
+        except Like.DoesNotExist:
+            like = Like(list=ls, owner=user)
+            like.save()
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+class ReblogList(View):
+    def post(self, request, slug=''):
+        ls = List.objects.get(slug=slug)
+        reblog = Reblog(list=ls, owner=request.user)
+        reblog.save()
+        return HttpResponse(status=201)
+
+    def delete(self, request, slug=''):
+        ls = List.objects.get(slug=slug)
+        try:
+            reblog = Reblog.objects.get(list=ls, owner=request.user)
+            reblog.delete()
+        except Reblog.DoesNotExist:
+            return HttpResponse(status=404)
+        return HttpResponse(status=200)
