@@ -121,13 +121,16 @@ def recommended_lists(user):
     histTopics = TopicTag.objects.filter(Q(list__in=history)).values('topic')
     mytopics = InterestTopic.objects.filter(user=user).values('topic')
     relevantlists = TopicTag.objects.filter(Q(topic__in=mytopics) | Q(topic__in=histTopics)).values('list')
-    top = List.objects.filter(Q(id__in=relevantlists)).order_by('-pub_date')[:5]
     
-    pairs = []
+    # first getting the 5 most recent lists in the categories, then sort by likes
+    # sorting all potential lists by count is possible, but could be really slow
+
+    top = List.objects.filter(Q(id__in=relevantlists)).order_by('-pub_date')[:5]
+    pairs = [] 
     for lst in top:
         count = Like.objects.filter(list=lst).count()
         pairs.append((lst,count)) 
-    pairs = sorted(pairs,key=lambda x: x[1]) 
+    pairs = sorted(pairs,key=lambda x: x[1])
     pairs.reverse() 
 
     mostLiked = [pair[0] for pair in pairs] # remove the counts
