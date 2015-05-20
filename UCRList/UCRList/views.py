@@ -26,12 +26,12 @@ class HomePageView(generic.TemplateView):
             myfriends = Friend.objects.friends(request.user)
             followers = Follow.objects.followers(request.user)
             following = Follow.objects.following(request.user)
-            list_notifications = Message.objects.filter(to_user=request.user)
+            notifications = Message.objects.filter(to_user=request.user).order_by('-send_date')
             return render(request, 'home.html', {'frequests' : frequests,
                                                  'followers': followers,
                                                  'myfriends': myfriends,
                                                  'following': following,
-                                                 'list_notifications' : list_notifications})
+                                                 'notifications' : notifications})
 
         else:
             return LoginView.as_view()(self.request)
@@ -54,16 +54,30 @@ class HomePageView(generic.TemplateView):
                 ln_id = request.POST.get('delete_ln')
                 ln = Message.objects.filter(id=ln_id).delete()
 
+            elif(request.POST.get('reply_gn_id')):
+                gn_id = request.POST.get('reply_gn_id')
+                gn_content = request.POST.get('reply_gn_content')
+
+                # To user is the user who sent the message
+                to_user = Message.objects.get(id=gn_id).from_user
+                message = Message(
+                            type='GN',
+                            to_user=to_user,
+                            from_user=request.user,
+                            content=gn_content
+                )
+                message.save()
+
             frequests = Friend.objects.unrejected_requests(user=request.user)
             myfriends = Friend.objects.friends(request.user)
             followers = Follow.objects.followers(request.user)
             following = Follow.objects.following(request.user)
-            list_notifications = Message.objects.filter(to_user=request.user)
+            notifications = Message.objects.filter(to_user=request.user).order_by('-send_date')
             return render(request, 'home.html', {'frequests' : frequests,
                                                  'myfriends' : myfriends,
                                                  'followers': followers,
                                                  'following': following,
-                                                 'list_notifications' : list_notifications})
+                                                 'notifications' : notifications})
 
         else:
             return LoginView.as_view()(self.request)

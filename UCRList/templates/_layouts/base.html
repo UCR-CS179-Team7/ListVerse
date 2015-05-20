@@ -7,7 +7,19 @@
     <link rel="stylesheet" href="{% static "css/base.css" %}" >
     <!--cant parse staticfiles from css so I put background image here-->
     <style>
-
+      textarea.message
+      {
+        resize:none;
+        white-space: normal;
+        text-align: justify;
+        text-align-last: center;
+      }
+      p.from {
+        text-align: left;
+      }
+      p.to {
+        text-align: right;
+      }
     </style>
     {% block css %}{% endblock css %}
     {% block script %}{% endblock script %}
