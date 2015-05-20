@@ -11,7 +11,7 @@ from .models import Profile
 from .models import InterestTopic
 from .models import User
 from .forms import EditProfileForm
-from .models import FriendCircle, FriendCircleRelation
+from .models import Circle, CircleRelation
 from lists.models import List, ListItem
 from django.db.models import Q
 
@@ -93,7 +93,7 @@ class ProfileView(View):
             frnd_rqsts = Friend.objects.unread_requests(request_profile.user)
             active_request = request.user in list(map(lambda req: req.from_user, frnd_rqsts))
 
-            circles = FriendCircle.objects.filter(user=request.user).values('circleName')
+            circles = Circle.objects.filter(user=request.user).values('circleName')
 
         return render(request, 'profiles/pubprofile.html', {'profile':request_profile,
                                                             'not_friends': not_friends,
@@ -186,22 +186,22 @@ class CirclesView(View):
     def get(self, request):
         if request.user.is_authenticated():
             current_profile = request.user.profile
-            myfriends = Friend.objects.friends(request.user)
-            circles = FriendCircle.objects.filter(user=request.user).values()
-            friendsInCircles = {}
-            friendsNotInCircles = {}
+            following = Follow.objects.following(request.user)
+            circles = Circle.objects.filter(user=request.user).values()
+            in_circle = {}
+            not_in_circle = {}
             for c in circles:
-                circleMappings = FriendCircleRelation.objects.filter(circle=c['id'])
-                friendsInCircles[c['circleName']] = \
-                    [f for f in myfriends if circleMappings.filter(friend=f).exists()]
-                friendsNotInCircles[c['circleName']] = \
-                    [f for f in myfriends if not circleMappings.filter(friend=f).exists()]
+                circle_mapping = CircleRelation.objects.filter(circle=c['id'])
+                in_circle[c['circleName']] = \
+                    [f for f in following if circle_mapping.filter(followee=f).exists()]
+                not_in_circle[c['circleName']] = \
+                    [f for f in following if not circle_mapping.filter(followee=f).exists()]
 
         return render(request, 'profiles/circles.html', {'profile': current_profile,
-                                                         'friends': myfriends,
+                                                         'following': following,
                                                          'circles': circles,
-                                                         'friends_in_circles': friendsInCircles,
-                                                         'not_in_circles': friendsNotInCircles})
+                                                         'in_circles': in_circle,
+                                                         'not_in_circles': not_in_circle})
 
     @register.filter(name='getItem')
     def getItem(dictionary, key):
@@ -209,28 +209,30 @@ class CirclesView(View):
 
     def post(self, request):
         if request.user.is_authenticated():
+            # Create Circle
             if request.POST['circle_action'] == 'add_circle':
-                if not FriendCircle.objects.filter(circleName=request.POST['newcircle']).exists():
-                    circle = FriendCircle(user=request.user, circleName=request.POST['newcircle'])
+                if not Circle.objects.filter(circleName=request.POST['circle']).exists():
+                    circle = Circle(user=request.user, circleName=request.POST['circle'])
                     circle.save()
+            # Delete Circle
             if request.POST['circle_action'] == 'delete_circle':
-                if FriendCircle.objects.filter(circleName=request.POST['circle']).exists():
-                    circle = FriendCircle.objects.get(user=request.user, circleName=request.POST['circle'])
+                if Circle.objects.filter(circleName=request.POST['circle']).exists():
+                    circle = Circle.objects.get(user=request.user, circleName=request.POST['circle'])
                     circle.delete()
-            if request.POST['circle_action'] == 'add_friend_to_circle':
-                friend = Friend.objects.get(to_user=request.user,
-                                            from_user=User.objects.get(username=request.POST['friend']))
-                circle = FriendCircle.objects.get(user=request.user, circleName=request.POST['circle'])
-                if not FriendCircleRelation.objects.filter(circle=circle, friend=friend.from_user).exists():
-                    friendCircleMapping = FriendCircleRelation(circle=circle, friend=friend.from_user)
-                    friendCircleMapping.save()
-            if request.POST['circle_action'] == 'remove_friend_from_circle':
-                friend = Friend.objects.get(to_user=request.user,
-                                            from_user=User.objects.get(username=request.POST['friend']))
-                circle = FriendCircle.objects.get(user=request.user, circleName=request.POST['circle'])
-                if FriendCircleRelation.objects.filter(circle=circle, friend=friend.from_user).exists():
-                    friendCircleMapping = FriendCircleRelation.objects.get(circle=circle, friend=friend.from_user)
-                    friendCircleMapping.delete()
+            # Add Followee to Circle
+            if request.POST['circle_action'] == 'add_followee_to_circle':
+                followee = User.objects.get(username=request.POST['followee'])
+                circle = Circle.objects.get(user=request.user, circleName=request.POST['circle'])
+                if not CircleRelation.objects.filter(circle=circle, followee=followee).exists():
+                    circle_mapping = CircleRelation(circle=circle, followee=followee)
+                    circle_mapping.save()
+            # Remove Followee from Circle
+            if request.POST['circle_action'] == 'remove_followee_from_circle':
+                followee = User.objects.get(username=request.POST['followee'])
+                circle = Circle.objects.get(user=request.user, circleName=request.POST['circle'])
+                if CircleRelation.objects.filter(circle=circle, followee=followee).exists():
+                    circle_mapping = CircleRelation.objects.get(circle=circle, followee=followee)
+                    circle_mapping.delete()
             return HttpResponseRedirect('/profiles/circles')
 
 

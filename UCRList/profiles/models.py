@@ -35,14 +35,14 @@ class InterestTopic(models.Model):
     topic = models.IntegerField(choices=TOPIC_CHOICES)
 
 
-class FriendCircle(models.Model):
+class Circle(models.Model):
     circleName = models.CharField(max_length=100)
     user = models.ForeignKey(User)
 
 
-class FriendCircleRelation(models.Model):
-    circle = models.ForeignKey(FriendCircle)
-    friend = models.ForeignKey(User)
+class CircleRelation(models.Model):
+    circle = models.ForeignKey(Circle)
+    followee = models.ForeignKey(User)
 
 
 def create_user_profile(sender, instance, created, **kwargs):
