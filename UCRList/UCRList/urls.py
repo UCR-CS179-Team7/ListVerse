@@ -2,7 +2,7 @@ from django.conf.urls import include, url
 from django.contrib import admin
 
 # NOTE import views here
-from .views import HomePageView, RegisterView, LoginView, LogOutView, FeedView
+from .views import HomePageView, RegisterView, LoginView, LogOutView, feed_view
 
 urlpatterns = [
     # NOTE Remember to link views here
@@ -15,5 +15,5 @@ urlpatterns = [
     url(r'^profiles/', include('profiles.urls', namespace='profiles')),
     url(r'^lists/', include('lists.urls', namespace='lists')),
     url(r'^admin/', include(admin.site.urls)),
-    url(r'feed/$', FeedView.as_view(), name='feed')
+    url(r'^feed/$', feed_view, name='feed')
 ]

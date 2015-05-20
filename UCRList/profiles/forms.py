@@ -57,10 +57,3 @@ class EditProfileForm(forms.Form):
     birthday = forms.DateField(
         widget=SelectDateWidget(attrs=({'style': 'width: 125px; display: inline-block;'}), years=years),
         label='Birthday')
-
-
-class CirclesForm(forms.Form):
-    def __init__(self, *args, **kwargs):
-        current_profile = kwargs.pop('current_profile')
-        super(CirclesForm, self).__init__(*args, **kwargs)
-        self.fields['new_circle'].initial = ''

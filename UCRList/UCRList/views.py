@@ -3,14 +3,15 @@ from django.shortcuts import render
 from django.views import generic
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
-from django.core.urlresolvers import reverse_lazy
-from django.db.models import Q
+from django.core.urlresolvers import reverse_lazy, reverse
+from django.db.models import Q, Field
+from django.http import HttpResponseRedirect
 
 from .forms import RegistrationForm, LoginForm
 
 from friendship.models import Friend, Follow, FriendshipRequest
 from messages.models import Message
-from profiles.models import InterestTopic
+from profiles.models import InterestTopic, Circle, CircleRelation
 from lists.models import TopicTag
 
 # Decorators
@@ -94,16 +95,35 @@ class LogOutView(generic.RedirectView):
         logout(request)
         return super(LogOutView, self).get(request, *args, **kwargs)
 
-class FeedView(generic.TemplateView):
-    def get(self, request, *args, **kwargs):
-        # args[0] = list item start, args[1] = num of list items
-        user = request.user
-        #startListNum = args[0]
-        #numListItems = args[1]
-        friends = Friend.objects.friends(user)
-        mytopics = InterestTopic.objects.filter(user=request.user).values('topic')
-        similarListTags = TopicTag.objects.filter(topic__in=mytopics)
-        listsWithMyTopics = TopicTag.objects.filter(topic__in=mytopics).values('list')
-        followees = Follow.objects.following(user)
-        lists = List.objects.filter(Q(owner__in=friends) | Q(owner__in=followees) | Q(id__in=listsWithMyTopics)).order_by('-pub_date')
-        return render(request, 'feed.html', {'friendList': lists})
+
+def feed_view(request):
+    filter_data = request.POST.get('filter', 'default:default')
+    feed_filter = filter_data.split(':')[0]
+    feed_filter_data = filter_data.split(':')[1]
+    lists = {}
+    circles = Circle.objects.filter(user=request.user)
+    ineterest_topics = InterestTopic.TOPIC_CHOICES
+    if feed_filter == 'interests':
+        topics = InterestTopic.objects.filter(user=request.user).values('topic')
+        lists_in_topics = TopicTag.objects.filter(topic__in=topics).values('list')
+        lists = List.objects.filter(id__in=lists_in_topics).order_by('-pub_date')
+    elif feed_filter == 'topic':
+        lists_in_topics = TopicTag.objects.filter(topic=feed_filter_data).values('list')
+        lists = List.objects.filter(id__in=lists_in_topics).order_by('-pub_date')
+    elif feed_filter == 'following':
+        following = Follow.objects.following(request.user)
+        lists = List.objects.filter(owner__in=following)
+    elif feed_filter == 'circle':
+        circle = Circle.objects.get(user=request.user, circleName=feed_filter_data)
+        circle_relation = CircleRelation.objects.filter(circle=circle).values('followee')
+        in_circle = User.objects.filter(id__in=circle_relation)
+        lists = List.objects.filter(owner__in=in_circle)
+    else:
+        topics = InterestTopic.objects.filter(user=request.user).values('topic')
+        lists_in_topics = TopicTag.objects.filter(topic__in=topics).values('list')
+        following = Follow.objects.following(request.user)
+        lists = List.objects.filter(Q(id__in=lists_in_topics)|Q(owner__in=following))
+    return render(request, 'feed.html', {'lists': lists,
+                                         'circles': circles,
+                                         'interest_topics': ineterest_topics,
+                                         'default_filter_select': filter_data})

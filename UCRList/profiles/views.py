@@ -233,7 +233,7 @@ class CirclesView(View):
                 if CircleRelation.objects.filter(circle=circle, followee=followee).exists():
                     circle_mapping = CircleRelation.objects.get(circle=circle, followee=followee)
                     circle_mapping.delete()
-            return HttpResponseRedirect('/profiles/circles')
+            return HttpResponseRedirect(reverse('profiles:circles'))
 
 
 def handle_uploaded_file(f):
