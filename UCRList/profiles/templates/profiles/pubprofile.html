@@ -20,32 +20,19 @@
           <form method="post" action="{% url 'profiles:sendmessage' username=profile.user.username sortmethod='default' %}">
             {% csrf_token %}
             <p><strong>
-                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal">
+                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#messageModel">
                   Send Message
-                </button>
-
-                <style>
-                  textarea.message
-                  {
-                    resize:none;
-                  }
-                  p.from {
-                    text-align: left;
-                  }
-                  p.to {
-                    text-align: right;
-                  }
-                </style>
+                </button
 
                 <!-- Modal -->
-                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal fade" id="messageModel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                   <div class="modal-dialog">
                     <div class="modal-content">
                       <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                         <h4 class="modal-title" id="myModalLabel">Conversation with {{profile.user.username}}</h4>
                       </div>
-                      <div class="modal-body" id="conversation" style="height:200px; overflow:scroll;">
+                      <div class="modal-body" id="conversation" style="height:200px; overflow-y:auto;">
                         {% for message in conversation %}
                           {% if message.from_user = profile.user %}
                             <p class="from">{{profile.user.username}}: {{message.content}}</p>
