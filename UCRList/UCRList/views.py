@@ -27,11 +27,13 @@ class HomePageView(generic.TemplateView):
             myfriends = Friend.objects.friends(request.user)
             followers = Follow.objects.followers(request.user)
             following = Follow.objects.following(request.user)
+            circles = Circle.objects.filter(user=request.user)
             list_notifications = Message.objects.filter(to_user=request.user)
             return render(request, 'home.html', {'frequests' : frequests,
                                                  'followers': followers,
                                                  'myfriends': myfriends,
                                                  'following': following,
+                                                 'circles': circles,
                                                  'list_notifications' : list_notifications})
 
         else:
@@ -50,7 +52,7 @@ class HomePageView(generic.TemplateView):
                 frequest_id = request.POST.get('reject')
                 frequest = FriendshipRequest.objects.get(id=frequest_id)
                 frequest.reject()
-
+            circles = Circle.objects.filter(user=request.user)
             frequests = Friend.objects.unrejected_requests(user=request.user)
             myfriends = Friend.objects.friends(request.user)
             followers = Follow.objects.followers(request.user)
@@ -60,6 +62,7 @@ class HomePageView(generic.TemplateView):
                                                  'myfriends' : myfriends,
                                                  'followers': followers,
                                                  'following': following,
+                                                 'circles': circles,
                                                  'list_notifications' : list_notifications})
 
         else:

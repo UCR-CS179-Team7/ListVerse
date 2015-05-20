@@ -9,7 +9,20 @@
         <div class="network-content">
             <table style="width: 100%">
                 <tr style="width: 100%; vertical-align: top">
-                    <td style="width: 33%">
+                    <td style="width: 25%">
+                        <div style="display: inline-block; margin-right: 10px;">
+                            <h4> Circles</h4>
+                        </div>
+                        <div style="display: inline-block">
+                            <a href="{% url 'profiles:circles' %}">edit</a>
+                        </div>
+                        <ul>
+                            {% for c in circles %}
+                                <li> {{ c.circleName }}</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    <td style="width: 25%">
                         <h4> Friends </h4>
                         <ul>
                             {% for f in myfriends %}
@@ -17,7 +30,7 @@
                             {% endfor %}
                         </ul>
                     </td>
-                    <td style="width: 33%">
+                    <td style="width: 25%">
                         <h4> Followers </h4>
                         <ul>
                             {% for f in followers %}
@@ -25,7 +38,7 @@
                             {% endfor %}
                         </ul>
                     </td>
-                    <td style="width: 33%">
+                    <td style="width: 25%">
                         <h4> Following </h4>
                         <ul>
                             {% for f in following %}
