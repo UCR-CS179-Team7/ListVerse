@@ -1,16 +1,18 @@
 import base64, hmac, json, os, time, urllib
 from hashlib import sha1
-from django.shortcuts import render
+from django.shortcuts import render, redirect, render_to_response
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import View
 from django.conf import settings
+from django.core.urlresolvers import reverse, reverse_lazy
 
 # Models
-from .models import Profile
-from .models import InterestTopic
-from .models import User
+from .models import Profile, InterestTopic, User
+from messages.models import Message
 from .forms import EditProfileForm
+from .models import Circle, CircleRelation
 from lists.models import List, ListItem
+from django.db.models import Q
 
 # Friendship
 from friendship.models import Friend, Follow
@@ -18,6 +20,20 @@ from friendship.models import Friend, Follow
 # Decorators
 
 from django.views.decorators.cache import never_cache
+from django.template.defaultfilters import register
+
+class SendMessage(View):
+    def post(self, request, username='', sortmethod=''):
+        message_content = request.POST.get('message_content')
+        to_user = User.objects.get(username=username)
+        message = Message(
+                    type='GN',
+                    to_user=to_user,
+                    from_user=request.user,
+                    content=message_content
+        )
+        message.save()
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 class AddFriendView(View):
     def post(self, request, username='', sortmethod=''):
@@ -85,9 +101,17 @@ class ProfileView(View):
             doesnt_follow = not Follow.objects.follows(request.user,request_profile.user)
             not_self = request.user.username != username
 
+            # Generate message history between logged in user and the user
+            # whos profile is being viewed
+            conversation = Message.objects.filter(to_user=request_profile.user, from_user=request.user, type='GN').order_by('send_date') \
+                            | Message.objects.filter(to_user=request.user, from_user=request_profile.user, type='GN').order_by('send_date')
+
+
             # if you've already friended the person who's profile you're viewing, don't show the button
             frnd_rqsts = Friend.objects.unread_requests(request_profile.user)
             active_request = request.user in list(map(lambda req: req.from_user, frnd_rqsts))
+
+            circles = Circle.objects.filter(user=request.user).values('circleName')
 
         return render(request, 'profiles/pubprofile.html', {'profile':request_profile,
                                                             'not_friends': not_friends,
@@ -98,7 +122,8 @@ class ProfileView(View):
                                                             'followers': followers,
                                                             'following': following,
                                                             'userLists': userLists,
-                                                            'active_request':active_request})
+                                                            'active_request':active_request,
+                                                            'conversation': conversation})
 
 class EditProfileView(View):
     def get(self, request, username=''):
@@ -173,6 +198,61 @@ class SignS3(View):
             'url': url,
         })
         return HttpResponse(content, content_type='application/json')
+
+
+class CirclesView(View):
+    def get(self, request):
+        if request.user.is_authenticated():
+            current_profile = request.user.profile
+            following = Follow.objects.following(request.user)
+            circles = Circle.objects.filter(user=request.user).values()
+            in_circle = {}
+            not_in_circle = {}
+            for c in circles:
+                circle_mapping = CircleRelation.objects.filter(circle=c['id'])
+                in_circle[c['circleName']] = \
+                    [f for f in following if circle_mapping.filter(followee=f).exists()]
+                not_in_circle[c['circleName']] = \
+                    [f for f in following if not circle_mapping.filter(followee=f).exists()]
+
+        return render(request, 'profiles/circles.html', {'profile': current_profile,
+                                                         'following': following,
+                                                         'circles': circles,
+                                                         'in_circles': in_circle,
+                                                         'not_in_circles': not_in_circle})
+
+    @register.filter(name='getItem')
+    def getItem(dictionary, key):
+        return dictionary.get(key)
+
+    def post(self, request):
+        if request.user.is_authenticated():
+            # Create Circle
+            if request.POST['circle_action'] == 'add_circle':
+                if not Circle.objects.filter(circleName=request.POST['circle']).exists():
+                    circle = Circle(user=request.user, circleName=request.POST['circle'])
+                    circle.save()
+            # Delete Circle
+            if request.POST['circle_action'] == 'delete_circle':
+                if Circle.objects.filter(circleName=request.POST['circle']).exists():
+                    circle = Circle.objects.get(user=request.user, circleName=request.POST['circle'])
+                    circle.delete()
+            # Add Followee to Circle
+            if request.POST['circle_action'] == 'add_followee_to_circle':
+                followee = User.objects.get(username=request.POST['followee'])
+                circle = Circle.objects.get(user=request.user, circleName=request.POST['circle'])
+                if not CircleRelation.objects.filter(circle=circle, followee=followee).exists():
+                    circle_mapping = CircleRelation(circle=circle, followee=followee)
+                    circle_mapping.save()
+            # Remove Followee from Circle
+            if request.POST['circle_action'] == 'remove_followee_from_circle':
+                followee = User.objects.get(username=request.POST['followee'])
+                circle = Circle.objects.get(user=request.user, circleName=request.POST['circle'])
+                if CircleRelation.objects.filter(circle=circle, followee=followee).exists():
+                    circle_mapping = CircleRelation.objects.get(circle=circle, followee=followee)
+                    circle_mapping.delete()
+            return HttpResponseRedirect(reverse('profiles:circles'))
+
 
 def handle_uploaded_file(f):
     filename = f.name

@@ -1,15 +1,51 @@
 {% extends '_layouts/base.html' %}
-
 {% block content %}
     <div class="feed-section">
         <h1 style="text-align: center">Lists Feed</h1>
+        <div style="display: inline-block">
+            <p>filter feed by</p>
+        </div>
+        <div style="display: inline-block">
+            <form id="feed_filter" action="{% url 'feed' %}" method="post">{% csrf_token %}
+                <select name="filter" onchange="this.form.submit()">
+                    <option value="default:default">all</option>
+                    <optgroup label="Topics">
+                        {% for i in interest_topics %}
+                            <option value="topic:{{ i.0 }}">{{ i.1 }}</option>
+                        {% endfor %}
+                    </optgroup>
+                    <optgroup label="Circles">
+                        {% for c in circles %}
+                            <option value="circle:{{ c.circleName }}">{{ c.circleName }}</option>
+                        {% endfor %}
+                    </optgroup>
+                </select>
+            </form>
+        </div>
         <table class="table table-hover">
             <thead>
                 <tr>
                     <td>Title</td><td>Created by</td><td>Published</td><td>Description</td>
                 </tr>
             </thead>
-        {% for l in friendList %}
+        {% for l in lists %}
+            <tr><td> <a href="{% url 'lists:detail' slug=l.slug %}">{{ l.title }}</a></td>
+                <td> <a href="{% url 'profiles:view' username=l.owner sortmethod='default' %}">{{ l.owner }}</a></td>
+                <td> {{ l.pub_date }}</td>
+                <td>{{ l.descriptionmeta|slice:'50' }}</td>
+            </tr>
+        {% endfor %}
+        </table>
+    </div>
+    <div class="feed-section">
+        <h1 style="text-align: center">Recommended Lists</h1>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <td>Title</td><td>Created by</td><td>Published</td><td>Description</td>
+                </tr>
+            </thead>
+        {% for l in recommendations %}
             <tr><td> <a href="{% url 'lists:detail' slug=l.slug %}">{{ l.title }}</a></td>
                 <td> <a href="{% url 'profiles:view' username=l.owner sortmethod='default' %}">{{ l.owner }}</a></td>
                 <td> {{ l.pub_date }}</td>

@@ -9,7 +9,20 @@
         <div class="network-content">
             <table style="width: 100%">
                 <tr style="width: 100%; vertical-align: top">
-                    <td style="width: 33%">
+                    <td style="width: 25%">
+                        <div style="display: inline-block; margin-right: 10px;">
+                            <h4> Circles</h4>
+                        </div>
+                        <div style="display: inline-block">
+                            <a href="{% url 'profiles:circles' %}">edit</a>
+                        </div>
+                        <ul>
+                            {% for c in circles %}
+                                <li> {{ c.circleName }}</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    <td style="width: 25%">
                         <h4> Friends </h4>
                         <ul>
                             {% for f in myfriends %}
@@ -17,7 +30,7 @@
                             {% endfor %}
                         </ul>
                     </td>
-                    <td style="width: 33%">
+                    <td style="width: 25%">
                         <h4> Followers </h4>
                         <ul>
                             {% for f in followers %}
@@ -25,7 +38,7 @@
                             {% endfor %}
                         </ul>
                     </td>
-                    <td style="width: 33%">
+                    <td style="width: 25%">
                         <h4> Following </h4>
                         <ul>
                             {% for f in following %}
@@ -40,10 +53,35 @@
 
      <div class="small-separator" style="height: 30px; width: 100%; display: inline-block;"> &nbsp; </div>
 
+
     <div class="messages-section" style="float: left;">
         <h3> Messages: </h3>
         <form method="post" action="">
           {% csrf_token %}
+          <center>
+            <div class="modal fade" id="messageModel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Your reply</h4>
+                  </div>
+                  <textarea name="reply_gn_content" rows="4" cols="65" class="message" placeholder="Your message content here"></textarea>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" id="reply_gn_id" name="reply_gn_id" value="" class="btn btn-primary">Send</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </center>
+          <script type="text/javascript">
+          function updateReplyRecipient(notification_id) {
+            reply_bttn = document.getElementById('reply_gn_id');
+            reply_bttn.value = notification_id;
+          }
+          </script>
+
           <table class="table table-hover" style="width: 100%;">
             <thead>
               <tr>
@@ -57,18 +95,23 @@
             <tr>
               <td><a href="{% url 'profiles:view' username=frequest.from_user sortmethod='default'%}">{{frequest.from_user}}</a></td>
               <td> {{frequest.message}} </td>
-              <td> <button name="accept" value="{{frequest.id}}" type="submit" class="btn btn-success btn-sm">Accept</button>
-                   <button name="reject" value="{{frequest.id}}" type="submit" class="btn btn-danger btn-sm">Reject</button>
+              <td> <button name="accept_fr" value="{{frequest.id}}" type="submit" class="btn btn-success btn-sm">Accept</button>
+                   <button name="reject_fr" value="{{frequest.id}}" type="submit" class="btn btn-danger btn-sm">Reject</button>
               </td>
               <td>{{frequest.created}}</td>
             </tr>
             {% endfor %}
-            {% for list_notification in list_notifications %}
+            {% for notification in notifications %}
             <tr>
-              <td><a href="{% url 'profiles:view' username=list_notification.from_user sortmethod='default' %}">{{list_notification.from_user}}</a></td>
-              <td> {{list_notification.content}} </td>
-              <td></td>
-              <td>{{list_notification.send_date}} </td>
+              <td><a href="{% url 'profiles:view' username=notification.from_user sortmethod='default' %}">{{notification.from_user}}</a></td>
+              <td> {{notification.content}} </td>
+              <td>
+                <button name="delete_ln" value="{{notification.id}}" type="submit" class="btn btn-danger btn-sm">Dismiss</button>
+                {% if notification.type == 'GN' %}
+                  <button onclick="updateReplyRecipient({{notification.id}});" value="{{notification.id}}" type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#messageModel">Reply</button>
+                {% endif %}
+              </td>
+              <td>{{notification.send_date}} </td>
             </tr>
             {% endfor %}
           </table>
