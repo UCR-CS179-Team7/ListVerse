@@ -15,5 +15,5 @@ urlpatterns = [
     url(r'^search/', include('stats.urls', namespace='searching')),
     url(r'^lists/', include('lists.urls', namespace='lists')),
     url(r'^admin/', include(admin.site.urls)),
-    url(r'feed/$', FeedView.as_view(), name='feed') 
+    url(r'feed/$', FeedView.as_view(), name='feed')
 ]
