@@ -5,12 +5,6 @@
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
     {% load staticfiles %}
     <link rel="stylesheet" href="{% static "css/base.css" %}" >
-    <!--cant parse staticfiles from css so I put background image here-->
-    <style>
-        .side-border{
-            background: url("{% static "img/ucrlist_borderpattern.png" %}");
-        }
-    </style>
     {% block css %}{% endblock css %}
     {% block script %}{% endblock script %}
 </head>
@@ -40,11 +34,9 @@
         </div><!--/.navbar-collapse -->
       </div>
     </div>
-    <div class="side-border side-border-left"></div>
     <div class="container content-container">
         {% block content %}{% endblock content %}
     </div>
-    <div class="side-border side-border-right"></div>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     {% block js %}{% endblock js %}
 </body>
