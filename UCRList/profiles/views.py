@@ -97,11 +97,10 @@ class ProfileView(View):
             doesnt_follow = not Follow.objects.follows(request.user,request_profile.user)
             not_self = request.user.username != username
 
-            if not_self:
-                # Generate message history between logged in user and the user
-                # whos profile is being viewed
-                conversation = Message.objects.filter(to_user=request_profile.user, from_user=request.user, type='GN').order_by('send_date') \
-                                | Message.objects.filter(to_user=request.user, from_user=request_profile.user, type='GN').order_by('send_date')
+            # Generate message history between logged in user and the user
+            # whos profile is being viewed
+            conversation = Message.objects.filter(to_user=request_profile.user, from_user=request.user, type='GN').order_by('send_date') \
+                            | Message.objects.filter(to_user=request.user, from_user=request_profile.user, type='GN').order_by('send_date')
 
 
             # if you've already friended the person who's profile you're viewing, don't show the button
