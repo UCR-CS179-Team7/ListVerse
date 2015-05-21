@@ -18,4 +18,21 @@
         {% endfor %}
         </table>
     </div>
+    <div class="feed-section">
+        <h1 style="text-align: center">Recommended Lists</h1>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <td>Title</td><td>Created by</td><td>Published</td><td>Description</td>
+                </tr>
+            </thead>
+        {% for l in recommendations %}
+            <tr><td> <a href="{% url 'lists:detail' slug=l.slug %}">{{ l.title }}</a></td>
+                <td> <a href="{% url 'profiles:view' username=l.owner sortmethod='default' %}">{{ l.owner }}</a></td>
+                <td> {{ l.pub_date }}</td>
+                <td>{{ l.descriptionmeta|slice:'50' }}</td>
+            </tr>
+        {% endfor %}
+        </table>
+    </div>
 {% endblock content %}
