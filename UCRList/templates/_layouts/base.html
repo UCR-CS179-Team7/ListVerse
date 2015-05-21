@@ -31,7 +31,8 @@
             <img id="logoimage" src="{% static "img/ucrlist_logo.png" %}"/>
             <a class="nav-tabs" href="/">Home</a>
             <a class="nav-tabs" href="{% url 'feed' %}">Feed</a>
-            <a class="nav-tabs" href="{% url  'lists:hot'%}">Trending</a>
+            <a class="nav-tabs" href="{% url 'lists:hot'%}">Trending</a>
+            <a class="nav-tabs" href="{% url 'searching:search' %}">Search</a>
         </div>
         <div class="navbar-collapse collapse">
           {% if not user.is_authenticated %}
