@@ -53,6 +53,17 @@ INSTALLED_APPS = (
     'allauth.socialaccount.providers.twitter',
 )
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.ipage.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'ucrlist@georgebraxton.com'
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = 'george@georgebraxton.com'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
+
 SITE_ID = 3
 
 LOGIN_REDIRECT_URL = '/'

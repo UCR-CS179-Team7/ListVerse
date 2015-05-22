@@ -14,6 +14,8 @@ from messages.models import Message
 
 from profiles.models import InterestTopic, Circle, CircleRelation
 from lists.models import List, TopicTag, BrowseHistory, Like
+from allauth.account.views import LoginView
+import allauth.account.views
 import datetime
 
 # Decorators
@@ -38,7 +40,7 @@ class HomePageView(generic.TemplateView):
                                                  'circles': circles,
                                                  'notifications' : notifications})
         else:
-            return LoginView.as_view()(self.request)
+            return HttpResponseRedirect(reverse('account_login'))
 
     @never_cache
     def post(self, request):
@@ -84,7 +86,7 @@ class HomePageView(generic.TemplateView):
                                                  'circles': circles,
                                                  'notifications' : notifications})
         else:
-            return LoginView.as_view()(self.request)
+            HttpResponseRedirect(reverse('account_login'))
 
 
 class RegisterView(generic.CreateView):
