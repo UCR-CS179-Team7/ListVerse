@@ -3,6 +3,8 @@ from django.views.generic import View
 
 from lists.models import ListItem, List, TopicTag
 
+import time
+
 class SearchView(View):
     def get(self, request):
         # simply return the rendering page to display the form
@@ -28,7 +30,6 @@ class SearchView(View):
             titleResults = List.objects.filter(title__icontains=word)
             for l in titleResults:
                 querySet.add(l)
-                print l.title
             # do a query for list item descriptions and titles that contain the word
             results = ListItem.objects.filter(descriptionhtml__icontains=word)
             results |= ListItem.objects.filter(title__icontains=word)
@@ -36,7 +37,6 @@ class SearchView(View):
             for li in results:
                 # here check if the list that the li belongs to has the category as topic
                 if topicNumber is not None:
-                    #print "using category filter on: " + str(li.listid) + " with topic " + str(topicNumber) + ": " + str(category)
                     results = None
                     try:
                         results = TopicTag.objects.get(list=li.listid, topic=topicNumber)
@@ -44,10 +44,8 @@ class SearchView(View):
                         # do nothing if it doesn't exist. this means that that list is not tagged with topic
                         continue
                     if results is not None:
-                        #print "adding " + str(li.listid) + " (topic filtered)"
                         querySet.add(li.listid)
                 else:
-                    #print "adding " + str(li.listid) + " (no filter)"
                     querySet.add(li.listid)
 
         return querySet
@@ -70,29 +68,30 @@ class SearchView(View):
         catSearched = False
 
         if query is not None:
-            query = query.split(' ')
+            cleanQuery = query.split(' ')
 
             # filter out the query set by Topic
             if request.POST.get('cbmusic') is not None:
                 catSearched = True;
-                querySet = querySet.union(self.getQuerySet(query, "Music"))
+                querySet = querySet.union(self.getQuerySet(cleanQuery, "Music"))
             if request.POST.get('cbmovies') is not None:
                 catSearched = True;
-                querySet = querySet.union(self.getQuerySet(query, "Movies"))
+                querySet = querySet.union(self.getQuerySet(cleanQuery, "Movies"))
             if request.POST.get('cbtv') is not None:
                 catSearched = True;
-                querySet = querySet.union(self.getQuerySet(query, "TV"))
+                querySet = querySet.union(self.getQuerySet(cleanQuery, "TV"))
             if request.POST.get('cbscience') is not None:
                 catSearched = True;
-                querySet = querySet.union(self.getQuerySet(query, "Science"))
+                querySet = querySet.union(self.getQuerySet(cleanQuery, "Science"))
             if request.POST.get('cbpolitics') is not None:
                 catSearched = True;
-                querySet = querySet.union(self.getQuerySet(query, "Politics"))
+                querySet = querySet.union(self.getQuerySet(cleanQuery, "Politics"))
 
             # NO CATEGORY FILTERING TOOK PLACE, search textually
             if not catSearched:
                 # there were no categories selected
-                querySet = querySet.union(self.getQuerySet(query))
+                querySet = querySet.union(self.getQuerySet(cleanQuery))
 
 
-        return render(request, 'searching/results.html', {'queryResultSet':querySet})
+        return render(request, 'searching/results.html', {'queryResultSet':querySet,
+                                                          'queryText':query})
