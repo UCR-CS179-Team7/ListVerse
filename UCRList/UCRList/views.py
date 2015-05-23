@@ -14,6 +14,8 @@ from messages.models import Message
 
 from profiles.models import InterestTopic, Circle, CircleRelation
 from lists.models import List, TopicTag, BrowseHistory, Like
+from allauth.account.views import LoginView
+import allauth.account.views
 import datetime
 
 # Decorators
@@ -38,7 +40,7 @@ class HomePageView(generic.TemplateView):
                                                  'circles': circles,
                                                  'notifications' : notifications})
         else:
-            return LoginView.as_view()(self.request)
+            return HttpResponseRedirect(reverse('account_login'))
 
     @never_cache
     def post(self, request):
@@ -84,7 +86,7 @@ class HomePageView(generic.TemplateView):
                                                  'circles': circles,
                                                  'notifications' : notifications})
         else:
-            return LoginView.as_view()(self.request)
+            HttpResponseRedirect(reverse('account_login'))
 
 
 class RegisterView(generic.CreateView):
@@ -117,24 +119,23 @@ class LogOutView(generic.RedirectView):
 
 
 def recommended_lists(user):
-    today = datetime.datetime.today()
-    margin = datetime.timedelta(days=7)
-    history = BrowseHistory.objects.filter(Q(timestamp__gte=today-margin), user=user).values('list')
+    # nullity of user checked by caller
+    weekAgo = datetime.datetime.today() - datetime.timedelta(days=7)
+    history = BrowseHistory.objects.filter(Q(timestamp__gte=weekAgo), user=user).values('list')
     histTopics = TopicTag.objects.filter(Q(list__in=history)).values('topic')
     mytopics = InterestTopic.objects.filter(user=user).values('topic')
-    relevantlists = TopicTag.objects.filter(Q(topic__in=mytopics) | Q(topic__in=histTopics)).values('list')
-    
-    # first getting the 5 most recent lists in the categories, then sort by likes
+        
+    # first get the 5 most recent lists in the categories, then sort by likes
     # sorting all potential lists by count is possible, but could be really slow
 
+    relevantlists = TopicTag.objects.filter(Q(topic__in=mytopics) | Q(topic__in=histTopics)).values('list')
     top = List.objects.filter(Q(id__in=relevantlists)).order_by('-pub_date')[:5]
+    
     pairs = [] 
     for lst in top:
         count = Like.objects.filter(list=lst).count()
         pairs.append((lst,count)) 
-    pairs = sorted(pairs,key=lambda x: x[1])
-    pairs.reverse() 
-
+    pairs = sorted(pairs,key=lambda x: x[1], reverse=True)
     mostLiked = [pair[0] for pair in pairs] # remove the counts
     return mostLiked
 
@@ -146,6 +147,7 @@ def feed_view(request):
     lists = {}
     circles = Circle.objects.filter(user=request.user)
     ineterest_topics = InterestTopic.TOPIC_CHOICES
+    recommendations = recommended_lists(request.user)
     if feed_filter == 'interests':
         topics = InterestTopic.objects.filter(user=request.user).values('topic')
         lists_in_topics = TopicTag.objects.filter(topic__in=topics).values('list')
@@ -169,4 +171,5 @@ def feed_view(request):
     return render(request, 'feed.html', {'lists': lists,
                                          'circles': circles,
                                          'interest_topics': ineterest_topics,
-                                         'default_filter_select': filter_data})
+                                         'default_filter_select': filter_data,
+                                         'recommendations':recommendations})

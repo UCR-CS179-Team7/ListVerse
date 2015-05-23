@@ -20,7 +20,7 @@ class ListDetailView(DetailView):
         context = super(ListDetailView, self).get_context_data(**kwargs)
         user = self.request.user
         ls = context['l']
-        num_likes = len(Like.objects.filter(list=ls))
+        num_likes = Like.objects.filter(list=ls).count()
         context['num_likes'] = num_likes
         try:
             like = Like.objects.get(owner=user, list=ls)
