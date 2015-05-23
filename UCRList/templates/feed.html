@@ -8,6 +8,7 @@
         <div style="display: inline-block">
             <form id="feed_filter" action="{% url 'feed' %}" method="post">{% csrf_token %}
                 <select name="filter" onchange="this.form.submit()">
+                    <option value=""></option>
                     <option value="default:default">all</option>
                     <optgroup label="Topics">
                         {% for i in interest_topics %}

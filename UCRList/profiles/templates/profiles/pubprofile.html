@@ -5,8 +5,8 @@
 {% block content %}
 <div class="profile-section">
     {% if not not_friends or not not_self %}
-    <div class="row">
-      <div class="col-md-6">
+    <div class="row" style="display: flex;">
+      <div class="col-md-6 profile-view-data" style="width: 500px;">
         <img style="display:block; margin: 0 auto;" class="img-circle" src="{{ MEDIA_URL }}{{ profile.avatar }}" height="100" width="100"/>
 
         <center>
@@ -33,11 +33,11 @@
                       </div>
                       <div class="modal-body" id="conversation" style="height:200px; overflow-y:auto;">
                         {% for message in conversation %}
-                          {% if message.from_user = profile.user %}
+                          {% if message.from_user == profile.user %}
                             <p class="from">{{profile.user.username}}: {{message.content}}</p>
                           {% endif %}
 
-                          {% if message.to_user = profile.user %}
+                          {% if message.to_user == profile.user %}
                             <p class="to">You: {{message.content}}</p>
                           {% endif %}
                         {% endfor %}
@@ -56,7 +56,7 @@
           {% endif %}
         </center>
       </div>
-      <div class="col-md-6">
+      <div class="col-md-6 profile-view-data">
         <h3>{{profile.user.username}}'s Friends </h3>
         <ul>
             {% for f in myfriends %}
