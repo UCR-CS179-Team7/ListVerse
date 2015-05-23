@@ -129,24 +129,23 @@ class FeedView(generic.TemplateView):
                                              'recommendations':recommendations})
 
 def recommended_lists(user):
-    today = datetime.datetime.today()
-    margin = datetime.timedelta(days=7)
-    history = BrowseHistory.objects.filter(Q(timestamp__gte=today-margin), user=user).values('list')
+    # nullity of user checked by caller
+    weekAgo = datetime.datetime.today() - datetime.timedelta(days=7)
+    history = BrowseHistory.objects.filter(Q(timestamp__gte=weekAgo), user=user).values('list')
     histTopics = TopicTag.objects.filter(Q(list__in=history)).values('topic')
     mytopics = InterestTopic.objects.filter(user=user).values('topic')
-    relevantlists = TopicTag.objects.filter(Q(topic__in=mytopics) | Q(topic__in=histTopics)).values('list')
-    
-    # first getting the 5 most recent lists in the categories, then sort by likes
+        
+    # first get the 5 most recent lists in the categories, then sort by likes
     # sorting all potential lists by count is possible, but could be really slow
 
+    relevantlists = TopicTag.objects.filter(Q(topic__in=mytopics) | Q(topic__in=histTopics)).values('list')
     top = List.objects.filter(Q(id__in=relevantlists)).order_by('-pub_date')[:5]
+    
     pairs = [] 
     for lst in top:
         count = Like.objects.filter(list=lst).count()
         pairs.append((lst,count)) 
-    pairs = sorted(pairs,key=lambda x: x[1])
-    pairs.reverse() 
-
+    pairs = sorted(pairs,key=lambda x: x[1], reverse=True)
     mostLiked = [pair[0] for pair in pairs] # remove the counts
     return mostLiked
 
