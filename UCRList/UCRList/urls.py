@@ -7,7 +7,6 @@ from allauth.account.views import LogoutView
 
 urlpatterns = [
     url(r'^accounts/', include('allauth.urls')),
-    #url(r'^accounts/logout', LogoutView.as_view(), name='mylogout'),
     url(r'^$', HomePageView.as_view(), name='home'),
     url(r'^profiles/', include('profiles.urls', namespace='profiles')),
     url(r'^search/', include('stats.urls', namespace='searching')),

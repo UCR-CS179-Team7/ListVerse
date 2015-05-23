@@ -1,4 +1,3 @@
-<!--TODO-->
 {% extends '_layouts/base.html' %}
 {% load crispy_forms_tags %}
 {% load friendshiptags %}
@@ -92,9 +91,9 @@
           <h1>{{ profile.user.username }}'s lists</h1>
           <div class="btn-group" role="group" aria-label="...">
             <a class="btn btn-info" href="/profiles/view/{{profile.user.username}}/ascending">Time Ascending</a>
-            <a class="btn btn-info"href="/profiles/view/{{profile.user.username}}/descending">Time Descending</a>
-            <a class="btn btn-info"href="/profiles/view/{{profile.user.username}}/alphabetical">A-Z</a>
-            <a class="btn btn-info"href="/profiles/view/{{profile.user.username}}/ralphabetical">Z-A</a>
+            <a class="btn btn-info" href="/profiles/view/{{profile.user.username}}/descending">Time Descending</a>
+            <a class="btn btn-info" href="/profiles/view/{{profile.user.username}}/alphabetical">A-Z</a>
+            <a class="btn btn-info" href="/profiles/view/{{profile.user.username}}/ralphabetical">Z-A</a>
           </div>
           <table class="table table-hover">
               <thead>
