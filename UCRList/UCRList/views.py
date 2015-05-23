@@ -147,6 +147,7 @@ def feed_view(request):
     lists = {}
     circles = Circle.objects.filter(user=request.user)
     ineterest_topics = InterestTopic.TOPIC_CHOICES
+    recommendations = recommended_lists(request.user)
     if feed_filter == 'interests':
         topics = InterestTopic.objects.filter(user=request.user).values('topic')
         lists_in_topics = TopicTag.objects.filter(topic__in=topics).values('list')
@@ -170,4 +171,5 @@ def feed_view(request):
     return render(request, 'feed.html', {'lists': lists,
                                          'circles': circles,
                                          'interest_topics': ineterest_topics,
-                                         'default_filter_select': filter_data})
+                                         'default_filter_select': filter_data
+                                         'recommendations':recommendations})
