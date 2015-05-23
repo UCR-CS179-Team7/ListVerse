@@ -43,7 +43,46 @@ INSTALLED_APPS = (
     'lists',
     'friendship',
     'messages',
+    'stats',
+    'django.contrib.sites',     # The Django sites framework is required
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.facebook',
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.twitter',
 )
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.ipage.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'ucrlist@georgebraxton.com'
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = 'ucrlist@georgebraxton.com'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
+
+SITE_ID = 3
+
+LOGIN_REDIRECT_URL = '/'
+
+SOCIALACCOUNT_PROVIDERS = \
+    {'facebook':
+     {'SCOPE': ['email', 'public_profile', 'user_friends'],
+      'AUTH_PARAMS': {'auth_type': 'reauthenticate'},
+      'METHOD': 'oauth2',
+      'LOCALE_FUNC': lambda request: 'en-US',
+      'VERIFIED_EMAIL': False,
+      'VERSION': 'v2.3'
+      },
+     'google':
+     {'SCOPE': ['profile', 'email'],
+      'AUTH_PARAMS': {'access_type': 'online'},
+      'LOCALE_FUNC': lambda request: 'en-US',
+      }
+     }
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -71,10 +110,21 @@ TEMPLATES = [
                 'django.template.context_processors.static',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.core.context_processors.request',
+                'allauth.account.context_processors.account',
+                'allauth.socialaccount.context_processors.socialaccount',
             ],
         },
     },
 ]
+
+AUTHENTICATION_BACKENDS = (
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
 
 WSGI_APPLICATION = 'UCRList.wsgi.application'
 

@@ -47,22 +47,34 @@
 
     next() {
         this.save();
-        if (this.number < this.top_n) {    
-            var next_number = (this.number + 1).toString();
-            this.$location.path('/item/' + next_number);
-        } else {
-            this.$location.path('/confirm');
-        }
-    }
+        let next_location = this._next_location(this.number, this.top_n, false);
+        this.$location.path(next_location);
+    } 
 
     back() {
         this.save();  
-        if (this.idx > 0) {    
-            var next_number = (this.number - 1).toString();
-            this.$location.path('/item/' + next_number);
+        let next_location = this._next_location(this.number, this.top_n, true)
+        this.$location.path(next_location);
+    }
+
+    _next_location(idx, num_items, back=true) {
+        let next_idx = idx;
+        
+        if(back) {
+            next_idx = idx - 1;
         } else {
-            this.$location.path('/');
-        } 
+            next_idx = idx + 1;
+        }
+
+        if(next_idx > 0 && next_idx <= num_items) {
+            let prefix = '/item/';
+            let suffix = next_idx.toString();
+            return prefix + suffix;
+        } else if (next_idx <= 0) {
+            return '/';
+        } else {
+            return '/confirm';
+        }
     }
 }
 

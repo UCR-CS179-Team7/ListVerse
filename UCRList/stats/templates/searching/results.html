@@ -1,0 +1,30 @@
+<!--TODO-->
+{% extends '_layouts/base.html' %}
+{% block content %}
+<div class="container">
+  <h2 style="text-align: center">Search Results</h2>
+</div>
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title"> Search Results</h3>
+  </div>
+  <div class="panel-body">
+{% for result in queryResultSet %}
+    <div class="row" style="margin-left: 3px">
+      <a href="{% url 'lists:detail' slug=result.slug %}">{{result.title}}</a><br/>
+      By: <a href="{% url 'profiles:view' username=result.owner sortmethod='default'%}">{{ result.owner }}</a><br/>
+    </div>
+    <hr />
+{% endfor %}
+  </div>
+
+{% endblock content %}
+
+
+{% block js %}
+{% endblock js %}
+
+
+{% block css %}
+{% endblock css %}
