@@ -171,5 +171,5 @@ def feed_view(request):
     return render(request, 'feed.html', {'lists': lists,
                                          'circles': circles,
                                          'interest_topics': ineterest_topics,
-                                         'default_filter_select': filter_data
+                                         'default_filter_select': filter_data,
                                          'recommendations':recommendations})
