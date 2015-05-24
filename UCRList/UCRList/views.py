@@ -21,6 +21,8 @@ import datetime
 # Decorators
 from django.views.decorators.cache import never_cache
 
+def filter_unviewable_lists(lists, user):
+    return [l for l in lists if l.sufficent_view_permissions(user)]
 
 class HomePageView(generic.TemplateView):
     @never_cache
@@ -124,17 +126,20 @@ def recommended_lists(user):
     history = BrowseHistory.objects.filter(Q(timestamp__gte=weekAgo), user=user).values('list')
     histTopics = TopicTag.objects.filter(Q(list__in=history)).values('topic')
     mytopics = InterestTopic.objects.filter(user=user).values('topic')
-        
+
     # first get the 5 most recent lists in the categories, then sort by likes
     # sorting all potential lists by count is possible, but could be really slow
 
     relevantlists = TopicTag.objects.filter(Q(topic__in=mytopics) | Q(topic__in=histTopics)).values('list')
-    top = List.objects.filter(Q(id__in=relevantlists)).order_by('-pub_date')[:5]
-    
-    pairs = [] 
+    ordered_lists = List.objects.filter(Q(id__in=relevantlists)).order_by('-pub_date')
+
+    ordered_viewable_lists = filter_unviewable_lists(ordered_lists, user)
+
+    top = ordered_viewable_lists[:5]
+    pairs = []
     for lst in top:
         count = Like.objects.filter(list=lst).count()
-        pairs.append((lst,count)) 
+        pairs.append((lst,count))
     pairs = sorted(pairs,key=lambda x: x[1], reverse=True)
     mostLiked = [pair[0] for pair in pairs] # remove the counts
     return mostLiked
@@ -168,6 +173,7 @@ def feed_view(request):
         lists_in_topics = TopicTag.objects.filter(topic__in=topics).values('list')
         following = Follow.objects.following(request.user)
         lists = List.objects.filter(Q(id__in=lists_in_topics)|Q(owner__in=following))
+    lists = filter_unviewable_lists(lists, request.user)
     return render(request, 'feed.html', {'lists': lists,
                                          'circles': circles,
                                          'interest_topics': ineterest_topics,
