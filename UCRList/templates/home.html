@@ -1,10 +1,9 @@
 {% extends '_layouts/base.html' %}
 {% load friendshiptags %}
 {% block content %}
-    {% block headline %}<h1 style="text-align: center;">Welcome to UCRList</h1>{% endblock headline %}
     {% if user.is_authenticated %}
     <div style="width: 20px; float: left"></div>
-    <div class="network-section" style="float: left;">
+    <div class="network-section">
         <h3>Your Network</h3>
         <div class="network-content">
             <table style="width: 100%">

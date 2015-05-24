@@ -5,6 +5,7 @@
 	<link rel="icon" type="image/png" href="http://listverse.wpengine.netdna-cdn.com/wp-content/themes/listverse2013/assets/img/favicon.png" />
     {% load staticfiles %}
     <link rel="stylesheet" href="{% static "css/base.css" %}" >
+
 	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
     <style>
         textarea.message
@@ -39,12 +40,15 @@
                         <li><a href="{% url 'profiles:edit' %}">Edit Profile</a></li>
                     </ul>
                 </nav>
-			    <div class="search-top">
-	                <a class="search-top" href="#">Search this site</a>
-	                <div class="search-form search-top-reveal">
-		                <form id="cse-search-box" action="http://listverse.com/search/">
-			                <input type="text" id="search-input" size="31" name="q" />
-			                <button type="submit" id="search-submit" value="Search" name="sa">Search</button>
+			    <div class="user-search">
+	                <div class="user-search">
+		                <form action="http://listverse.com/search/">
+                            <div style="display: inline-block; float: right;">
+                                <input type="text" id="user-search-box" class="user-search-text" size="15" name="q" placeholder="Search Users"/>
+                            </div>
+                            <div style="display: inline-block; float: right;">
+			                    <a class="search-top" href="#" onclick="this.form.submit();">Search this site</a>
+                            </div>
 		                </form>
 	                </div>
                 </div>
@@ -65,14 +69,27 @@
                 </div>
             </div>
 	    </div>
-	    <div class="">
-		    <a href="{% url 'home' %}" title="Go to Home"><div style="float: left; padding-right: 100px;"><img width="285" height="81" class="logo" src="{% static "img/ucrlist_logo.png" %}" style="display: inline-block; float: left; margin: 20px 20px 20px 200px;"/></div></a>
+	    <div class="logo">
+		    <a href="{% url 'home' %}" title="Go to Home">
+                <div style="float: left; padding-right: 100px;">
+                    <img width="285" height="81" src="{% static "img/ucrlist_logo.png" %}" class="ucrlist-logo"/>
+                </div>
+            </a>
 		</div>
     </header>
     <div class="container content-container">
         {% block content %}{% endblock content %}
     </div>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="{% static 'js/jQuery-Autocomplete-master/dist/jquery-2.1.1.js' %}"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script src="{% static 'js/jQuery-Autocomplete-master/dist/jquery.autocomplete.js' %}"></script>
+    <script>
+        $("#user-search-box").devbridgeAutocomplete({
+            serviceUrl: '{% url 'user_query'  %}',
+            onSelect: function (suggestion) {
+                window.location.href = "/profiles/view/"+suggestion.value+"/default/";
+            }
+        });
+    </script>
     {% block js %}{% endblock js %}
 </body>
