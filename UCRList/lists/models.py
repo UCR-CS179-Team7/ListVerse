@@ -76,28 +76,6 @@ class BrowseHistory(models.Model):
     list = models.ForeignKey(List)
     timestamp = models.DateTimeField(auto_now_add=True)
 
-
-'''
-    Notes for List and ListItems models
-    ----------------------------------------
-    Content-Types supported:
-        - text
-        - photo
-        - quote
-        - link
-        - video
-        - audio
-    ListItems requirements for each content type:
-        !!! title and body is required for all list items
-    Text
-        defaults are fine ( body will be considered the "text" )
-    Photo | link | video | audio
-        contenturi is required
-    Quote
-        contentalt is required
-
-'''
-
 class Comment(models.Model):
     list = models.ForeignKey(List, related_name='comments')
     owner = models.ForeignKey(User, related_name='comment_history')
