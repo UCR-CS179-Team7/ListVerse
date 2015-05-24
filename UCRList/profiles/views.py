@@ -78,6 +78,7 @@ class ProfileView(View):
         not_friends = doesnt_follow = not_self = active_request = False
 
         userLists = List.objects.filter(owner=userid)
+        userLists = List.filter_unviewable_lists(userLists, request.user)
         if sortmethod=='ascending':
             global topicList
             userLists = List.objects.filter(owner=userid).order_by('pub_date')
