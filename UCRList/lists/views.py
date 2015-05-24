@@ -1,5 +1,6 @@
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, \
+        HttpResponseNotFound, HttpResponseForbidden
 from django.views.generic import View, DetailView, ListView
 import json
 from friendship.models import Friend, Follow
@@ -11,17 +12,51 @@ from messages.models import Message
 from .forms import AddListForm
 from django.views.decorators.cache import never_cache
 
-class ListDetailView(DetailView):
-    model = List
-    context_object_name = 'l'
-    template_name = 'lists/listdetail.html'
 
-    def get_context_data(self, **kwargs):
-        context = super(ListDetailView, self).get_context_data(**kwargs)
-        user = self.request.user
-        ls = context['l']
+def needs_view_permission(view_method):
+    def check_permissions(self, request, slug=''):
+        not_found_response = HttpResponseNotFound()
+        try:
+            ls = List.objects.get(slug=slug)
+        except List.DoesNotExist:
+            return not_found_response
+
+        if ls.sufficent_view_permissions(request.user):
+            return view_method(self, request, ls)
+        else:
+            return not_found_response
+    return check_permissions
+
+def needs_write_permission(write_method):
+    def check_permissions(self, request, slug=''):
+        not_found_response = HttpResponseNotFound()
+        forbidden_response = HttpResponseForbidden()
+        try:
+            ls = List.objects.get(slug=slug)
+        except List.DoesNotExist:
+            return not_found_response
+
+        if ls.owner == request.user:
+            return write_method(self, request, ls)
+        else:
+            return forbidden_response
+    return check_permissions
+
+class ListDetailView(View):
+    @needs_view_permission
+    def get(self, request, ls):
+        bh = BrowseHistory(user=request.user, list=ls)
+        bh.save()
+        context = self.context_data(request, ls)
+        return render(request, 'lists/listdetail.html', context)
+
+    def context_data(self, request, ls):
+        context = {}
+        context['l'] = ls
+        user = request.user
         num_likes = Like.objects.filter(list=ls).count()
         context['num_likes'] = num_likes
+
         try:
             like = Like.objects.get(owner=user, list=ls)
             context['user_likes'] = True
@@ -30,17 +65,16 @@ class ListDetailView(DetailView):
 
         return context
 
-    def get(self, request, slug=''):
-        user = request.user
-        lst = List.objects.get(slug=slug) # might find a better way
-        bh = BrowseHistory(user=user, list=lst)
-        bh.save()
-        return super(ListDetailView,self).get(self)
-
 class HotListsView(ListView):
     model = List
     context_object_name= 'ls'
     template_name = 'lists/hotlists.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(HotListsView, self).get_context_data(**kwargs)
+        user = self.request.user
+        context['ls'] = List.objects.filter(privacy=List.PUBLIC_VISIBILITY)
+        return context
 
 # Create your views here.
 class AddListView(View):
@@ -52,10 +86,17 @@ class AddListView(View):
         ls = json.loads(request.body)
         # print ls
         # save list json from request into DB
-        newList = List(owner=request.user, title=ls["title"], num_items=ls["number"])
+        newList = List(owner=request.user, \
+                title=ls["title"], \
+                num_items=ls["number"], \
+                privacy=ls["privacy"])
+
         newList.save()
         for listItem in ls["list"]:
-            newListItem = ListItem(listid=newList, title=listItem["title"], descriptionhtml=listItem["description"], descriptionmeta=listItem["description_meta"])
+            newListItem = ListItem(listid=newList, \
+                    title=listItem["title"], \
+                    descriptionhtml=listItem["description"], \
+                    descriptionmeta=listItem["description_meta"])
             newListItem.save()
 
         slug_dict = {
@@ -74,51 +115,51 @@ class AddListView(View):
                 content_type='application/json')
 
 class DeleteView(View):
-    def post(self, request, slug=''):
-        for list in List.objects.filter(slug=slug):
-            list.delete()
+
+    @needs_write_permission
+    def post(self, request, ls):
+        ls.delete()
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 class EditListView(View):
-    def get(self, request, slug=''):
-        return render(request, 'lists/editlist/index.html', {'listSlug': slug})
+    @needs_write_permission
+    def get(self, request, ls):
+        return render(request, 'lists/editlist/index.html', {'listSlug': ls.slug})
 
-    def post(self, request, slug=''):
-        try:
-            list = json.loads(request.body)
-            ls = List.objects.get(slug=slug)
-            ls.title = list['title']
-            ls.num_items = list['number']
-            ls.save()
+    @needs_write_permission
+    def post(self, request, ls):
+        list = json.loads(request.body)
+        ls.title = list['title']
+        ls.num_items = list['number']
+        ls.privacy = list['privacy']
+        ls.save()
 
-            for item in ListItem.objects.filter(listid=ls):
-                item.delete()
+        for item in ListItem.objects.filter(listid=ls):
+            item.delete()
 
-            for item in list['list']:
-                newItem = ListItem(listid=ls, title=item['title'],\
-    descriptionhtml=item['description'], descriptionmeta=item['description_meta'])
-                newItem.save()
+        for item in list['list']:
+            newItem = ListItem(listid=ls, title=item['title'],\
+                    descriptionhtml=item['description'],
+                    descriptionmeta=item['description_meta'])
+            newItem.save()
 
-            for topicTag in TopicTag.objects.filter(list=ls):
-                topicTag.delete()
+        for topicTag in TopicTag.objects.filter(list=ls):
+            topicTag.delete()
 
-            for tagChoiceID in list['tags']:
-                newTopicTag = TopicTag(list=ls, topic=tagChoiceID)
-                newTopicTag.save()
+        for tagChoiceID in list['tags']:
+            newTopicTag = TopicTag(list=ls, topic=tagChoiceID)
+            newTopicTag.save()
 
-            slug_dict = {
-                'slug': ls.slug
-            }
-
-        except Exception as e:
-            print e
+        slug_dict = {
+            'slug': ls.slug
+        }
 
         return HttpResponse(json.dumps(slug_dict), status=201, \
                 content_type='application/json')
 
 class GetListData(View):
-    def get(self, request, slug=''):
-        ls = List.objects.get(slug=slug)
+    @needs_view_permission
+    def get(self, request, ls):
         items = ListItem.objects.filter(listid=ls)
         def get_item_info(item):
             return {
@@ -131,6 +172,7 @@ class GetListData(View):
         list_data = {
             'title': ls.title,
             'number': ls.num_items,
+            'privacy': ls.privacy,
             'list': map(get_item_info, items),
             'tags': map(lambda tag: tag.topic, tags),
         }
@@ -148,8 +190,8 @@ class DeleteComment(View):
         return HttpResponse(request.META.get('HTTP_REFERER'))
 
 class PostComment(View):
-    def post(self, request, slug=''):
-        ls = List.objects.get(slug=slug)
+    @needs_view_permission
+    def post(self, request, ls):
         comment_content = request.POST.get('comment_content')
         comment = Comment(
                     list=ls,

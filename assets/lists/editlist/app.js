@@ -68,6 +68,7 @@ function LoadList($q, $http, $location, list) {
        var list_data = response.data;
        list.title(list_data.title);
        list.capacity(list_data.number);
+       list.privacy(list_data.privacy);
        list.slug(slug);
        for (let tag_id of list_data.tags) {
             list.addTagById(tag_id);

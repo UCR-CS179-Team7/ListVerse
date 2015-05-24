@@ -8,6 +8,8 @@
        this.list_title = this.list.title();
        this.top_n = this.list.capacity();
        this.tags = this.list.tags();
+   
+       this.editing = this.list.editing();
    }
 
    back() {

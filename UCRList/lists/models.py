@@ -4,6 +4,8 @@ from django.contrib.auth.models import User
 from django.template.defaultfilters import slugify
 from profiles.models import InterestTopic
 
+from friendship.models import Friend
+
 import datetime
 import itertools
 
@@ -63,6 +65,21 @@ class List(models.Model):
         self.update_timestamps()
         self.add_slug()
         super(List, self).save(*args, **kwargs)
+
+    def sufficent_view_permissions(self, user):
+        privacy = self.privacy
+        owner = self.owner
+
+        if privacy == self.PUBLIC_VISIBILITY or user == owner:
+            return True
+        elif privacy == self.PRIVATE_VISIBILITY:
+            return False
+        elif privacy == self.FRIENDS_VISIBILITY:
+            return Friend.objects.are_friends(owner, user)
+        else:
+            return False
+
+
 
     def __str__(self):
         return self.title
