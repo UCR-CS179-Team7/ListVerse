@@ -176,7 +176,7 @@ def feed_view(request):
 def user_query(request):
     if request.is_ajax():
         q = request.GET.get('query', '')
-        users = User.objects.filter(username__contains=q)[:5]
+        users = User.objects.filter(username__icontains=q)[:5]
         results = []
         formatted_results = {}
         for u in users:
