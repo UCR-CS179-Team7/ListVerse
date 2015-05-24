@@ -3,9 +3,7 @@ import {default as controllers_module_name} from './controllers';
 
 angular.module('app', [
     'ngRoute', 'ngSanitize', 'ngMessages',
-    'ui.bootstrap', 
-
-    'ngTagsInput',
+    'ui.bootstrap', 'ui.select', 
 
     controllers_module_name,
 ])

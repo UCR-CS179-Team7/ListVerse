@@ -21,7 +21,6 @@ class ListItem {
        
        function replace_quotes(_, match) {
             let match_nl = match.replace(/<\/div\s*><div\s*>/gi, '<br>');
-            console.log(match_nl);
             return `<div><blockquote>${match_nl}</blockquote></div>`;
        }
        return html.replace(QUOTE_RE, replace_quotes);
@@ -81,6 +80,47 @@ class ListItem {
 
 }
 
+const TAGS = [
+    'Music',
+    'Movies',
+    'TV',
+    'Science',
+    'Politics'
+];
+
+const PRIVACY_LEVELS_KEYS = [
+    'PUBLIC', 
+    'PRIVATE', 
+    'FRIENDS',
+];
+
+const PRIVACY_LEVELS_LIST = [{
+    id: 1,
+    icon: '<i class="fa fa-globe"></i>',
+    name: 'Public',
+    description: 'Anyone can see this list.',
+}, {
+    id: 2,
+    icon: '<i class="fa fa-lock"></i>',
+    name: 'Private',
+    description: 'Only you can see this list.',
+}, {
+    id: 3,
+    icon: '<i class="fa fa-users"></i>', 
+    name: 'Friends',
+    description: 'Only your friends can see this list.',
+}];
+
+const PRIVACY_LEVELS = (() => {
+    let _PRIVACY_LEVELS = {};
+    let i = 0;
+    for (let key of PRIVACY_LEVELS_KEYS) {
+       _PRIVACY_LEVELS[key] = PRIVACY_LEVELS_LIST[i]; 
+       i += 1;
+    }
+    return _PRIVACY_LEVELS;
+})();
+
 class ListService {
     constructor($http, $sce, $location, $q) {
         this.$http = $http;
@@ -92,34 +132,20 @@ class ListService {
         this.list_title = '';
         this.list_items = [];
 
-        this.possible_tags = [{
-            id: 1,
-            text: 'Music'
-        }, {
-            id: 2,
-            text: 'Movies'
-        }, {
-            id: 3,
-            text: 'TV'
-        }, {
-            id: 4,
-            text: 'Science'
-        }, {
-            id: 5,
-            text: 'Politics'
-        }];
+        this.PRIVACY_LEVELS = PRIVACY_LEVELS;
+        this.PRIVACY_LEVELS_LIST = PRIVACY_LEVELS_LIST;
         
-        this.list_tags = []; 
+        // privacy level is public by default
+        this.privacy_level = PRIVACY_LEVELS.PUBLIC;
+        
+        this.tag_ids = []; 
     }
  
-    possibleTags() {
-        var deferred = this.$q.defer();
-
-        deferred.resolve({
-            data:this.possible_tags
-        });
-
-        return deferred.promise;
+    privacy(level) {
+        if(typeof level !== 'undefined') {
+            this.privacy_level = level;     
+        }
+        return this.privacy_level;
     }
 
     items() {
@@ -127,39 +153,42 @@ class ListService {
     }
 
     tags() {
-        return this.list_tags.slice();
+        return this.tag_ids.map(_id => TAGS[_id - 1]);
     }
     
     addTagById(id) {
-        for(let _possible_tag of this.possible_tags) {
-            if(_possible_tag.id === id) {
-                this.list_tags.push({
-                    text: _possible_tag.text,
-                    id: _possible_tag.id,
-                });
-                return;
+        if(id > 0 && id <= TAGS.length) {
+            for (let _id of this.tag_ids) {
+                if(id === _id) {
+                    // dup, don't add
+                    return;
+                }
             }
+            this.tag_ids.push(id);
         }
     }
 
-    addTag(tag) {
-        for(let _tag of this.list_tags) {
-            if(_tag.text === tag.text) {
+    addTag(tag) {        
+        let id = 1;
+        for(let _tag of TAGS) {
+            if(tag == _tag) {
+                this.addTagById(id);    
                 return;
             }
+            id += 1;
         }
+    }
 
-        for(let _possible_tag of this.possible_tags) {
-            if(_possible_tag.text === tag.text) {
-                tag.id = _possible_tag.id;
-                this.list_tags.push(tag);
-                return;
-            }
-        }
+    all_privacy_levels() {
+        return PRIVACY_LEVELS_LIST;
+    }
+
+    all_tags() {
+        return TAGS;
     }
 
     clearTags(tag) {
-        this.list_tags = [];
+        this.tag_ids = [];
     }
 
     title(title) {
@@ -214,10 +243,11 @@ class ListService {
 
     upload(endpoint) {
         var _payload = {};
-        _payload.list = this.list_items.map((_item) => _item.repr());
+        _payload.list = this.list_items.map(_item => _item.repr());
         _payload.number = this.top_n;
         _payload.title = this.list_title;
-        _payload.tags = this.list_tags.map((_item) => _item.id);
+        _payload.tags = this.tag_ids;
+        _payload.privacy = this.privacy_level.id;
         console.log(_payload);
         return this.$http.post(endpoint, _payload);
     }

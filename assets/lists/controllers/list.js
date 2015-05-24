@@ -5,11 +5,11 @@
 
         this.top_n = this.list.capacity();
         this.list_title = this.list.title();
+        this.privacy_level = this.list.privacy();
         this.tags = this.list.tags();
-    }
-
-    possible_tags(query) {
-        return this.list.possibleTags();
+        
+        this.PRIVACY_LEVELS = this.list.all_privacy_levels();
+        this.TAGS = this.list.all_tags();
     }
 
     next() {
@@ -19,6 +19,7 @@
         }
         this.list.title(this.list_title);
         this.list.capacity(this.top_n);
+        this.list.privacy(this.privacy_level);
         this.$location.path('/item/1');
     }
 }

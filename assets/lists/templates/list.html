@@ -31,20 +31,49 @@
                     max="100"/>
             </div>
         </div>
-        <div class="row" style='height: 50px;'>
-            <div class="col-sm-6 form-group" style='margin-bottom: 15px;'>
-                <label for="listtags">
+        <div class="row">
+            <div class="col-md-6">
+                <label for="privacy">
+                    Privacy
+                </label>
+                <ui-select 
+                id="privacy"
+                ng-model="vm.privacy_level"
+                theme="bootstrap">
+                 <ui-select-match placeholder="Who can see this?">
+                    <span ng-bind-html="$select.selected.icon"></span> {{$select.selected.name}}
+                </ui-select-match>
+                <ui-select-choices repeat="level in vm.PRIVACY_LEVELS | filter : {name: $select.search}">
+                    <span ng-bind-html="level.icon | highlight: $select.search"></span> 
+                    <span ng-bind-html="level.name | highlight : $select.search"></span>
+                    <br>
+                    <small>
+                        {{level.description}}
+                    </small>
+                </ui-select-choices>
+                </ui-select>
+            </div>
+        </div>
+        </div>
+        <br>
+        <div class="row">
+             <div class="col-md-6">
+               <label for="listtags">
                     Tags
                 </label>
-                <tags-input
+                <ui-select 
+                    multiple 
+                    tagging 
                     id="listtags"
-                    class="input-sm"
-		    style="height: 100%"
-                    ng-model="vm.tags"
-                    add-from-autocomplete-only="true">
-                    <auto-complete source="vm.possible_tags($query)"></auto-complete>
-                    </tags-input>
-                </label>
+                    theme="bootstrap"
+                    tagging-label="false"
+                    ng-model="vm.tags">
+                    <ui-select-match placeholder="Add Related Tags">
+                        {{$item}}
+                    </ui-select-match>
+                <ui-select-choices repeat="tag in vm.TAGS">
+                    {{tag}}
+                </ui-select>
             </div>
         </div>
         <div class="footer" style="clear: both;" >
