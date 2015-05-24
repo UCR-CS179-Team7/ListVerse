@@ -138,7 +138,7 @@ class ListService {
         // privacy level is public by default
         this.privacy_level = PRIVACY_LEVELS.PUBLIC;
         
-        this.tag_ids = []; 
+        this.tag_ids = [];
     }
  
     privacy(level) {
@@ -259,6 +259,10 @@ class AddListService extends ListService {
     upload() {
         return super.upload('/lists/new');
     }
+
+    editing() {
+        return false;
+    }
 }
 
 class EditListService extends ListService {
@@ -267,6 +271,10 @@ class EditListService extends ListService {
             this.list_slug = s;
         }
         return this.list_slug;
+    }
+
+    editing() {
+        return true;
     }
     
     upload() {

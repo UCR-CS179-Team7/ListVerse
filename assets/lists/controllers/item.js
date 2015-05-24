@@ -1,6 +1,7 @@
  class ItemController {
-    constructor($route, $location, list) {
+    constructor($route, $location, $window, list) {
         this.$location = $location;
+        this.$window = $window;
         this.list = list;
 
         this.top_n = list.capacity();
@@ -28,6 +29,8 @@
         this.item_title = this.item.title();
         this.preview_html = this.item.preview();
         this.editor.setHTML(this.item.edit());
+    
+        this.editing = this.list.editing();
     }
     
     show_preview() {
@@ -59,7 +62,7 @@
 
     _next_location(idx, num_items, back=true) {
         let next_idx = idx;
-        
+    
         if(back) {
             next_idx = idx - 1;
         } else {
@@ -76,8 +79,18 @@
             return '/confirm';
         }
     }
+    
+    finish() {
+        this.save();
+        this.list.upload()
+        .then((response) => {
+            var slug = response.data.slug;
+            //this.list.reset();
+            this.$window.location.href = '/lists/detail/' + slug;
+        });
+    }
 }
 
-ItemController.$inject = ['$route', '$location', 'list'];
+ItemController.$inject = ['$route', '$location', '$window', 'list'];
 
 export default ItemController;

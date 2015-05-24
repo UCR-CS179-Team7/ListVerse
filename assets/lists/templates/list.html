@@ -81,5 +81,12 @@
                 value="Next"
                 type="Submit"
                 ng-click="vm.next()"/>
+            
+            <input class="btn btn-success"
+            ng-if="vm.editing"
+            type="Submit"
+            value="Finish"
+            ng-click="vm.finish()">
+
         </div>
 </form>
