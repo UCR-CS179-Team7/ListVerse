@@ -84,30 +84,34 @@ class EditListView(View):
         return render(request, 'lists/editlist/index.html', {'listSlug': slug})
 
     def post(self, request, slug=''):
-        list = json.loads(request.body)
-        ls = List.objects.get(slug=slug)
-        ls.title = list['title']
-        ls.num_items = list['number']
-        ls.save()
+        try:
+            list = json.loads(request.body)
+            ls = List.objects.get(slug=slug)
+            ls.title = list['title']
+            ls.num_items = list['number']
+            ls.save()
 
-        for item in ListItem.objects.filter(listid=ls):
-            item.delete()
+            for item in ListItem.objects.filter(listid=ls):
+                item.delete()
 
-        for item in list['list']:
-            newItem = ListItem(listid=ls, title=item['title'],\
-descriptionhtml=item['description'], descriptionmeta=item['description_meta'])
-            newItem.save()
+            for item in list['list']:
+                newItem = ListItem(listid=ls, title=item['title'],\
+    descriptionhtml=item['description'], descriptionmeta=item['description_meta'])
+                newItem.save()
 
-        for topicTag in TopicTag.objects.filter(list=ls):
-            topicTag.delete()
+            for topicTag in TopicTag.objects.filter(list=ls):
+                topicTag.delete()
 
-        for tagChoiceID in list['tags']:
-            newTopicTag = TopicTag(list=ls, topic=tagChoiceID)
-            newTopicTag.save()
+            for tagChoiceID in list['tags']:
+                newTopicTag = TopicTag(list=ls, topic=tagChoiceID)
+                newTopicTag.save()
 
-        slug_dict = {
-            'slug': ls.slug
-        }
+            slug_dict = {
+                'slug': ls.slug
+            }
+
+        except Exception as e:
+            print e
 
         return HttpResponse(json.dumps(slug_dict), status=201, \
                 content_type='application/json')

@@ -7,15 +7,26 @@ from profiles.models import InterestTopic
 import datetime
 import itertools
 
-
 class List(models.Model):
+    PUBLIC_VISIBILITY = 1
+    PRIVATE_VISIBILITY = 2
+    FRIENDS_VISIBILITY = 3
+
+    PRIVACY_LEVELS = (
+        (PUBLIC_VISIBILITY, 'Public'),
+        (PRIVATE_VISIBILITY, 'Private'),
+        (FRIENDS_VISIBILITY, 'Friends'),
+    )
+
     # MODEL FIELDS
+
     owner = models.ForeignKey(User)
     title = models.CharField(max_length=128)
     slug = models.CharField(max_length=128, null=False, unique=True)
     pub_date = models.DateField(editable=False)
     edit_date = models.DateField()
     num_items = models.PositiveSmallIntegerField()
+    privacy = models.PositiveIntegerField(choices=PRIVACY_LEVELS, default=PUBLIC_VISIBILITY)
 
     def update_timestamps(self):
         if not self.id:
@@ -75,28 +86,6 @@ class BrowseHistory(models.Model):
     user = models.ForeignKey(User)
     list = models.ForeignKey(List)
     timestamp = models.DateTimeField(auto_now_add=True)
-
-
-'''
-    Notes for List and ListItems models
-    ----------------------------------------
-    Content-Types supported:
-        - text
-        - photo
-        - quote
-        - link
-        - video
-        - audio
-    ListItems requirements for each content type:
-        !!! title and body is required for all list items
-    Text
-        defaults are fine ( body will be considered the "text" )
-    Photo | link | video | audio
-        contenturi is required
-    Quote
-        contentalt is required
-
-'''
 
 class Comment(models.Model):
     list = models.ForeignKey(List, related_name='comments')
