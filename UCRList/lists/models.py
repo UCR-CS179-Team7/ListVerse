@@ -43,7 +43,6 @@ class List(models.Model):
         #should not happen
         return original_slug
 
-
     def _create_slug(self):
         d = self.pub_date
         slugified_owner = slugify(self.owner)
@@ -79,7 +78,13 @@ class List(models.Model):
         else:
             return False
 
+    @staticmethod
+    def filter_unviewable_lists(lists, user):
+        return [l for l in lists if l.sufficent_view_permissions(user)]
 
+    @staticmethod
+    def filter_own_lists(lists, user):
+        return [l for l in lists if l.owner != user]
 
     def __str__(self):
         return self.title
