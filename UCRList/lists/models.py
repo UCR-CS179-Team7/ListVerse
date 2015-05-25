@@ -145,3 +145,13 @@ class Like(models.Model):
             self.like_date = datetime.datetime.today()
         super(Like, self).save(*args, **kwargs)
 
+class Favorite(models.Model):
+    list = models.ForeignKey(List, related_name='favorited_by')
+    owner = models.ForeignKey(User, related_name='favorites')
+    favorite_date = models.DateField(editable=False)
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.favorite_date = datetime.datetime.today()
+        super(Favorite, self).save(*args, **kwargs)
+

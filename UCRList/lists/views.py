@@ -6,7 +6,7 @@ import json
 from friendship.models import Friend, Follow
 
 from .models import User, List, ListItem, TopicTag, Comment, \
-        Reblog, Like, BrowseHistory
+        Reblog, Like, Favorite, BrowseHistory
 
 from messages.models import Message
 from .forms import AddListForm
@@ -201,31 +201,55 @@ class PostComment(View):
         comment.save()
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
+'''
+The following three view classes are
+extremely similar, they act as toggles
+
+e.g. for like whenever a user sends a request
+for the like endpoints, the users likes
+the list if the user hasn't already like it.
+
+Sending a request to the same endpoint
+counts as an unlike.
+'''
 class LikeList(View):
+    @needs_view_permission
     @never_cache
-    def get(self, request, slug=''):
-        ls = List.objects.get(slug=slug)
+    def get(self, request, ls):
         user = request.user
+        redirect_response = HttpResponseRedirect(request.META.get('HTTP_REFERER'))
         try:
             like = Like.objects.get(list=ls, owner=user)
             like.delete()
         except Like.DoesNotExist:
             like = Like(list=ls, owner=user)
             like.save()
-        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+        return redirect_response
 
 class ReblogList(View):
-    def post(self, request, slug=''):
-        ls = List.objects.get(slug=slug)
-        reblog = Reblog(list=ls, owner=request.user)
-        reblog.save()
-        return HttpResponse(status=201)
-
-    def delete(self, request, slug=''):
-        ls = List.objects.get(slug=slug)
+    @needs_view_permission
+    @never_cache
+    def get(self, request, ls):
+        user = request.user
+        redirect_response = HttpResponseRedirect(request.META.get('HTTP_REFERER'))
         try:
-            reblog = Reblog.objects.get(list=ls, owner=request.user)
+            reblog = Reblog.objects.get(list=ls, owner=user)
             reblog.delete()
         except Reblog.DoesNotExist:
-            return HttpResponse(status=404)
-        return HttpResponse(status=200)
+            reblog = Reblog(list=ls, owner=user)
+            reblog.save()
+        return redirect_response
+
+class FavoriteList(View):
+    @needs_view_permission
+    @never_cache
+    def get(self, request, ls):
+        user = request.user
+        redirect_response = HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+        try:
+            favorite = Favorite.objects.get(list=ls, owner=user)
+            favorite.delete()
+        except Favorite.DoesNotExist:
+            favorite = Favorite(list=ls, owner=user)
+            favorite.save()
+        return redirect_response
