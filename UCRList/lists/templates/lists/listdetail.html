@@ -5,6 +5,7 @@
 
 <div class="list-detail-section">
     <h2> {{ l.title }} </h2>
+    <br>
     <a href="{%url 'lists:like' slug=l.slug %}">
     {% if user_likes %}
     Unlike
@@ -12,14 +13,20 @@
     Like
     {% endif %}
     </a>
-    
+    <br>
     <p>{{ num_likes }} users like this post</p>
-    
+    <br>
     <a href="{%url 'lists:favorite' slug=l.slug %}">
     {% if user_favorited %}
     Remove from favorites
     {% else %}
     Add to Favorites
+    {% endif %}
+    </a>
+    <br>
+    <a href="{%url 'lists:reblog' slug=l.slug %}">
+    {% if not user_reblogged %}
+    Repost List 
     {% endif %}
     </a>
 

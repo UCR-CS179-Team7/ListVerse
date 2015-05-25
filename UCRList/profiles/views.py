@@ -11,7 +11,7 @@ from .models import Profile, InterestTopic, User
 from messages.models import Message
 from .forms import EditProfileForm
 from .models import Circle, CircleRelation
-from lists.models import List, ListItem, Favorite
+from lists.models import List, ListItem, Favorite, Reblog
 from django.db.models import Q
 
 # Friendship
@@ -95,6 +95,24 @@ class ProfileView(View):
 
         userFavorites = List.objects.filter(id__in=favorite_list_ids).order_by(order_by)
 
+        # the following is a kludge to associate a reblog date
+        # with the its corresponding list object it's pointing
+        # to in 'order_by' order
+
+        reblog_list = Reblog.objects.filter(owner=userid).values_list('list', 'reblog_date')
+
+        reblog_list_to_reblog_date = dict(reblog_list)
+        reblog_list_ids = [reblog[0] for reblog in reblog_list]
+
+        userReblogListObjects = List.objects.filter(id__in=reblog_list_ids).order_by(order_by)
+
+        userReblogs = []
+        for l in userReblogListObjects:
+            userReblogs.append({
+                'list': l,
+                'reblog_date': reblog_list_to_reblog_date[l.id],
+            })
+
         topicList = InterestTopic.objects.filter(user=userid)
         followers = Follow.objects.followers(request_profile.user)
 
@@ -128,6 +146,8 @@ class ProfileView(View):
                                                             'userLists': userLists,
 
 'userFavorites': userFavorites,
+
+'userReblogs': userReblogs,
                                                             'active_request':active_request,
                                                             'conversation': conversation})
 

@@ -132,7 +132,7 @@
                   </tr>
               </thead>
               {% for list in userFavorites %}
-                <tr>
+              <tr>
                   <td>
                     <a href="{% url 'lists:detail' slug=list.slug %}">{{ list.title }}</a>
                   </td>
@@ -150,6 +150,37 @@
               {% endfor %}
           </table>
 
+        <h1>{{ profile.user.username }}'s reposts</h1>
+          <table class="table table-hover">
+              <thead>
+                  <tr>
+                      <td>Title</td>
+                      <td>Created by</td>
+                      <td>Reposted date</td>
+                      {% if not not_self %}<td><center>Options</center></td>{% endif %}
+                  </tr>
+              </thead>
+              {% for reblog in userReblogs %}
+              {% with list=reblog.list reblog_date=reblog.reblog_date %}
+
+                <tr>
+                  <td>
+                    <a href="{% url 'lists:detail' slug=list.slug %}">{{ list.title }}</a>
+                  </td>
+                  <td> <a href="{% url 'profiles:view' username=list.owner sortmethod='default'%}">{{ list.owner }}</a></td>
+                  <td><p>{{ reblog_date }}</p></td>
+                  <td>  
+                      {% if not not_self %}
+                      <center>
+                        <a href="{% url 'lists:reblog' slug=list.slug  %}" class="text-danger">(Delete)</a>
+                        </form>
+                      </center>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endwith %}
+              {% endfor %}
+          </table>
       </div>
     </div>
     <div class="col-md-4">

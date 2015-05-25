@@ -69,6 +69,13 @@ class ListDetailView(View):
         except Favorite.DoesNotExist:
             context['user_favorited'] = False
 
+        try:
+            reblog = Reblog.objects.get(owner=user, list=ls)
+            context['user_reblogged'] = True
+        except Reblog.DoesNotExist:
+            context['user_reblogged'] = False
+
+
         return context
 
 class HotListsView(ListView):
