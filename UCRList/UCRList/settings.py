@@ -158,7 +158,7 @@ STATICFILES_DIRS = (
 
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 STATIC_URL = os.environ.get("STATIC_URL", "")
-#STATIC_ROOT = 'static/'
+STATIC_ROOT = 'static/'
 
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 
