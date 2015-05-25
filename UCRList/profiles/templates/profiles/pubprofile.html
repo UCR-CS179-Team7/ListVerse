@@ -87,14 +87,14 @@
 
     {% endif %}
     <div class="col-md-12">
-      <div>
-          <h1>{{ profile.user.username }}'s lists</h1>
+      <div> 
           <div class="btn-group" role="group" aria-label="...">
             <a class="btn btn-info" href="/profiles/view/{{profile.user.username}}/ascending">Time Ascending</a>
             <a class="btn btn-info" href="/profiles/view/{{profile.user.username}}/descending">Time Descending</a>
             <a class="btn btn-info" href="/profiles/view/{{profile.user.username}}/alphabetical">A-Z</a>
             <a class="btn btn-info" href="/profiles/view/{{profile.user.username}}/ralphabetical">Z-A</a>
           </div>
+          <h1>{{ profile.user.username }}'s lists</h1>
           <table class="table table-hover">
               <thead>
                   <tr>
@@ -123,6 +123,35 @@
                 </tr>
               {% endfor %}
           </table>
+         <h1>{{ profile.user.username }}'s favorites</h1>
+          <table class="table table-hover">
+              <thead>
+                  <tr>
+                      <td>Title</td>
+                      <td>Created by</td>
+                      <td>Publish date</td>
+                      {% if not not_self %}<td><center>Options</center></td>{% endif %}
+                  </tr>
+              </thead>
+              {% for list in userFavorites %}
+                <tr>
+                  <td>
+                    <a href="{% url 'lists:detail' slug=list.slug %}">{{ list.title }}</a>
+                  </td>
+                  <td> <a href="{% url 'profiles:view' username=list.owner sortmethod='default'%}">{{ list.owner }}</a></td>
+                  <td><p>{{ list.pub_date }}</p></td>
+                  <td>  
+                      {% if not not_self %}
+                      <center>
+                        <a href="{% url 'lists:favorite' slug=list.slug  %}" class="text-danger">(Delete)</a>
+                        </form>
+                      </center>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+          </table>
+
       </div>
     </div>
     <div class="col-md-4">

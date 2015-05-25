@@ -63,6 +63,12 @@ class ListDetailView(View):
         except Like.DoesNotExist:
             context['user_likes'] = False
 
+        try:
+            favorite = Favorite.objects.get(owner=user, list=ls)
+            context['user_favorited'] = True
+        except Favorite.DoesNotExist:
+            context['user_favorited'] = False
+
         return context
 
 class HotListsView(ListView):

@@ -12,7 +12,17 @@
     Like
     {% endif %}
     </a>
+    
     <p>{{ num_likes }} users like this post</p>
+    
+    <a href="{%url 'lists:favorite' slug=l.slug %}">
+    {% if user_favorited %}
+    Remove from favorites
+    {% else %}
+    Add to Favorites
+    {% endif %}
+    </a>
+
     <p style="margin-left: 10px">by <a href="{% url 'profiles:view' username=l.owner sortmethod='default'%}">{{ l.owner }}</a></p><br/>
     {% for item in l.listitem_set.all %}
         <div>
@@ -39,6 +49,7 @@
                 cols="40" class="comment" 
                 placeholder="What did you think about this list?">
             </textarea>
+            <br>
             <button type="submit" class="btn btn-primary">
                 Post Comment
             </button>

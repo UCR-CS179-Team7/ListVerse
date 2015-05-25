@@ -11,7 +11,7 @@ from .models import Profile, InterestTopic, User
 from messages.models import Message
 from .forms import EditProfileForm
 from .models import Circle, CircleRelation
-from lists.models import List, ListItem
+from lists.models import List, ListItem, Favorite
 from django.db.models import Q
 
 # Friendship
@@ -79,18 +79,21 @@ class ProfileView(View):
 
         userLists = List.objects.filter(owner=userid)
         userLists = List.filter_unviewable_lists(userLists, request.user)
+        order_by = '-pub_date'
         if sortmethod=='ascending':
-            global topicList
-            userLists = List.objects.filter(owner=userid).order_by('pub_date')
+            order_by = 'pub_date'
         elif sortmethod=='descending':
-            global topicList
-            userLists = List.objects.filter(owner=userid).order_by('-pub_date')
+            order_by = '-pub_date'
         elif sortmethod=='alphabetical':
-            global topicList
-            userLists = List.objects.filter(owner=userid).order_by('title')
+            order_by = 'title'
         elif sortmethod=='ralphabetical':
-            global topicList
-            userLists = List.objects.filter(owner=userid).order_by('-title')
+            order_by = '-title'
+
+        userLists = List.objects.filter(owner=userid).order_by(order_by)
+
+        favorite_list_ids = Favorite.objects.filter(owner=userid).values_list('list', flat=True)
+
+        userFavorites = List.objects.filter(id__in=favorite_list_ids).order_by(order_by)
 
         topicList = InterestTopic.objects.filter(user=userid)
         followers = Follow.objects.followers(request_profile.user)
@@ -123,6 +126,8 @@ class ProfileView(View):
                                                             'followers': followers,
                                                             'following': following,
                                                             'userLists': userLists,
+
+'userFavorites': userFavorites,
                                                             'active_request':active_request,
                                                             'conversation': conversation})
 
