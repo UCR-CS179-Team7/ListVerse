@@ -5,7 +5,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.db.models import Q, Field
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
+import json
 
 from .forms import RegistrationForm, LoginForm
 
@@ -180,3 +181,19 @@ def feed_view(request):
                                          'interest_topics': ineterest_topics,
                                          'default_filter_select': filter_data,
                                          'recommendations':recommendations})
+
+def user_query(request):
+    if request.is_ajax():
+        q = request.GET.get('query', '')
+        users = User.objects.filter(username__icontains=q)[:5]
+        results = []
+        formatted_results = {}
+        for u in users:
+            results.append(u.username)
+        formatted_results['query'] = 'Unit'
+        formatted_results['suggestions'] = results
+        data = json.dumps(formatted_results)
+    else:
+        data = 'fail'
+    mime_type = 'application/json'
+    return HttpResponse(data, mime_type)

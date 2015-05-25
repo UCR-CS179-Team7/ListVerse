@@ -2,60 +2,63 @@
 
 {% block content %}
     {% if user.is_authenticated %}
-        <div style="display: inline-block; padding-right: 25px">
-            <h3>Your Circles</h3>
-        </div>
-        <div style="display: inline-block">
-            <form action="{% url 'profiles:circles' %}" method="post">{% csrf_token %}
-                <input type="hidden" name="circle_action" value="add_circle"/>
-                <input type="text" name="circle" placeholder="create new circle"/>
-                <input type="submit" value="OK"/>
-            </form>
+        <div style="margin-bottom: 20px; margin-top: 20px">
+            <div style="display: inline-block; padding-right: 25px">
+                <h3>Your Circles</h3>
+            </div>
+            <div style="display: inline-block">
+                <form action="{% url 'profiles:circles' %}" method="post">{% csrf_token %}
+                    <input type="hidden" name="circle_action" value="add_circle"/>
+                    <input type="text" name="circle" placeholder="create new circle" style="display: inline-block;"/>
+                    <input type="submit" value="OK" class="login-logout-button" style="display: inline-block;"/>
+                </form>
+            </div>
         </div>
         <ul>
             {% for c in circles %}
-                <li>
-                    <div style="display: inline-block; padding-right: 25px">
-                        {{ c.circleName }}
+                <li class="circles">
+                    <div>
+                        <div style="display: inline-block; padding-right: 25px; width: 180px;">
+                            {{ c.circleName }}
+                        </div>
+                        <div style="display: inline-block; padding-right: 25px;">
+                            <form action="{% url 'profiles:circles' %}" method="POST">{% csrf_token %}
+                                <input type="hidden" name="circle_action" value="add_followee_to_circle"/>
+                                <input type="hidden" name="circle" value="{{ c.circleName }}"/>
+                                <select name="followee" onchange="this.form.submit();" class="follow-list">
+                                    <option value="" disabled selected>Add</option>
+                                    {% for f in not_in_circles|getItem:c.circleName %}
+                                        <option value="{{ f }}">{{ f }}</option>
+                                    {% endfor %}
+                                </select>
+                            </form>
+                        </div>
+                        <div style="display: inline-block">
+                            <form action="{% url 'profiles:circles' %}" method="POST">{% csrf_token %}
+                                <input type="hidden" name="circle_action" value="delete_circle"/>
+                                <input type="hidden" name="circle" value="{{ c.circleName }}"/>
+                                <input type="submit" value="delete" class="delete-button btn btn-danger btn-sm "/>
+                            </form>
+                        </div>
                     </div>
-                    <div style="display: inline-block; padding-right: 25px;">
-                        <form action="{% url 'profiles:circles' %}" method="POST">{% csrf_token %}
-                            <input type="hidden" name="circle_action" value="add_followee_to_circle"/>
-                            <input type="hidden" name="circle" value="{{ c.circleName }}"/>
-                            <select name="followee">
-                                <option value="" disabled selected>followee</option>
-                                {% for f in not_in_circles|getItem:c.circleName %}
-                                    <option value="{{ f }}">{{ f }}</option>
-                                {% endfor %}
-                            </select>
-                            <input type="submit" value="add to circle"/>
-                        </form>
-                    </div>
-                    <div style="display: inline-block">
-                        <form action="{% url 'profiles:circles' %}" method="POST">{% csrf_token %}
-                            <input type="hidden" name="circle_action" value="delete_circle"/>
-                            <input type="hidden" name="circle" value="{{ c.circleName }}"/>
-                            <input type="submit" value="delete circle"/>
-                        </form>
-                    </div>
+                    <ul>
+                        {% for f in in_circles|getItem:c.circleName %}
+                            <li class="circlefollow">
+                                <div style="display: inline-block; width: 150px;">
+                                    {{ f }}
+                                </div>
+                                <div style="display: inline-block">
+                                    <form action="{% url 'profiles:circles' %}" method="POST">{% csrf_token %}
+                                        <input type="hidden" name="circle_action" value="remove_followee_from_circle"/>
+                                        <input type="hidden" name="circle" value="{{ c.circleName }}"/>
+                                        <input type="hidden" name="followee" value="{{ f }}"/>
+                                        <input type="submit" value="remove" class="btn btn-danger btn-sm delete-button"/>
+                                    </form>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
                 </li>
-                <ul>
-                    {% for f in in_circles|getItem:c.circleName %}
-                        <li>
-                            <div style="display: inline-block">
-                                {{ f }}
-                            </div>
-                            <div style="display: inline-block">
-                                <form action="{% url 'profiles:circles' %}" method="POST">{% csrf_token %}
-                                    <input type="hidden" name="circle_action" value="remove_followee_from_circle"/>
-                                    <input type="hidden" name="circle" value="{{ c.circleName }}"/>
-                                    <input type="hidden" name="followee" value="{{ f }}"/>
-                                    <input type="submit" value="remove from circle"/>
-                                </form>
-                            </div>
-                        </li>
-                    {% endfor %}
-                </ul>
             {% endfor %}
         </ul>
     {% endif %}

@@ -1,4 +1,3 @@
-<!--TODO-->
 {% extends '_layouts/base.html' %}
 {% load crispy_forms_tags %}
 {% load friendshiptags %}
@@ -6,8 +5,8 @@
 {% block content %}
 <div class="profile-section">
     {% if not not_friends or not not_self %}
-    <div class="row">
-      <div class="col-md-6">
+    <div class="row" style="display: flex;">
+      <div class="col-md-6 profile-view-data" style="width: 500px;">
         <img style="display:block; margin: 0 auto;" class="img-circle" src="{{ MEDIA_URL }}{{ profile.avatar }}" height="100" width="100"/>
 
         <center>
@@ -22,7 +21,7 @@
             <p><strong>
                 <button type="button" class="btn btn-default" data-toggle="modal" data-target="#messageModel">
                   Send Message
-                </button
+                </button>
 
                 <!-- Modal -->
                 <div class="modal fade" id="messageModel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -34,11 +33,11 @@
                       </div>
                       <div class="modal-body" id="conversation" style="height:200px; overflow-y:auto;">
                         {% for message in conversation %}
-                          {% if message.from_user = profile.user %}
+                          {% if message.from_user == profile.user %}
                             <p class="from">{{profile.user.username}}: {{message.content}}</p>
                           {% endif %}
 
-                          {% if message.to_user = profile.user %}
+                          {% if message.to_user == profile.user %}
                             <p class="to">You: {{message.content}}</p>
                           {% endif %}
                         {% endfor %}
@@ -57,7 +56,7 @@
           {% endif %}
         </center>
       </div>
-      <div class="col-md-6">
+      <div class="col-md-6 profile-view-data">
         <h3>{{profile.user.username}}'s Friends </h3>
         <ul>
             {% for f in myfriends %}
@@ -92,9 +91,9 @@
           <h1>{{ profile.user.username }}'s lists</h1>
           <div class="btn-group" role="group" aria-label="...">
             <a class="btn btn-info" href="/profiles/view/{{profile.user.username}}/ascending">Time Ascending</a>
-            <a class="btn btn-info"href="/profiles/view/{{profile.user.username}}/descending">Time Descending</a>
-            <a class="btn btn-info"href="/profiles/view/{{profile.user.username}}/alphabetical">A-Z</a>
-            <a class="btn btn-info"href="/profiles/view/{{profile.user.username}}/ralphabetical">Z-A</a>
+            <a class="btn btn-info" href="/profiles/view/{{profile.user.username}}/descending">Time Descending</a>
+            <a class="btn btn-info" href="/profiles/view/{{profile.user.username}}/alphabetical">A-Z</a>
+            <a class="btn btn-info" href="/profiles/view/{{profile.user.username}}/ralphabetical">Z-A</a>
           </div>
           <table class="table table-hover">
               <thead>
