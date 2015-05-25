@@ -99,7 +99,6 @@
               <thead>
                   <tr>
                       <td>Title</td>
-                      <td>Created by</td>
                       <td>Publish date</td>
                       {% if not not_self %}<td><center>Options</center></td>{% endif %}
                   </tr>
@@ -109,7 +108,6 @@
                   <td>
                     <a href="{% url 'lists:detail' slug=list.slug %}">{{ list.title }}</a>
                   </td>
-                  <td> <a href="{% url 'profiles:view' username=list.owner sortmethod='default'%}">{{ list.owner }}</a></td>
                   <td><p>{{ list.pub_date }}</p></td>
                   <td>  {% if not not_self %}
                       <center>
