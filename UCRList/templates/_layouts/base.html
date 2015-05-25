@@ -45,14 +45,12 @@
                 {% if user.is_authenticated %}
 			    <div class="user-search">
 	                <div class="user-search">
-		                <form action="#">
-                            <div style="display: inline-block; float: right;">
-                                <input type="text" id="user-search-box" class="user-search-text" size="15" name="q" placeholder="Search Users"/>
-                            </div>
-                            <div style="display: inline-block; float: right;">
-			                    <a class="search-top" href="#">Search for users</a>
-                            </div>
-		                </form>
+                        <div style="display: inline-block; float: right;">
+                            <input type="text" id="user-search-box" class="user-search-text" size="15" name="q" placeholder="Search Users"/>
+                        </div>
+                        <div style="display: inline-block; float: right;">
+                            <div class="search-top">Search for users</div>
+                        </div>
 	                </div>
                 </div>
                 {% endif %}

@@ -281,14 +281,14 @@ color: #56a6d4;
 transition: all 0.25s ease-in;
 } 
 
-a.search-top {
+div.search-top {
 background: url(http://listverse.wpengine.netdna-cdn.com/wp-content/themes/listverse2013/assets/img/search.png) 50% 50% no-repeat;
 display: inline-block;
 width: 48px;
 text-indent: -9999em;
 border-left: 1px solid #5c5d5f;
 }
-a:hover.search-top, a.search-top.active {
+div:hover.search-top, div.search-top.active {
 background-color: #33363b;
 }
 .search-top {
@@ -322,7 +322,7 @@ div.logo {
     float: left;
     margin: 60px 20px 80px 150px;
 }
-a.search-top {
+div.search-top {
 padding: 13px 0;
 }
 header .wrapper {
@@ -354,7 +354,7 @@ position: absolute;
 top: 0;
 left: 60px;
 }
-a.search-top {
+div.search-top {
 width: 58px;
 }
 .search-top-reveal.active {
@@ -372,7 +372,7 @@ display: none;
 header .toolbar {
 width: 35%;
 }
-a.search-top {
+div.search-top {
 float: right;
 padding: 12px 0;
 }
@@ -394,7 +394,7 @@ float: right;
 ####################################################################### */
 
 @media screen and (min-width: 1024px) {
-a.search-top {
+div.search-top {
 padding: 10px 0;
 }
 .top-nav, .toolbar nav {
