@@ -24,11 +24,11 @@
     {% endif %}
     </a>
     <br>
-    <a href="{%url 'lists:reblog' slug=l.slug %}" class="login-logout-button">
     {% if not own_list and not user_reblogged %}
-    Repost List 
-    {% endif %}
+    <a href="{%url 'lists:reblog' slug=l.slug %}" class="login-logout-button">
+    Repost List
     </a>
+    {% endif %}
 
     <p style="margin-left: 10px">by <a href="{% url 'profiles:view' username=l.owner sortmethod='default'%}">{{ l.owner }}</a></p><br/>
     {% for item in l.listitem_set.all %}
