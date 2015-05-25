@@ -56,6 +56,7 @@ class ListDetailView(View):
         user = request.user
         num_likes = Like.objects.filter(list=ls).count()
         context['num_likes'] = num_likes
+        context['own_list'] = user == ls.owner
 
         try:
             like = Like.objects.get(owner=user, list=ls)
@@ -244,7 +245,12 @@ class ReblogList(View):
     @never_cache
     def get(self, request, ls):
         user = request.user
+        forbidden_response = HttpResponseForbidden()
         redirect_response = HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+        if user == ls.owner:
+            return forbidden_response
+
         try:
             reblog = Reblog.objects.get(list=ls, owner=user)
             reblog.delete()

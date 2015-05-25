@@ -8,7 +8,7 @@
         <div style="display: inline-block">
             <form id="feed_filter" action="{% url 'feed' %}" method="post">{% csrf_token %}
                 <select name="filter" onchange="this.form.submit()">
-                    <option value=""></option>
+                    <option value="following:following">following</option>
                     <option value="default:default">all</option>
                     <optgroup label="Topics">
                         {% for i in interest_topics %}
@@ -26,15 +26,18 @@
         <table class="table table-hover">
             <thead>
                 <tr>
-                    <td>Title</td><td>Created by</td><td>Published</td><td>Description</td>
+                    <td>Title</td><td>Created by</td><td>Published</td><td>Description</td> <td>Reposted by</td>
                 </tr>
             </thead>
-        {% for l in lists %}
+        {% for feed_item in feed %}
+        {% with l=feed_item.list is_reblog=feed_item.is_reblog reblogged_by=feed_item.reblogged_by %}
             <tr><td> <a href="{% url 'lists:detail' slug=l.slug %}">{{ l.title }}</a></td>
                 <td> <a href="{% url 'profiles:view' username=l.owner sortmethod='default' %}">{{ l.owner }}</a></td>
                 <td> {{ l.pub_date }}</td>
                 <td>{{ l.descriptionmeta|slice:'50' }}</td>
+                <td>{% if is_reblog %} <a href="{% url 'profiles:view' username=reblogged_by sortmethod='default' %}">{{ reblogged_by }}</a> {% endif %}
             </tr>
+        {% endwith %}
         {% endfor %}
         </table>
     </div>

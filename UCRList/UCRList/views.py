@@ -14,7 +14,7 @@ from friendship.models import Friend, Follow, FriendshipRequest
 from messages.models import Message
 
 from profiles.models import InterestTopic, Circle, CircleRelation
-from lists.models import List, TopicTag, BrowseHistory, Like
+from lists.models import List, TopicTag, BrowseHistory, Like, Reblog
 from allauth.account.views import LoginView
 import allauth.account.views
 import datetime
@@ -146,13 +146,16 @@ def recommended_lists(user):
 
 
 def feed_view(request):
-    filter_data = request.POST.get('filter', 'default:default')
+    filter_data = request.POST.get('filter', 'following:following')
     feed_filter = filter_data.split(':')[0]
     feed_filter_data = filter_data.split(':')[1]
     lists = {}
     circles = Circle.objects.filter(user=request.user)
     ineterest_topics = InterestTopic.TOPIC_CHOICES
     recommendations = recommended_lists(request.user)
+
+    reblog_listids_ownerids = []
+
     if feed_filter == 'interests':
         topics = InterestTopic.objects.filter(user=request.user).values('topic')
         lists_in_topics = TopicTag.objects.filter(topic__in=topics).values('list')
@@ -162,21 +165,41 @@ def feed_view(request):
         lists = List.objects.filter(id__in=lists_in_topics).order_by('-pub_date')
     elif feed_filter == 'following':
         following = Follow.objects.following(request.user)
-        lists = List.objects.filter(owner__in=following)
+        reblog_listids_ownerids = Reblog.objects.filter(owner__in=following).values_list('list', 'owner')
+        following_reblogs = [reblog[0] for reblog in reblog_listids_ownerids]
+        lists = List.objects.filter(Q(owner__in=following)|Q(id__in=following_reblogs)).order_by('-pub_date')
     elif feed_filter == 'circle':
         circle = Circle.objects.get(user=request.user, circleName=feed_filter_data)
         circle_relation = CircleRelation.objects.filter(circle=circle).values('followee')
         in_circle = User.objects.filter(id__in=circle_relation)
-        lists = List.objects.filter(owner__in=in_circle)
+        reblog_listids_ownerids = Reblog.objects.filter(owner__in=in_circle).values_list('list', 'owner')
+        circle_reblogs = [reblog[0] for reblog in reblog_listids_ownerids]
+        lists = List.objects.filter(Q(owner__in=in_circle)|Q(id__in=circle_reblogs)).order_by('-pub_date')
     else:
         topics = InterestTopic.objects.filter(user=request.user).values('topic')
         lists_in_topics = TopicTag.objects.filter(topic__in=topics).values('list')
         following = Follow.objects.following(request.user)
         lists = List.objects.filter(Q(id__in=lists_in_topics)|Q(owner__in=following))
+
+    reblog_listids_to_ownerids = dict(reblog_listids_ownerids)
+
     lists = List.filter_unviewable_lists(lists, request.user)
     lists = List.filter_own_lists(lists, request.user)
 
-    return render(request, 'feed.html', {'lists': lists,
+    feed = []
+    for l in lists:
+        is_reblog = False
+        reblogged_by = ''
+        if l.id in reblog_listids_to_ownerids:
+            is_reblog = True
+            reblogged_by = User.objects.get(id=reblog_listids_to_ownerids[l.id])
+        feed.append({
+            'is_reblog': is_reblog,
+            'reblogged_by': reblogged_by,
+            'list': l
+            })
+
+    return render(request, 'feed.html', {'feed': feed,
                                          'circles': circles,
                                          'interest_topics': ineterest_topics,
                                          'default_filter_select': filter_data,
