@@ -770,6 +770,12 @@ input.delete-button {
     vertical-align: middle;
 }
 
+a.delete-button {
+    border-radius: 7px;
+    height: 28px;
+    vertical-align: middle;
+}
+
 li.circlefollow {
     margin: 10px;
 }
