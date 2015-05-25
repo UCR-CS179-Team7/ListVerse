@@ -151,21 +151,22 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
+
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
 )
 
 
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
-STATIC_URL = os.environ.get("STATIC_URL", "")
-STATIC_ROOT = '/'
-
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+STATIC_ROOT = 'static/'
+MEDIA_ROOT = '/media/'
+DEFAULT_FILE_STORAGE = os.environ.get("DEFAULT_FILE_STORAGE", "")
+STATICFILES_STORAGE = os.environ.get("STATICFILES_STORAGE", "")
 
 AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID", "")
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY", "")
 AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME", "")
 
+STATIC_URL = os.environ.get("STATIC_URL", "")
 MEDIA_URL = 'http://ucrlist-static.s3.amazonaws.com/media/'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
