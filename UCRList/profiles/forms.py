@@ -46,7 +46,7 @@ class EditProfileForm(forms.Form):
     helper = FormHelper()
     helper.form_class = 'form-horizontal'
     currentAvatar = forms.CharField(widget=forms.HiddenInput(attrs={'id': 'currentAvatar', 'style': 'width: 200px;'}), max_length=200, required=False)
-    upload = forms.FileField(widget=forms.FileInput(attrs={'id': 'upload'}), label='select file for photo', required=False)
+    upload = forms.FileField(widget=forms.FileInput(attrs={'id': 'upload', 'style': 'width: 400px;'}), label='select file for photo', required=False)
     nickname = forms.CharField(widget=forms.TextInput(attrs={'style': 'width: 200px;'}), label='Nickname',
                                max_length=100, required=False)
     gender = forms.ChoiceField(widget=forms.Select(attrs={'style': 'width: 150px;'}), label='Gender', choices=GENDERS)

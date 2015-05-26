@@ -5,18 +5,17 @@
 
 <div class="list-detail-section">
     <h2> {{ l.title }} </h2>
-    <br>
-    <a href="{%url 'lists:like' slug=l.slug %}" class="login-logout-button">
+     <p style="margin-left: 10px">by <a href="{% url 'profiles:view' username=l.owner sortmethod='default'%}">{{ l.owner }}</a></p>
+    <div class="network-section" style="margin-left: 0;">
+    <a href="{%url 'lists:like' slug=l.slug %}" class="login-logout-button" style="margin: 10px 0 10px 0;">
     {% if user_likes %}
     Unlike
     {% else %}
     Like
     {% endif %}
     </a>
-    <br>
-    <p>{{ num_likes }} users like this post</p>
-    <br>
-    <a href="{%url 'lists:favorite' slug=l.slug %}" class="login-logout-button">
+    <p style="margin: 5px 0 0 0;">{{ num_likes }} users like this post</p>
+    <a href="{%url 'lists:favorite' slug=l.slug %}" class="login-logout-button" style="margin: 10px 0 20px 0;">
     {% if user_favorited %}
     Remove from favorites
     {% else %}
@@ -29,8 +28,8 @@
     Repost List
     </a>
     {% endif %}
-
-    <p style="margin-left: 10px">by <a href="{% url 'profiles:view' username=l.owner sortmethod='default'%}">{{ l.owner }}</a></p><br/>
+    </div>
+    <div class="network-section" style="margin-left: 0;">
     {% for item in l.listitem_set.all %}
         <div>
             <h4>{{ forloop.counter}}. {{ item.title }}</h4>
@@ -38,7 +37,9 @@
             {{ item.descriptionmeta |safe}}
         </div>
     {% endfor %}
-
+    </div>
+    <div class="network-section" style="margin-left: 0;">
+        <h3>Comments</h3>
     {% for comment in l.comments.all %}
         <div class="row">
           <div class="col-md-6">
@@ -61,6 +62,6 @@
                 Post Comment
             </button>
         </form>
-
+    </div>
 </div>
 {% endblock %}

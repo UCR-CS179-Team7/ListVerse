@@ -1,6 +1,6 @@
 {% extends '_layouts/base.html' %}
 {% block content %}
-<div class="trending-section">
+<div class="trending-section network-section">
     <h2 style="text-align: center; margin-bottom: 20px;">Lists Trending Right Now!</h2>
     <table style="">
         {% for l in ls|dictsortreversed:"pub_date" %}
