@@ -42,12 +42,17 @@
         <h3>Comments</h3>
     {% for comment in l.comments.all %}
         <div class="row">
-          <div class="col-md-6">
-                
-              <img style="display:block; margin: 0 auto;" class="img-circle" src="{{ MEDIA_URL }}{{ comment.owner.profile.avatar }}" height="75" width="75"/>
-              <strong><a href="{% url 'profiles:view' username=comment.owner.username sortmethod='default' %}"> {{comment.owner.username}}</a></strong>
-                <strong>Posted on </strong>: {{ comment.pub_date }}
-                {{ comment.content }}
+          <div class="col-md-6 network-section" style="margin-left: 0;">
+              <div>
+                  <a href="{% url 'profiles:view' username=comment.owner.username sortmethod='default' %}">
+                      <img class="img-circle" src="{{ MEDIA_URL }}{{ comment.owner.profile.avatar }}" height="75" width="75"/>
+                      <strong>{{comment.owner.username}}</strong></a>
+              </div>
+              <div>
+                    <strong>Posted on </strong>: {{ comment.pub_date }}
+               </div>
+               <br>
+               <p>{{ comment.content }}</p>
             </div>
         </div>
     {% endfor %}
