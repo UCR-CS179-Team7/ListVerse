@@ -1,10 +1,60 @@
+
+.autocomplete-suggestions {
+    border: 1px solid #999;
+    background: #33363b;
+    color: #cccccc
+    cursor: default;
+    overflow: auto;
+    -webkit-box-shadow: 1px 4px 3px rgba(50, 50, 50, 0.64);
+    -moz-box-shadow: 1px 4px 3px rgba(50, 50, 50, 0.64);
+    box-shadow: 1px 4px 3px rgba(50, 50, 50, 0.64);
+}
+
+.autocomplete-suggestion {
+    padding: 2px 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    background-color: #33363b;
+    color: #fcfcfc;
+    font: 11pt sans-serif;
+}
+
+.autocomplete-no-suggestion {
+    padding: 2px 5px;
+}
+
+.autocomplete-selected {
+    background: #0097cf;
+}
+
+.autocomplete-suggestions strong {
+    font-weight: bold;
+    color: #0066cc;
+}
+
+.autocomplete-group { padding: 2px 5px; }
+.autocomplete-group strong {
+    font-weight: bold;
+    font-size: 16px;
+    color: #0066cc;
+    border-bottom: 1px solid #000;
+}
+
+input {
+    font-size: 28px;
+    padding: 10px;
+    border: 1px solid #CCC;
+    display: block;
+    margin: 20px 0;
+}
+
 /* #######################################################################
 
 	0.1  CSS Reset, Font setup and Plugins
 
 ####################################################################### */
 
-html,body,div,span,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,abbr,address,cite,code,del,dfn,em,img,ins,kbd,q,samp,small,strong,sub,sup,var,b,i,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,figcaption,figure,footer,header,menu,nav,section,summary,time,mark,audio,video{border:0;font-size:100%;vertical-align:baseline;margin:0;padding:0;}
+html,body,div,span,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,abbr,address,cite,code,del,dfn,em,img,ins,kbd,q,samp,small,strong,sub,sup,var,b,i,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,figcaption,figure,footer,header,menu,nav,section,summary,time,mark,audio,video{border:0;vertical-align:baseline;margin:0;padding:0;}
 article,aside,details,figcaption,figure,footer,header,menu,nav,section{
     display:block;
 }
@@ -44,9 +94,7 @@ hr{
 input,select{
     vertical-align:middle;
 }
-body {
-    font:13px/1.231 sans-serif;
-}
+
 select,input,textarea,button{
     font:99% sans-serif;
 }
@@ -233,14 +281,14 @@ color: #56a6d4;
 transition: all 0.25s ease-in;
 } 
 
-a.search-top {
+div.search-top {
 background: url(http://listverse.wpengine.netdna-cdn.com/wp-content/themes/listverse2013/assets/img/search.png) 50% 50% no-repeat;
 display: inline-block;
 width: 48px;
 text-indent: -9999em;
 border-left: 1px solid #5c5d5f;
 }
-a:hover.search-top, a.search-top.active {
+div:hover.search-top, div.search-top.active {
 background-color: #33363b;
 }
 .search-top {
@@ -269,16 +317,17 @@ header .toolbar {
 float: right;
 display: inline-block;
 }
-header .logo {
-float: left;
-margin: 0 0 40px 5px;
+div.logo {
+    display: inline-block;
+    float: left;
+    margin: 60px 20px 80px 150px;
 }
-a.search-top {
+div.search-top {
 padding: 13px 0;
 }
 header .wrapper {
 float: left;
-width: 83%;
+width: 93%;
 }
 
 /* #######################################################################
@@ -305,7 +354,7 @@ position: absolute;
 top: 0;
 left: 60px;
 }
-a.search-top {
+div.search-top {
 width: 58px;
 }
 .search-top-reveal.active {
@@ -323,7 +372,7 @@ display: none;
 header .toolbar {
 width: 35%;
 }
-a.search-top {
+div.search-top {
 float: right;
 padding: 12px 0;
 }
@@ -345,7 +394,7 @@ float: right;
 ####################################################################### */
 
 @media screen and (min-width: 1024px) {
-a.search-top {
+div.search-top {
 padding: 10px 0;
 }
 .top-nav, .toolbar nav {
@@ -373,11 +422,11 @@ padding-bottom: 56px;
 }
 .wrapper, header .wrapper {
 float: none;
-width: 978px;
+width: 1000px;
 margin: 0 auto;
 }
 header .wrapper, footer .wrapper {
-width: 940px;
+width: 1040px;
 }
 header .toolbar {
 float: left;
@@ -637,12 +686,14 @@ font-size: 16px;
     }
 }
 
+
 .network-section{
-    border: solid #0066cc;
+    border: solid #0066cc 1px;
     border-radius: 15px;
     padding: 15px;
     width: 100%;
     min-height: 200px;
+    margin: 15px;
 }
 .network-content{
     margin-left: 20px;
@@ -650,11 +701,13 @@ font-size: 16px;
 }
 
 .messages-section{
-    border: solid #0066cc;
+    border: solid #0066cc 1px;
     border-radius: 15px;
     padding: 15px;
     width: 100%;
     min-height: 250px;
+    margin-left: 15px;
+    margin-right: 15px;
 }
 .login-logout-button {
 	-moz-box-shadow: 0 10px 14px -7px #276873;
@@ -697,9 +750,38 @@ font-size: 16px;
 	top:1px;
 }
 
-button, input[type='submit'] {
-	-moz-box-shadow: 0 10px 14px -7px #276873;
-	-webkit-box-shadow: 0 10px 14px -7px #276873;
+.textlink {
+    color: #0066cc;
+}
+.textlink:hover {
+    color: #0097cf;
+}
+
+li.circles {
+    border: solid #0066cc 1px;
+    border-radius: 10px;
+    margin: 25px;
+    padding: 15px;
+}
+
+input.delete-button {
+    border-radius: 7px;
+    height: 28px;
+    vertical-align: middle;
+}
+
+a.delete-button {
+    border-radius: 7px;
+    height: 28px;
+    vertical-align: middle;
+}
+
+li.circlefollow {
+    margin: 10px;
+}
+
+select.follow-list {
+    -moz-box-shadow: 0 10px 14px -7px #276873;
 	box-shadow: 0 10px 14px -7px #276873;
 	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #56a6d4), color-stop(1, #408c99));
 	background:-moz-linear-gradient(top, #56a6d4 5%, #408c99 100%);
@@ -715,26 +797,40 @@ button, input[type='submit'] {
 	display:inline-block;
 	cursor:pointer;
 	color:#ffffff;
-	font-size:10px;
+	font-size:12px;
 	font-weight:bold;
 	padding:6px 16px;
 	text-decoration:none;
 	text-shadow:0 1px 0 #3d768a;
     vertical-align: middle;
-    margin-top: 7px;
+    margin-top: 7px;}
+
+div.profile-view-data {
+    border: solid #0066cc 1px;
+    border-radius: 10px;
+    margin: 15px;
+    display: inline-block;
+    padding: 10px;
+    flex: 1;
+    height: inherit;
 }
 
-button:hover, input[type='submit']:hover {
-	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #408c99), color-stop(1, #56a6d4));
-	background:-moz-linear-gradient(top, #408c99 5%, #56a6d4 100%);
-	background:-webkit-linear-gradient(top, #408c99 5%, #56a6d4 100%);
-	background:-o-linear-gradient(top, #408c99 5%, #56a6d4 100%);
-	background:-ms-linear-gradient(top, #408c99 5%, #56a6d4 100%);
-	background:linear-gradient(to bottom, #408c99 5%, #56a6d4 100%);
-	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#408c99', endColorstr='#56a6d4',GradientType=0);
-	background-color:#408c99;
+.user-search {
+    display: inline-block;
 }
-button:active, input[type='submit']:active {
-	position:relative;
-	top:1px;
+
+.user-search-text {
+    height: 20px;
+    margin: 10px 0 0 0;
+    background-color: #33363b;
+    color: #cccccc
+}
+
+input.user-search, a.user-search {
+    display: inline-block;
+}
+
+.ucrlist-logo {
+    border-radius: 7px;
+    overflow: hidden;
 }
