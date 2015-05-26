@@ -77,8 +77,6 @@ class ProfileView(View):
         request_profile = Profile.objects.get(user_id=userid)
         not_friends = doesnt_follow = not_self = active_request = False
 
-        userLists = List.objects.filter(owner=userid)
-        userLists = List.filter_unviewable_lists(userLists, request.user)
         order_by = '-pub_date'
         if sortmethod=='ascending':
             order_by = 'pub_date'
@@ -90,10 +88,14 @@ class ProfileView(View):
             order_by = '-title'
 
         userLists = List.objects.filter(owner=userid).order_by(order_by)
+        userLists = List.filter_unviewable_lists(userLists, request.user)
+
 
         favorite_list_ids = Favorite.objects.filter(owner=userid).values_list('list', flat=True)
 
         userFavorites = List.objects.filter(id__in=favorite_list_ids).order_by(order_by)
+
+        userFavorites = List.filter_unviewable_lists(userFavorites, request.user)
 
         # the following is a kludge to associate a reblog date
         # with the its corresponding list object it's pointing
@@ -105,6 +107,8 @@ class ProfileView(View):
         reblog_list_ids = [reblog[0] for reblog in reblog_list]
 
         userReblogListObjects = List.objects.filter(id__in=reblog_list_ids).order_by(order_by)
+
+        userReblogListObjects = List.filter_unviewable_lists(userReblogListObjects, request.user)
 
         userReblogs = []
         for l in userReblogListObjects:
