@@ -7,3 +7,6 @@ use the following command after cloning the repo:
 ```sh
 $ git submodule update --init
 ```
+
+This app is available at:
+  http://ucrlist.herokuapp.com/
